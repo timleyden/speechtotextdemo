@@ -1,0 +1,19 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "functionAppName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "sitesWebApiVersion": "2016-08-01"
+    },
+    "resources": [],
+    "outputs": {
+        "triggerUrl": {
+            "type": "string",
+            "value": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionAppName'), 'TranscripCompleteHttpTrigger'), variables('sitesWebApiVersion')).trigger_url]"
+        }
+    }
+}
