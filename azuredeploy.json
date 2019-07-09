@@ -79,7 +79,7 @@
       "apiVersion": "2018-01-01",
       "dependsOn": [
         "[parameters('storageName')]",
-        "deployFunction"
+        "[resourceId('Microsoft.Web/sites/sourcecontrols',variables('functionAppName'),'web')]"
       ],
       "properties": {
         "destination": {
@@ -181,7 +181,22 @@
             }
           ]
         }
-      }
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "name": "web",
+          "type": "sourcecontrols",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', variables('functionAppName'))]"
+          ],
+          "properties": {
+            "RepoUrl": "https://github.com/timleyden/speechtotextdemo.git",
+            "branch": "master",
+            "IsManualIntegration": true
+          }
+        }
+      ]
     },
     {
       "type": "Microsoft.CognitiveServices/accounts",
@@ -207,18 +222,6 @@
         "Application_Type": "web",
         "ApplicationId": "[variables('appInsightsName')]",
         "Request_Source": "IbizaWebAppExtensionCreate"
-      }
-    },
-    {
-      "name": "deployFunction",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2014-04-01-preview",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(listsecrets(resourceId('Microsoft.Web/sites/functions', variables('functionAppName'), 'GetFunctionMasterKeyHttpTrigger'),'2016-08-01').trigger_url,'&publishingUserName=', list(resourceId('Microsoft.Web/sites/config', variables('functionAppName'), 'publishingcredentials'), '2016-08-01').properties.publishingUserName,'&publishingPassword=',list(resourceId('Microsoft.Web/sites/config', variables('functionAppName'), 'publishingcredentials'), '2016-08-01').properties.publishingPassword)]",
-          "contentVersion": "1.0.0.0"
-        }
       }
     },
     {
@@ -254,25 +257,19 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2014-04-01-preview",
       "dependsOn": [
-        "[resourceId('Microsoft.Web/sites/config',variables('functionAppName'),'appSettings')]"
+        "[resourceId('Microsoft.Web/sites/config',variables('functionAppName'),'appSettings')]",
+        "[resourceId('Microsoft.Web/sites/sourcecontrols',variables('functionAppName'),'web')]"
       ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(listsecrets(resourceId('Microsoft.Web/sites/functions', variables('functionAppName'), 'TranscriptCompleteHttpTrigger'),'2016-08-01').trigger_url,'&Register=Yes')]",          "contentVersion": "1.0.0.0"
+          "uri": "[concat(listsecrets(resourceId('Microsoft.Web/sites/functions', variables('functionAppName'), 'TranscriptCompleteHttpTrigger'),'2016-08-01').trigger_url,'&Register=Yes')]",
+          "contentVersion": "1.0.0.0"
         }
       }
     }
   ],
   "outputs": {
-    "code": {
-      "type": "string",
-      "value": "[concat('https://',variables('functionAppName'),'.azurewebsites.net/runtime/webhooks/EventGrid?functionName=','NewAudioFileEventGridTrigger','&code=',reference('deployFunction').outputs.HostKey.value)]"
-    },
-    "code2": {
-      "type": "object",
-      "value":  "[listkeys(concat(resourceId('Microsoft.Web/sites', variables('functionAppName')), '/host/default'), '2018-11-01')]"
-    }    
-
+  
   }
 }
