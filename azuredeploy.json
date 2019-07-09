@@ -181,7 +181,7 @@
     {
       "name": "registerCallback",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2014-04-01-preview",
+      "apiVersion": "2018-05-01",
       "dependsOn": [
         "nestedTemplate",
         "[resourceId('Microsoft.Web/sites/config',variables('functionAppName'),'appSettings')]",
