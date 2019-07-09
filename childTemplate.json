@@ -13,7 +13,7 @@
     "outputs": {
         "triggerUrl": {
             "type": "string",
-            "value": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionAppName'), 'TranscripCompleteHttpTrigger'), variables('sitesWebApiVersion')).trigger_url]"
+            "value": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionAppName'), 'TranscriptCompleteHttpTrigger'), variables('sitesWebApiVersion')).trigger_url]"
         }
     }
 }
