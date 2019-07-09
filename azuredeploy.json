@@ -1,0 +1,278 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageName": {
+      "type": "string",
+      "defaultValue": "[concat('storage', uniqueString(resourceGroup().id))]",
+      "metadata": {
+        "description": "Provide a unique name for the Blob Storage account."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Provide a location for the Blob Storage account that supports Event Grid."
+      }
+    },
+    "eventSubName": {
+      "type": "string",
+      "defaultValue": "subToStorage",
+      "metadata": {
+        "description": "Provide a name for the Event Grid subscription."
+      }
+    },
+  },
+  "variables": {
+    "functionAppName": "[concat(uniquestring(resourceGroup().id), 'speechsToTextDemo')]",
+    "hostingPlanName": "[concat(uniquestring(resourceGroup().id), 'speechsToTextDemo')]",
+    "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'azfunctions')]",
+    "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+    "functionWorkerRuntime": "dotnet",
+    "appInsightsName": "speechToTextDemoAppInsights",
+    "accountSasProperties": {
+      "signedServices": "b",
+      "signedPermission": "cr",
+      "signedExpiry": "2020-03-01T00:00:01Z",
+      "signedResourceTypes": "sco"
+    }
+  },
+  "resources": [
+    {
+      "name": "[parameters('storageName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2017-10-01",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "StorageV2",
+      "location": "[parameters('location')]",
+      "tags": {},
+      "properties": {
+        "accessTier": "Hot"
+      },
+      "resources": [
+        {
+          "name": "[concat(parameters('storageName'),'/default/','transcripts')]",
+          "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+          "apiVersion": "2018-07-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountName')]",
+      "apiVersion": "2016-12-01",
+      "location": "[parameters('location')]",
+      "kind": "Storage",
+      "sku": {
+        "name": "Standard_LRS"
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/providers/eventSubscriptions",
+      "name": "[concat(parameters('storageName'), '/Microsoft.EventGrid/', parameters('eventSubName'))]",
+      "apiVersion": "2018-01-01",
+      "dependsOn": [
+        "[parameters('storageName')]",
+        "deployFunction"
+      ],
+      "properties": {
+        "destination": {
+          "endpointType": "WebHook",
+          "properties": {
+            "endpointUrl": "[concat('https://',variables('functionAppName'),'.azurewebsites.net/runtime/webhooks/EventGrid?functionName=','NewAudioFileEventGridTrigger','&code=',listkeys(concat(resourceId('Microsoft.Web/sites', variables('functionAppName')), '/host/default'), '2018-11-01').masterKey)]"
+          }
+        },
+        "filter": {
+          "subjectBeginsWith": "",
+          "subjectEndsWith": ".wav",
+          "isSubjectCaseSensitive": false,
+          "includedEventTypes": [
+            "Microsoft.Storage.BlobCreated"
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2018-02-01",
+      "name": "[variables('hostingPlanName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Y1",
+        "tier": "Dynamic"
+      },
+      "properties": {
+        "name": "[variables('hostingPlanName')]",
+        "computeMode": "Dynamic"
+      }
+    },
+    {
+      "apiVersion": "2015-08-01",
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('functionAppName')]",
+      "location": "[parameters('location')]",
+      "kind": "functionapp",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+        "speechToTextDemo"
+      ],
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "AzureWebJobsDashboard",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "WEBSITE_CONTENTSHARE",
+              "value": "[toLower(variables('functionAppName'))]"
+            },
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~2"
+            },
+            {
+              "name": "WEBSITE_NODE_DEFAULT_VERSION",
+              "value": "8.11.1"
+            },
+            {
+              "name": "FUNCTIONS_WORKER_RUNTIME",
+              "value": "[variables('functionWorkerRuntime')]"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(resourceId('microsoft.insights/components/', variables('appInsightsName')), '2015-05-01').InstrumentationKey]"
+            },
+            {
+              "name": "AzureWebJobsSecretStorageType",
+              "value": "files"
+            },
+            {
+              "name": "SubscriptionKey",
+              "value": "[listkeys(resourceId('Microsoft.CognitiveServices/accounts', 'speechToTextDemo'),'2017-04-18').key1]"
+            },
+            {
+              "name": "Region",
+              "value": "[parameters('location')]"
+            },
+            {
+              "name": "SASToken",
+              "value": "[listAccountSas(parameters('StorageName'), '2018-07-01', variables('accountSasProperties')).accountSasToken]"
+            },
+            {
+              "name": "TranscriptStorageContainerUrl",
+              "value": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('storageName')), '2016-01-01').primaryEndpoints.blob,'transcripts')]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts",
+      "apiVersion": "2017-04-18",
+      "name": "speechToTextDemo",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "S0"
+      },
+      "kind": "SpeechServices",
+      "properties": {}
+    },
+    {
+      "type": "microsoft.insights/components",
+      "apiVersion": "2015-05-01",
+      "name": "[variables('appInsightsName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('functionAppName'))]": "Resource"
+      },
+      "kind": "web",
+      "properties": {
+        "Application_Type": "web",
+        "ApplicationId": "[variables('appInsightsName')]",
+        "Request_Source": "IbizaWebAppExtensionCreate"
+      }
+    },
+    {
+      "name": "deployFunction",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2014-04-01-preview",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(listsecrets(resourceId('Microsoft.Web/sites/functions', variables('functionAppName'), 'GetFunctionMasterKeyHttpTrigger'),'2016-08-01').trigger_url,'&publishingUserName=', list(resourceId('Microsoft.Web/sites/config', variables('functionAppName'), 'publishingcredentials'), '2016-08-01').properties.publishingUserName,'&publishingPassword=',list(resourceId('Microsoft.Web/sites/config', variables('functionAppName'), 'publishingcredentials'), '2016-08-01').properties.publishingPassword)]",
+          "contentVersion": "1.0.0.0"
+        }
+      }
+    },
+    {
+      "name": "[concat(variables('functionAppName'),'/appSettings')]",
+      "type": "Microsoft.Web/sites/config",
+      "apiVersion": "2018-11-01",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Web/sites/', variables('functionAppName'))]"
+      ],
+      "tags": {
+        "displayName": "WebAppSettings"
+      },
+      "properties": {
+        "CallbackFunctionUrl": "[listsecrets(resourceId('Microsoft.Web/sites/functions', variables('functionAppName'), 'TranscriptCompleteHttpTrigger'),'2016-08-01').trigger_url]",
+        "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+        "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+        "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+        "WEBSITE_CONTENTSHARE": "[toLower(variables('functionAppName'))]",
+        "FUNCTIONS_EXTENSION_VERSION": "~2",
+        "WEBSITE_NODE_DEFAULT_VERSION": "8.11.1",
+        "FUNCTIONS_WORKER_RUNTIME": "[variables('functionWorkerRuntime')]",
+        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('appInsightsName')), '2015-05-01').InstrumentationKey]",
+        "AzureWebJobsSecretStorageType": "files",
+        "SubscriptionKey": "[listkeys(resourceId('Microsoft.CognitiveServices/accounts', 'speechToTextDemo'),'2017-04-18').key1]",
+        "Region": "[parameters('location')]",
+        "SASToken": "[concat('?',listAccountSas(parameters('StorageName'), '2018-07-01', variables('accountSasProperties')).accountSasToken)]",
+        "TranscriptStorageContainerUrl": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('storageName')), '2016-01-01').primaryEndpoints.blob,'transcripts')]"
+      }
+    },
+    {
+      "name": "registerCallback",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2014-04-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites/config',variables('functionAppName'),'appSettings')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(listsecrets(resourceId('Microsoft.Web/sites/functions', variables('functionAppName'), 'TranscriptCompleteHttpTrigger'),'2016-08-01').trigger_url,'&Register=Yes')]",          "contentVersion": "1.0.0.0"
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "code": {
+      "type": "string",
+      "value": "[concat('https://',variables('functionAppName'),'.azurewebsites.net/runtime/webhooks/EventGrid?functionName=','NewAudioFileEventGridTrigger','&code=',reference('deployFunction').outputs.HostKey.value)]"
+    },
+    "code2": {
+      "type": "object",
+      "value":  "[listkeys(concat(resourceId('Microsoft.Web/sites', variables('functionAppName')), '/host/default'), '2018-11-01')]"
+    }    
+
+  }
+}
