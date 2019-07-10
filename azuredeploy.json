@@ -17,23 +17,23 @@
       }
     },
     "sasExpiryDate": {
-       "type": "string",
-       "defaultValue": "2021-01-01T00:00:01Z",
-       "metadata": {
-            "description": "when deployed this template generates and store a sas token in appSettings to allow the Batch Transcription service to access audio blob files."
-        }
+      "type": "string",
+      "defaultValue": "2021-01-01T00:00:01Z",
+      "metadata": {
+        "description": "when deployed this template generates and store a sas token in appSettings to allow the Batch Transcription service to access audio blob files."
+      }
     }
   },
   "variables": {
-    "audioStorageAccountName":"[substring(toLower(concat('audiostore', parameters('demoName'))),0,24)]",
+    "audioStorageAccountName": "[toLower(if(greater(length(concat('audiostore', parameters('demoName'))),23),substring(concat('audiostore', parameters('demoName')),0,24),concat('audiostore', parameters('demoName'))))]",
     "functionAppName": "[concat(parameters('demoName'), 'FuncApp')]",
     "hostingPlanName": "[concat(parameters('demoName'), 'ServicePlan')]",
-    "functionStorageAccountName": "[substring(toLower(concat('funcstore',parameters('demoName'))),0,24)]",
+    "functionStorageAccountName": "[toLower(if(greater(length(concat('funcstore', parameters('demoName'))),23),substring(concat('funcstore', parameters('demoName')),0,24),concat('funcstore', parameters('demoName'))))]",
     "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('functionStorageAccountName'))]",
     "functionWorkerRuntime": "dotnet",
     "appInsightsName": "speechToTextDemoAppInsights",
-    "cognititiveServiceName":"[concat(parameters('demoName'), 'SpeechServices')]",
-    "eventSubName":"NewBlobEvent",
+    "cognititiveServiceName": "[concat(parameters('demoName'), 'SpeechServices')]",
+    "eventSubName": "NewBlobEvent",
     "accountSasProperties": {
       "signedServices": "b",
       "signedPermission": "cr",
@@ -52,7 +52,9 @@
       "kind": "StorageV2",
       "dependsOn": [],
       "location": "[parameters('location')]",
-      "tags": {},
+      "tags": {
+        "displayName": "Storage account for audio files"
+      },
       "properties": {
         "accessTier": "Hot"
       },
@@ -83,6 +85,9 @@
       "apiVersion": "2016-12-01",
       "location": "[parameters('location')]",
       "kind": "Storage",
+      "tags": {
+        "displayName": "Storage account for functions content"
+      },
       "sku": {
         "name": "Standard_LRS"
       }
@@ -91,9 +96,12 @@
       "type": "Microsoft.Storage/storageAccounts/providers/eventSubscriptions",
       "name": "[concat(variables('AudioStorageAccountName'), '/Microsoft.EventGrid/', variables('EventSubName'))]",
       "apiVersion": "2018-01-01",
+      "tags": {
+        "displayName": "EventGrid subscription - onblobcreated"
+      },
       "dependsOn": [
         "[variables('AudioStorageAccountName')]",
-        "getTriggerUrlNestedTemplate",
+        "getTriggerUrlLinkedTemplate",
         "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers',variables('AudioStorageAccountName'),'default','audio')]"
       ],
       "properties": {
@@ -122,6 +130,9 @@
         "name": "Y1",
         "tier": "Dynamic"
       },
+      "tags": {
+        "displayName": "App Service Plan - Consumption"
+      },
       "properties": {
         "name": "[variables('hostingPlanName')]",
         "computeMode": "Dynamic"
@@ -133,6 +144,9 @@
       "name": "[variables('cognititiveServiceName')]",
       "dependsOn": [],
       "location": "[parameters('location')]",
+      "tags": {
+        "displayName": "Speech Service"
+      },
       "sku": {
         "name": "S0"
       },
@@ -145,7 +159,8 @@
       "name": "[variables('appInsightsName')]",
       "location": "[parameters('location')]",
       "tags": {
-        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('functionAppName'))]": "Resource"
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('functionAppName'))]": "Resource",
+        "displayName": "Application Insights"
       },
       "kind": "web",
       "properties": {
@@ -160,7 +175,7 @@
       "apiVersion": "2018-11-01",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "getTriggerUrlNestedTemplate",
+        "getTriggerUrlLinkedTemplate",
         "[variables('cognititiveServiceName')]"
       ],
       "tags": {
@@ -180,22 +195,22 @@
         "Region": "[parameters('location')]",
         "SASToken": "[concat('?',listAccountSas(variables('AudioStorageAccountName'), '2018-07-01', variables('accountSasProperties')).accountSasToken)]",
         "TranscriptStorageContainerUrl": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('audioStorageAccountName')), '2016-01-01').primaryEndpoints.blob,'transcripts')]",
-        "CallbackFunctionUrl": "[reference('getTriggerUrlNestedTemplate').outputs.triggerUrl.value]"
+        "CallbackFunctionUrl": "[reference('getTriggerUrlLinkedTemplate').outputs.triggerUrl.value]"
       }
     },
     {
-      "name": "registerCallback",
+      "name": "registerCallbackLinkedTemplate",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
       "dependsOn": [
-        "getTriggerUrlNestedTemplate",
+        "getTriggerUrlLinkedTemplate",
         "[resourceId('Microsoft.Web/sites/config',variables('functionAppName'),'appSettings')]",
         "[resourceId('Microsoft.Storage/storageAccounts/providers/eventSubscriptions',variables('audioStorageAccountName'),'Microsoft.EventGrid',variables('eventSubName'))]"
       ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(reference('getTriggerUrlNestedTemplate').outputs.triggerUrl.value,'&Register=Yes')]",
+          "uri": "[concat(reference('getTriggerUrlLinkedTemplate').outputs.triggerUrl.value,'&Register=Yes')]",
           "contentVersion": "1.0.0.0"
         }
       }
@@ -206,6 +221,9 @@
       "name": "[variables('functionAppName')]",
       "location": "[parameters('location')]",
       "kind": "functionapp",
+      "tags": {
+        "displayName": "Function app"
+      },
       "dependsOn": [
         "[variables('hostingPlanName')]"
       ],
@@ -258,6 +276,9 @@
       "apiVersion": "2018-02-01",
       "name": "[concat(variables('functionAppName'),'/web')]",
       "type": "Microsoft.Web/sites/sourcecontrols",
+      "tags": {
+        "displayName": "Bind function app to github repo"
+      },
       "dependsOn": [
         "[resourceId('Microsoft.Web/Sites', variables('functionAppName'))]"
       ],
@@ -270,14 +291,14 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
-      "name": "getTriggerUrlNestedTemplate",
+      "name": "getTriggerUrlLinkedTemplate",
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites/sourcecontrols',variables('functionAppName'),'web')]"
       ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[uri(deployment().properties.templateLink.uri, 'childTemplate.json')]",
+          "uri": "[uri(if(not(contains(deployment().properties,'templateLink')),'https://raw.githubusercontent.com/timleyden/speechtotextdemo/master/',deployment().properties.templateLink.uri), 'childTemplate.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
