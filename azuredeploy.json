@@ -2,45 +2,48 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "storageName": {
+    "demoName": {
       "type": "string",
-      "defaultValue": "[concat('storage', uniqueString(resourceGroup().id))]",
+      "defaultValue": "[concat('S2T', uniqueString(resourceGroup().id))]",
       "metadata": {
-        "description": "Provide a unique name for the Blob Storage account."
+        "description": "Provide a unique name for the resources in this template."
       }
     },
     "location": {
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
       "metadata": {
-        "description": "Provide a location for the Blob Storage account that supports Event Grid."
+        "description": "Provide a location for the resources in this template."
       }
     },
-    "eventSubName": {
-      "type": "string",
-      "defaultValue": "subToStorage",
-      "metadata": {
-        "description": "Provide a name for the Event Grid subscription."
-      }
+    "sasExpiryDate": {
+       "type": "string",
+       "defaultValue": "2021-01-01T00:00:01Z",
+       "metadata": {
+            "description": "when deployed this template generates and store a sas token in appSettings to allow the Batch Transcription service to access audio blob files."
+        }
     }
   },
   "variables": {
-    "functionAppName": "[concat(uniquestring(resourceGroup().id), 'speechsToTextDemoFuncApp')]",
-    "hostingPlanName": "[concat(uniquestring(resourceGroup().id), 'speechsToTextDemoASP')]",
-    "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'azfunctions')]",
-    "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+    "audioStorageAccountName":"[substring(toLower(concat('audiostore', parameters('demoName'))),0,24)]",
+    "functionAppName": "[concat(parameters('demoName'), 'FuncApp')]",
+    "hostingPlanName": "[concat(parameters('demoName'), 'ServicePlan')]",
+    "functionStorageAccountName": "[substring(toLower(concat('funcstore',parameters('demoName'))),0,24)]",
+    "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('functionStorageAccountName'))]",
     "functionWorkerRuntime": "dotnet",
     "appInsightsName": "speechToTextDemoAppInsights",
+    "cognititiveServiceName":"[concat(parameters('demoName'), 'SpeechServices')]",
+    "eventSubName":"NewBlobEvent",
     "accountSasProperties": {
       "signedServices": "b",
       "signedPermission": "cr",
-      "signedExpiry": "2020-03-01T00:00:01Z",
+      "signedExpiry": "[parameters('sasExpiryDate')]",
       "signedResourceTypes": "sco"
     }
   },
   "resources": [
     {
-      "name": "[parameters('storageName')]",
+      "name": "[variables('AudioStorageAccountName')]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2017-10-01",
       "sku": {
@@ -55,27 +58,28 @@
       },
       "resources": [
         {
-          "name": "[concat(parameters('storageName'),'/default/','transcripts')]",
+          "name": "[concat(variables('AudioStorageAccountName'),'/default/','transcripts')]",
           "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
           "apiVersion": "2018-07-01",
           "dependsOn": [
-            "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
+            "[resourceId('Microsoft.Storage/storageAccounts', variables('AudioStorageAccountName'))]",
             "[resourceId('Microsoft.Web/sites/config',variables('functionAppName'),'appSettings')]"
           ]
-        },{
-          "name": "[concat(parameters('storageName'),'/default/','audio')]",
+        },
+        {
+          "name": "[concat(variables('AudioStorageAccountName'),'/default/','audio')]",
           "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
           "apiVersion": "2018-07-01",
           "dependsOn": [
-            "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
-            "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers',parameters('storageName'),'default','transcripts')]"
+            "[resourceId('Microsoft.Storage/storageAccounts', variables('AudioStorageAccountName'))]",
+            "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers',variables('AudioStorageAccountName'),'default','transcripts')]"
           ]
         }
       ]
     },
     {
       "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('storageAccountName')]",
+      "name": "[variables('functionStorageAccountName')]",
       "apiVersion": "2016-12-01",
       "location": "[parameters('location')]",
       "kind": "Storage",
@@ -85,12 +89,12 @@
     },
     {
       "type": "Microsoft.Storage/storageAccounts/providers/eventSubscriptions",
-      "name": "[concat(parameters('storageName'), '/Microsoft.EventGrid/', parameters('eventSubName'))]",
+      "name": "[concat(variables('AudioStorageAccountName'), '/Microsoft.EventGrid/', variables('EventSubName'))]",
       "apiVersion": "2018-01-01",
       "dependsOn": [
-        "[parameters('storageName')]",
-        "nestedTemplate",
-        "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers',parameters('storageName'),'default','audio')]"
+        "[variables('AudioStorageAccountName')]",
+        "getTriggerUrlNestedTemplate",
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers',variables('AudioStorageAccountName'),'default','audio')]"
       ],
       "properties": {
         "destination": {
@@ -126,7 +130,7 @@
     {
       "type": "Microsoft.CognitiveServices/accounts",
       "apiVersion": "2017-04-18",
-      "name": "speechToTextDemo",
+      "name": "[variables('cognititiveServiceName')]",
       "dependsOn": [],
       "location": "[parameters('location')]",
       "sku": {
@@ -156,26 +160,27 @@
       "apiVersion": "2018-11-01",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "nestedTemplate"
+        "getTriggerUrlNestedTemplate",
+        "[variables('cognititiveServiceName')]"
       ],
       "tags": {
         "displayName": "WebAppSettings"
       },
       "properties": {
-        "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
-        "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
-        "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+        "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('functionStorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+        "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('functionStorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
+        "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('functionStorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
         "WEBSITE_CONTENTSHARE": "[toLower(variables('functionAppName'))]",
         "FUNCTIONS_EXTENSION_VERSION": "~2",
         "WEBSITE_NODE_DEFAULT_VERSION": "8.11.1",
         "FUNCTIONS_WORKER_RUNTIME": "[variables('functionWorkerRuntime')]",
         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('appInsightsName')), '2015-05-01').InstrumentationKey]",
         "AzureWebJobsSecretStorageType": "files",
-        "SubscriptionKey": "[listkeys(resourceId('Microsoft.CognitiveServices/accounts', 'speechToTextDemo'),'2017-04-18').key1]",
+        "SubscriptionKey": "[listkeys(resourceId('Microsoft.CognitiveServices/accounts', variables('cognititiveServiceName')),'2017-04-18').key1]",
         "Region": "[parameters('location')]",
-        "SASToken": "[concat('?',listAccountSas(parameters('StorageName'), '2018-07-01', variables('accountSasProperties')).accountSasToken)]",
-        "TranscriptStorageContainerUrl": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('storageName')), '2016-01-01').primaryEndpoints.blob,'transcripts')]",
-        "CallbackFunctionUrl": "[reference('nestedTemplate').outputs.triggerUrl.value]"
+        "SASToken": "[concat('?',listAccountSas(variables('AudioStorageAccountName'), '2018-07-01', variables('accountSasProperties')).accountSasToken)]",
+        "TranscriptStorageContainerUrl": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('audioStorageAccountName')), '2016-01-01').primaryEndpoints.blob,'transcripts')]",
+        "CallbackFunctionUrl": "[reference('getTriggerUrlNestedTemplate').outputs.triggerUrl.value]"
       }
     },
     {
@@ -183,14 +188,14 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
       "dependsOn": [
-        "nestedTemplate",
+        "getTriggerUrlNestedTemplate",
         "[resourceId('Microsoft.Web/sites/config',variables('functionAppName'),'appSettings')]",
-        "[resourceId('Microsoft.Storage/storageAccounts/providers/eventSubscriptions',parameters('storageName'),'Microsoft.EventGrid',parameters('eventSubName'))]"
+        "[resourceId('Microsoft.Storage/storageAccounts/providers/eventSubscriptions',variables('audioStorageAccountName'),'Microsoft.EventGrid',variables('eventSubName'))]"
       ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(reference('nestedTemplate').outputs.triggerUrl.value,'&Register=Yes')]",
+          "uri": "[concat(reference('getTriggerUrlNestedTemplate').outputs.triggerUrl.value,'&Register=Yes')]",
           "contentVersion": "1.0.0.0"
         }
       }
@@ -210,15 +215,15 @@
           "appSettings": [
             {
               "name": "AzureWebJobsDashboard",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('functionStorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
             },
             {
               "name": "AzureWebJobsStorage",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('functionStorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
             },
             {
               "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('functionStorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]"
             },
             {
               "name": "WEBSITE_CONTENTSHARE",
@@ -265,8 +270,10 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
-      "name": "nestedTemplate",
-      "dependsOn": ["[resourceId('Microsoft.Web/sites/sourcecontrols',variables('functionAppName'),'web')]"],
+      "name": "getTriggerUrlNestedTemplate",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites/sourcecontrols',variables('functionAppName'),'web')]"
+      ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
