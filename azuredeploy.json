@@ -113,8 +113,15 @@
         },
         "filter": {
           "subjectBeginsWith": "",
-          "subjectEndsWith": ".wav",
+          "subjectEndsWith": "",
           "isSubjectCaseSensitive": false,
+          "advancedFilters":[
+            {
+              "operatorType": "StringEndsWith",
+              "key": "Subject",
+              "values": [".wav", ".mp3", ".ogg"]
+            }
+          ],
           "includedEventTypes": [
             "Microsoft.Storage.BlobCreated"
           ]
