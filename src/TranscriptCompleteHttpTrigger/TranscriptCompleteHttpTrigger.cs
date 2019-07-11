@@ -112,7 +112,8 @@ namespace SpeechToTextDemo
                                string url = Transcriptionresult.ResultsUrls[channel];
                                log.LogInformation(url);
                                CloudBlockBlob sourceblob = new CloudBlockBlob(new Uri(url));
-                               string transcripturl = storageUrl+"/"+recording.Name.Replace(".wav",channel+"-transcript.json")+SASToken;
+                               string filename = recording.Name.Remove(recording.Name.LastIndexOf('.'));
+                               string transcripturl = storageUrl+"/"+filename+channel+"-transcript.json"+SASToken;
                                log.LogInformation(transcripturl);
                                CloudBlockBlob targetblob = new CloudBlockBlob(new Uri(transcripturl));
                                var resutl = await targetblob.StartCopyAsync(sourceblob);
