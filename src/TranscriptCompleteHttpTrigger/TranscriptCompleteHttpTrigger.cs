@@ -123,6 +123,8 @@ namespace SpeechToTextDemo
 
                         }else{
                             log.LogWarning("Transcription not succesful");
+                            string statusMessage = eventData.statusMessage;
+                            log.LogWarning(statusMessage);
                         }
                         break;
                     default:
