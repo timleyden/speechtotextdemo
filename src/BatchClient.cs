@@ -99,10 +99,10 @@ namespace SpeechToTextDemo
             return this.GetAsync<Transcription>(path);
         }
 
-        public Task<Uri> PostTranscriptionAsync(string name, string description, string locale, Uri recordingsUrl)
+        public Task<Uri> PostTranscriptionAsync(string name, string description, string locale, Uri recordingsUrl, bool AddDiarization)
         {
             var path = $"{this.speechToTextBasePath}transcriptions/";
-            var transcriptionDefinition = TranscriptionDefinition.Create(name, description, locale, recordingsUrl);
+            var transcriptionDefinition = TranscriptionDefinition.Create(name, description, locale,recordingsUrl,AddDiarization);
 
             return this.PostAsJsonAsync<TranscriptionDefinition>(path, transcriptionDefinition);
         }
