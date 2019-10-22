@@ -107,17 +107,17 @@ namespace SpeechToTextDemo
             return this.PostAsJsonAsync<TranscriptionDefinition>(path, transcriptionDefinition);
         }
 
-        public Task<Uri> PostTranscriptionAsync(string name, string description, string locale, Uri recordingsUrl, IEnumerable<Guid> modelIds)
+        public Task<Uri> PostTranscriptionAsync(string name, string description, string locale, Uri recordingsUrl, IEnumerable<Guid> modelIds, bool AddDiarization)
         {
             if (!modelIds.Any())
             {
-                return this.PostTranscriptionAsync(name, description, locale, recordingsUrl);
+                return this.PostTranscriptionAsync(name, description, locale, recordingsUrl, AddDiarization);
             }
 
             var models = modelIds.Select(m => ModelIdentity.Create(m)).ToList();
             var path = $"{this.speechToTextBasePath}transcriptions/";
 
-            var transcriptionDefinition = TranscriptionDefinition.Create(name, description, locale, recordingsUrl, models);
+            var transcriptionDefinition = TranscriptionDefinition.Create(name, description, locale, recordingsUrl, models,AddDiarization);
             return this.PostAsJsonAsync<TranscriptionDefinition>(path, transcriptionDefinition);
         }
 

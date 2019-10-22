@@ -10,7 +10,7 @@ namespace SpeechToTextDemo
 
     public sealed class TranscriptionDefinition
     {
-        private TranscriptionDefinition(string name, string description, string locale, Uri recordingsUrl, IEnumerable<ModelIdentity> models)
+        private TranscriptionDefinition(string name, string description, string locale, Uri recordingsUrl, IEnumerable<ModelIdentity> models, bool AddDiarization)
         {
             this.Name = name;
             this.Description = description;
@@ -21,6 +21,9 @@ namespace SpeechToTextDemo
             this.properties.Add("PunctuationMode", "DictatedAndAutomatic");
             this.properties.Add("ProfanityFilterMode", "Masked");
             this.properties.Add("AddWordLevelTimestamps", "True");
+            if(AddDiarization){
+                this.properties.Add("AddDiarization","True");
+            }
         }
 
         /// <inheritdoc />
@@ -42,9 +45,10 @@ namespace SpeechToTextDemo
             string name,
             string description,
             string locale,
-            Uri recordingsUrl)
+            Uri recordingsUrl,
+            bool AddDiarization)
         {
-            return TranscriptionDefinition.Create(name, description, locale, recordingsUrl, null);
+            return TranscriptionDefinition.Create(name, description, locale, recordingsUrl, null, AddDiarization);
         }
 
         public static TranscriptionDefinition Create(
@@ -52,9 +56,10 @@ namespace SpeechToTextDemo
             string description,
             string locale,
             Uri recordingsUrl,
-            IEnumerable<ModelIdentity> models)
+            IEnumerable<ModelIdentity> models,
+            bool AddDiarization)
         {
-            return new TranscriptionDefinition(name, description, locale, recordingsUrl, models);
+            return new TranscriptionDefinition(name, description, locale, recordingsUrl, models, AddDiarization);
         }
     }
 }

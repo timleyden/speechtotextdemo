@@ -42,13 +42,15 @@ namespace SpeechToTextDemo
         {
             string SubscriptionKey = System.Environment.GetEnvironmentVariable("SubscriptionKey");
             string SASToken = System.Environment.GetEnvironmentVariable("SASToken");
+            string AddDiarizationString = System.Environment.GetEnvironmentVariable("AddDiarization");
+            bool AddDiarization = bool.Parse(AddDiarizationString);
             string HostName = string.Format(HostNameTempalte, System.Environment.GetEnvironmentVariable("Region"));
             log.LogInformation(eventGridEvent.Data.ToString());
             var client = BatchClient.CreateApiV2Client(SubscriptionKey, HostName, Port,log);
             dynamic eventData = JObject.Parse(eventGridEvent.Data.ToString());
             string url = eventData.url;
              log.LogInformation(url);
-            Task<Uri> task =   client.PostTranscriptionAsync(Name, Description, Locale, new Uri(url+SASToken));
+            Task<Uri> task =   client.PostTranscriptionAsync(Name, Description, Locale, new Uri(url+SASToken),true);
             task.Wait();
             Uri Location = task.Result;
             if(Location != null){

@@ -202,7 +202,8 @@
         "Region": "[parameters('location')]",
         "SASToken": "[concat('?',listAccountSas(variables('AudioStorageAccountName'), '2018-07-01', variables('accountSasProperties')).accountSasToken)]",
         "TranscriptStorageContainerUrl": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('audioStorageAccountName')), '2016-01-01').primaryEndpoints.blob,'transcripts')]",
-        "CallbackFunctionUrl": "[reference('getTriggerUrlLinkedTemplate').outputs.triggerUrl.value]"
+        "CallbackFunctionUrl": "[reference('getTriggerUrlLinkedTemplate').outputs.triggerUrl.value]",
+        "AddDiarization":"True"
       }
     },
     {
