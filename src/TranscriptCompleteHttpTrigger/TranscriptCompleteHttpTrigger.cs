@@ -64,15 +64,16 @@ namespace SpeechToTextDemo
                 var signature = req.Headers[SignatureHeaderName];
                 log.LogInformation("C# HTTP trigger function processed a request.");
                 log.LogInformation("Validating request");
+                 string body = string.Empty;
                 try{
-                string body = string.Empty;
                 using (var streamReader = new StreamReader(req.Body))
                 {
                     body = await streamReader.ReadToEndAsync().ConfigureAwait(false);
+                    log.LogInformation(body);
                     var secretBytes = Encoding.UTF8.GetBytes("<my_secret>");
                     using (var hmacsha256 = new HMACSHA256(secretBytes))
                     {
-                        log.LogInformation(body);
+                        
                         var contentBytes = Encoding.UTF8.GetBytes(body);
                         var contentHash = hmacsha256.ComputeHash(contentBytes);
                         var storedHash = Convert.FromBase64String(signature);
@@ -86,7 +87,7 @@ namespace SpeechToTextDemo
                 }
                 }catch(Exception e){
                     log.LogError(e.Message);
-                    log.LogError(e.StackTrace);
+                    log.LogError(e.Message);
                     return (ActionResult)new BadRequestResult();
                 }
 
