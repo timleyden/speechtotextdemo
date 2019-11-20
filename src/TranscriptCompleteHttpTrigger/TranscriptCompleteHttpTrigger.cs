@@ -40,16 +40,16 @@ namespace SpeechToTextDemo
                     log.LogInformation(SubscriptionKey);
                     string HostName = string.Format(HostNameTempalte, System.Environment.GetEnvironmentVariable("Region"));
                     log.LogInformation(HostName);
-                    var client = BatchClient.CreateApiV2Client(SubscriptionKey, HostName, Port,log,"2.1");
-                    var result = await client.CreateWebHook(url,"<my_secret>");
-                    if(result != null){log.LogInformation(result.AbsoluteUri);}
+                    var client = BatchClient.CreateApiV2Client(SubscriptionKey, HostName, Port, log, "2.1");
+                    var result = await client.CreateWebHook(url, "<my_secret>");
+                    if (result != null) { log.LogInformation(result.AbsoluteUri); }
                     var template = @"{'$schema': 'https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#', 'contentVersion': '1.0.0.0', 'parameters': {}, 'variables': {}, 'resources': [],'outputs': {}}";
                     var contentResult = new ContentResult();
                     contentResult.Content = template;
                     contentResult.ContentType = "applicaition/json";
                     return (ActionResult)contentResult;
-           
-            
+
+
                 }
                 catch (Exception e)
                 {
@@ -63,7 +63,8 @@ namespace SpeechToTextDemo
                 var eventTypeHeader = req.Headers[EventTypeHeaderName];
                 var signature = req.Headers[SignatureHeaderName];
                 log.LogInformation("C# HTTP trigger function processed a request.");
-
+                log.LogInformation("Validating request");
+                try{
                 string body = string.Empty;
                 using (var streamReader = new StreamReader(req.Body))
                 {
@@ -71,16 +72,22 @@ namespace SpeechToTextDemo
                     var secretBytes = Encoding.UTF8.GetBytes("<my_secret>");
                     using (var hmacsha256 = new HMACSHA256(secretBytes))
                     {
+                        log.LogInformation(body);
                         var contentBytes = Encoding.UTF8.GetBytes(body);
-                       var contentHash = hmacsha256.ComputeHash(contentBytes);
-                       var storedHash = Convert.FromBase64String(signature);
-                       var validated = contentHash.SequenceEqual(storedHash);
-                        
+                        var contentHash = hmacsha256.ComputeHash(contentBytes);
+                        var storedHash = Convert.FromBase64String(signature);
+                        var validated = contentHash.SequenceEqual(storedHash);
+
                         if (!validated)
                         {
                             return (ActionResult)new BadRequestResult();
                         }
                     }
+                }
+                }catch(Exception e){
+                    log.LogError(e.Message);
+                    log.LogError(e.StackTrace);
+                    return (ActionResult)new BadRequestResult();
                 }
 
                 switch (eventTypeHeader)
@@ -100,28 +107,31 @@ namespace SpeechToTextDemo
                         {
                             string SubscriptionKey = System.Environment.GetEnvironmentVariable("SubscriptionKey");
                             string storageUrl = System.Environment.GetEnvironmentVariable("TranscriptStorageContainerUrl");
-                                        string SASToken = System.Environment.GetEnvironmentVariable("SASToken");
+                            string SASToken = System.Environment.GetEnvironmentVariable("SASToken");
                             log.LogInformation(SubscriptionKey);
                             string HostName = string.Format(HostNameTempalte, System.Environment.GetEnvironmentVariable("Region"));
                             log.LogInformation(HostName);
                             var client = BatchClient.CreateApiV2Client(SubscriptionKey, HostName, Port);
                             var Transcriptionresult = await client.GetTranscriptionAsync(new Guid(id));
-                            foreach(string channel in Transcriptionresult.ResultsUrls.Keys){
+                            foreach (string channel in Transcriptionresult.ResultsUrls.Keys)
+                            {
                                 log.LogInformation(channel);
-                               CloudBlockBlob recording = new CloudBlockBlob(Transcriptionresult.RecordingsUrl);
-                               string url = Transcriptionresult.ResultsUrls[channel];
-                               log.LogInformation(url);
-                               CloudBlockBlob sourceblob = new CloudBlockBlob(new Uri(url));
-                               string filename = recording.Name.Remove(recording.Name.LastIndexOf('.'));
-                               string transcripturl = storageUrl+"/"+filename+channel+"-transcript.json"+SASToken;
-                               log.LogInformation(transcripturl);
-                               CloudBlockBlob targetblob = new CloudBlockBlob(new Uri(transcripturl));
-                               var resutl = await targetblob.StartCopyAsync(sourceblob);
-                               log.LogInformation(resutl);
+                                CloudBlockBlob recording = new CloudBlockBlob(Transcriptionresult.RecordingsUrl);
+                                string url = Transcriptionresult.ResultsUrls[channel];
+                                log.LogInformation(url);
+                                CloudBlockBlob sourceblob = new CloudBlockBlob(new Uri(url));
+                                string filename = recording.Name.Remove(recording.Name.LastIndexOf('.'));
+                                string transcripturl = storageUrl + "/" + filename + channel + "-transcript.json" + SASToken;
+                                log.LogInformation(transcripturl);
+                                CloudBlockBlob targetblob = new CloudBlockBlob(new Uri(transcripturl));
+                                var resutl = await targetblob.StartCopyAsync(sourceblob);
+                                log.LogInformation(resutl);
                             }
                             await client.DeleteTranscriptionAsync(new Guid(id));
 
-                        }else{
+                        }
+                        else
+                        {
                             log.LogWarning("Transcription not succesful");
                             string statusMessage = eventData.statusMessage;
                             log.LogWarning(statusMessage);
