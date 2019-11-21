@@ -292,7 +292,7 @@
       ],
       "properties": {
         "RepoUrl": "https://github.com/timleyden/speechtotextdemo.git",
-        "branch": "master",
+        "branch": "dev",
         "IsManualIntegration": true
       }
     },
