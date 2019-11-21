@@ -193,7 +193,7 @@
         "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('functionStorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
         "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('functionStorageAccountName'), ';AccountKey=', listKeys(variables('storageAccountid'),'2015-05-01-preview').key1)]",
         "WEBSITE_CONTENTSHARE": "[toLower(variables('functionAppName'))]",
-        "FUNCTIONS_EXTENSION_VERSION": "~2",
+        "FUNCTIONS_EXTENSION_VERSION": "~3",
         "WEBSITE_NODE_DEFAULT_VERSION": "8.11.1",
         "FUNCTIONS_WORKER_RUNTIME": "[variables('functionWorkerRuntime')]",
         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('appInsightsName')), '2015-05-01').InstrumentationKey]",
