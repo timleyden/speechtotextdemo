@@ -1,4 +1,4 @@
-﻿# Speech to Text Solution Accelerator - Batch Transcription - Demo
+﻿# Speech to Text Batch Transcription - Demo
 
 **Disclaimer**: This content is not officially endorsed by *Microsoft*.
 
