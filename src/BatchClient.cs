@@ -102,6 +102,7 @@ namespace SpeechToTextDemo
         public Task<Uri> PostTranscriptionAsync(string name, string description, string locale, Uri recordingsUrl, bool AddDiarization)
         {
             var path = $"{this.speechToTextBasePath}transcriptions/";
+            if(this.log != null)log.LogInformation(path);
             var transcriptionDefinition = TranscriptionDefinition.Create(name, description, locale,recordingsUrl,AddDiarization);
 
             return this.PostAsJsonAsync<TranscriptionDefinition>(path, transcriptionDefinition);
@@ -130,7 +131,6 @@ namespace SpeechToTextDemo
 
             return this.GetAsync<Transcription>(location.AbsolutePath);
         }
-
         public Task DeleteTranscriptionAsync(Guid id)
         {
             var path = $"{this.speechToTextBasePath}Transcriptions/{id}";
