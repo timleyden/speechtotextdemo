@@ -18,7 +18,6 @@ This solution will get you started with using Speech-to-text cognitive service A
 Once solution is deployed you can copy supported audio files (wav, mp3, ogg) to the audio container in the storage account and the solution will automatically queue your file for transcription using speech services. The solution uses batch service webhook, to evoke azure function to pool completed transcripts and store in blob storage, instead of pooling for completion. 
 
 ## Solution Architecture
-![](https://raw.githubusercontent.com/timleyden/speechtotextdemo/master/Architecture.PNG)
 ![](Architecture.PNG)
 
 ## Technology Choices 
