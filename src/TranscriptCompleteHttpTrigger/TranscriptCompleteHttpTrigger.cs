@@ -112,7 +112,7 @@ namespace SpeechToTextDemo
                             log.LogInformation(SubscriptionKey);
                             string HostName = string.Format(HostNameTempalte, System.Environment.GetEnvironmentVariable("Region"));
                             log.LogInformation(HostName);
-                            var client = BatchClient.CreateApiV2Client(SubscriptionKey, HostName, Port);
+                            var client = BatchClient.CreateApiV2Client(SubscriptionKey, HostName, Port,log,"2.1");
                             var Transcriptionresult = await client.GetTranscriptionAsync(new Guid(id));
                             foreach (string channel in Transcriptionresult.ResultsUrls.Keys)
                             {
