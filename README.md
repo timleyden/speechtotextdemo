@@ -19,7 +19,7 @@ Once solution is deployed you can copy supported audio files (wav, mp3, ogg) to 
 
 ## Solution Architecture
 ![](https://raw.githubusercontent.com/timleyden/speechtotextdemo/master/Architecture.PNG)
-
+![](Architecture.PNG)
 
 ## Technology Choices 
 ### Speech to text cognitive service
