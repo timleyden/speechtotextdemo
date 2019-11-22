@@ -14,19 +14,17 @@ using System.Linq;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 
-
 namespace SpeechToTextDemo
 {
-    public static class PollTranscriptionHttpTrigger
+    public static class PollTranscriptionsTimerTrigger
     {
-        private const string HostNameTempalte = "{0}.cris.ai";
+         private const string HostNameTempalte = "{0}.cris.ai";
         private const int Port = 443;
-
-        [FunctionName("PollTranscriptionsHttpTrigger")]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
-            ILogger log)
+        [FunctionName("PollTranscriptionTimerTrigger")]
+        public static async void Run([TimerTrigger("0 */15 * * * *")]TimerInfo myTimer, ILogger log)
         {
+            //TODO: this needs to be refactored to use a common function with http trigger and transcript complete code
+            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             log.LogInformation("Function started");
             string SubscriptionKey = System.Environment.GetEnvironmentVariable("SubscriptionKey");
             string storageUrl = System.Environment.GetEnvironmentVariable("TranscriptStorageContainerUrl");
@@ -60,7 +58,6 @@ namespace SpeechToTextDemo
                         log.LogInformation(Newtonsoft.Json.JsonConvert.SerializeObject(transcription));
                 }
             }
-              return (ActionResult)new OkResult();
         }
     }
 }
