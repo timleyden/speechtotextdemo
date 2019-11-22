@@ -10,11 +10,11 @@ namespace SpeechToTextDemo
 
     public sealed class TranscriptionDefinition
     {
-        private TranscriptionDefinition(string name, string description, string locale, Uri recordingsUrl, IEnumerable<ModelIdentity> models, bool AddDiarization)
+        private TranscriptionDefinition(string name, string description, string locale, IEnumerable<Uri> recordingsUrls, IEnumerable<ModelIdentity> models, bool AddDiarization)
         {
             this.Name = name;
             this.Description = description;
-            this.RecordingsUrl = recordingsUrl;
+            this.RecordingsUrls = recordingsUrls;
             this.Locale = locale;
             this.Models = models;
             this.properties = new Dictionary<string, string>();
@@ -33,7 +33,7 @@ namespace SpeechToTextDemo
         public string Description { get; set; }
 
         /// <inheritdoc />
-        public Uri RecordingsUrl { get; set; }
+        public IEnumerable<Uri> RecordingsUrls { get; set; }
 
         public string Locale { get; set; }
 
@@ -45,21 +45,21 @@ namespace SpeechToTextDemo
             string name,
             string description,
             string locale,
-            Uri recordingsUrl,
+            IEnumerable<Uri> recordingsUrls,
             bool AddDiarization)
         {
-            return TranscriptionDefinition.Create(name, description, locale, recordingsUrl, null, AddDiarization);
+            return TranscriptionDefinition.Create(name, description, locale, recordingsUrls, null, AddDiarization);
         }
 
         public static TranscriptionDefinition Create(
             string name,
             string description,
             string locale,
-            Uri recordingsUrl,
+            IEnumerable<Uri> recordingsUrls,
             IEnumerable<ModelIdentity> models,
             bool AddDiarization)
         {
-            return new TranscriptionDefinition(name, description, locale, recordingsUrl, models, AddDiarization);
+            return new TranscriptionDefinition(name, description, locale, recordingsUrls, models, AddDiarization);
         }
     }
 }

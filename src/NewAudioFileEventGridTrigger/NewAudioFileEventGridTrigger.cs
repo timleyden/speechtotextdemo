@@ -50,7 +50,7 @@ namespace SpeechToTextDemo
             dynamic eventData = JObject.Parse(eventGridEvent.Data.ToString());
             string url = eventData.url;
              log.LogInformation(url);
-            Task<Uri> task =   client.PostTranscriptionAsync(Name, Description, Locale, new Uri(url+SASToken),true);
+            Task<Uri> task =   client.PostTranscriptionAsync(Name, Description, Locale, new Uri(url+SASToken),AddDiarization);
             task.Wait();
             Uri Location = task.Result;
             if(Location != null){

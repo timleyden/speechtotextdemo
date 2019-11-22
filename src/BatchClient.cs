@@ -102,7 +102,9 @@ namespace SpeechToTextDemo
         public Task<Uri> PostTranscriptionAsync(string name, string description, string locale, Uri recordingsUrl, bool AddDiarization)
         {
             var path = $"{this.speechToTextBasePath}transcriptions/";
-            var transcriptionDefinition = TranscriptionDefinition.Create(name, description, locale,recordingsUrl,AddDiarization);
+            IList<Uri> recordingsUrls = new List<Uri>();
+            recordingsUrls.Add(recordingsUrl);
+            var transcriptionDefinition = TranscriptionDefinition.Create(name, description, locale,recordingsUrls,AddDiarization);
 
             return this.PostAsJsonAsync<TranscriptionDefinition>(path, transcriptionDefinition);
         }
@@ -116,8 +118,9 @@ namespace SpeechToTextDemo
 
             var models = modelIds.Select(m => ModelIdentity.Create(m)).ToList();
             var path = $"{this.speechToTextBasePath}transcriptions/";
-
-            var transcriptionDefinition = TranscriptionDefinition.Create(name, description, locale, recordingsUrl, models,AddDiarization);
+            IList<Uri> recordingsUrls = new List<Uri>();
+            recordingsUrls.Add(recordingsUrl);
+            var transcriptionDefinition = TranscriptionDefinition.Create(name, description, locale, recordingsUrls, models,AddDiarization);
             return this.PostAsJsonAsync<TranscriptionDefinition>(path, transcriptionDefinition);
         }
 

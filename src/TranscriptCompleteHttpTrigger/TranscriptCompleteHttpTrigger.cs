@@ -135,9 +135,18 @@ namespace SpeechToTextDemo
                                     log.LogInformation(transcripturl);
                                     CloudBlockBlob targetblob = new CloudBlockBlob(new Uri(transcripturl));
                                     var resutl = await targetblob.StartCopyAsync(sourceblob);
+                                    while (targetblob.CopyState.Status == CopyStatus.Pending)
+                                    {
+                                        log.LogInformation($"copy status:{targetblob.CopyState.Status} sleeping for 1 second.");
+                                        await Task.Delay(1000);
+                                        await targetblob.FetchAttributesAsync();
+                                    }
+                                     log.LogInformation($"copy status:{targetblob.CopyState.Status}");
                                     log.LogInformation(resutl);
                                 }
                             }
+
+
                             await client.DeleteTranscriptionAsync(new Guid(id));
 
                         }
