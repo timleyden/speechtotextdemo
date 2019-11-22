@@ -40,29 +40,36 @@ namespace SpeechToTextDemo
             var Transcriptionresult = await client.GetTranscriptionsAsync();
             foreach (Transcription transcription in Transcriptionresult)
             {
-                if(transcription.Status == "Succeeded"){
-                    log.LogInformation($"found succeeded transciprtions for file {transcription.RecordingsUrl}, saving transcipt back to storage");
-                foreach (string channel in transcription.ResultsUrls.Keys)
+
+                if (transcription.Status == "Succeeded")
                 {
-                    log.LogInformation(channel);
-                    CloudBlockBlob recording = new CloudBlockBlob(transcription.RecordingsUrl);
-                    string url = transcription.ResultsUrls[channel];
-                    log.LogInformation(url);
-                    CloudBlockBlob sourceblob = new CloudBlockBlob(new Uri(url));
-                    string filename = recording.Name.Remove(recording.Name.LastIndexOf('.'));
-                    string transcripturl = storageUrl + "/" + filename + channel + "-transcript.json" + SASToken;
-                    log.LogInformation(transcripturl);
-                    CloudBlockBlob targetblob = new CloudBlockBlob(new Uri(transcripturl));
-                    var resutl = await targetblob.StartCopyAsync(sourceblob);
-                    log.LogInformation(resutl);
+                    foreach (Result result in transcription.Results)
+                    {
+                        log.LogInformation($"found succeeded transciprtions for file {result.RecordingsUrl}, saving transcipt back to storage");
+                        foreach (ResultUrl resultUrls in result.ResultsUrls)
+                        {
+                            log.LogInformation(resultUrls.FileName);
+                            CloudBlockBlob recording = new CloudBlockBlob(result.RecordingsUrl);
+                            Uri url = resultUrls.ResultsUrl;
+                            log.LogInformation(url.ToString());
+                            CloudBlockBlob sourceblob = new CloudBlockBlob(url);
+                            string filename = recording.Name.Remove(recording.Name.LastIndexOf('.'));
+                            string transcripturl = storageUrl + "/" + filename + resultUrls.FileName + "-transcript.json" + SASToken;
+                            log.LogInformation(transcripturl);
+                            CloudBlockBlob targetblob = new CloudBlockBlob(new Uri(transcripturl));
+                            var resutl = await targetblob.StartCopyAsync(sourceblob);
+                            log.LogInformation(resutl);
+                        }
+                    }
+                    await client.DeleteTranscriptionAsync(transcription.Id);
                 }
-                await client.DeleteTranscriptionAsync(transcription.Id);
-                }else{
-                        log.LogWarning($"found transcription for file {transcription.RecordingsUrl} not in a succeeded state, dumping object");
-                        log.LogInformation(Newtonsoft.Json.JsonConvert.SerializeObject(transcription));
+                else
+                {
+                    log.LogWarning($"found transcription for file {transcription.Results.First().RecordingsUrl} not in a succeeded state, dumping object");
+                    log.LogInformation(Newtonsoft.Json.JsonConvert.SerializeObject(transcription));
                 }
             }
-              return (ActionResult)new OkResult();
+            return (ActionResult)new OkResult();
         }
     }
 }

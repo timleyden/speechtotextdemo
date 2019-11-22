@@ -46,7 +46,7 @@ namespace SpeechToTextDemo
             bool AddDiarization = bool.Parse(AddDiarizationString);
             string HostName = string.Format(HostNameTempalte, System.Environment.GetEnvironmentVariable("Region"));
             log.LogInformation(eventGridEvent.Data.ToString());
-            var client = BatchClient.CreateApiV2Client(SubscriptionKey, HostName, Port,log);
+            var client = BatchClient.CreateApiV2Client(SubscriptionKey, HostName, Port,log,"2.1");
             dynamic eventData = JObject.Parse(eventGridEvent.Data.ToString());
             string url = eventData.url;
              log.LogInformation(url);

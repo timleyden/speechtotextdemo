@@ -64,28 +64,33 @@ namespace SpeechToTextDemo
                 var signature = req.Headers[SignatureHeaderName];
                 log.LogInformation("C# HTTP trigger function processed a request.");
                 log.LogInformation("Validating request");
-                 string body = string.Empty;
-                try{
-                using (var streamReader = new StreamReader(req.Body))
+                string body = string.Empty;
+                try
                 {
-                    body = await streamReader.ReadToEndAsync().ConfigureAwait(false);
-                    log.LogInformation(body);
-                    var secretBytes = Encoding.UTF8.GetBytes("<my_secret>");
-                    using (var hmacsha256 = new HMACSHA256(secretBytes))
+                    using (var streamReader = new StreamReader(req.Body))
                     {
-                        
-                        var contentBytes = Encoding.UTF8.GetBytes(body);
-                        var contentHash = hmacsha256.ComputeHash(contentBytes);
-                        var storedHash = Convert.FromBase64String(signature);
-                        var validated = contentHash.SequenceEqual(storedHash);
+                        body = await streamReader.ReadToEndAsync().ConfigureAwait(false);
+                        log.LogInformation(body);
+                        var secretBytes = Encoding.UTF8.GetBytes("<my_secret>");
 
-                        if (!validated)
+                        using (var hmacsha256 = new HMACSHA256(secretBytes))
                         {
-                            return (ActionResult)new BadRequestResult();
+
+                            var contentBytes = Encoding.UTF8.GetBytes(body);
+                            var contentHash = hmacsha256.ComputeHash(contentBytes);
+                            var storedHash = Convert.FromBase64String(signature);
+                            var validated = contentHash.SequenceEqual(storedHash);
+
+                            if (!validated)
+                            {
+                                return (ActionResult)new BadRequestResult();
+                            }
+
                         }
                     }
                 }
-                }catch(Exception e){
+                catch (Exception e)
+                {
                     log.LogError(e.Message);
                     log.LogError(e.Message);
                     return (ActionResult)new BadRequestResult();
@@ -99,8 +104,10 @@ namespace SpeechToTextDemo
                         break;
                     case "TranscriptionCompletion":
                         log.LogInformation("Transcript complete event happened");
-                        log.LogInformation(body);
+                        //log.LogInformation(body);
                         dynamic eventData = JObject.Parse(body);
+
+
                         string status = eventData.status;
                         string id = eventData.id;
 
@@ -112,21 +119,24 @@ namespace SpeechToTextDemo
                             log.LogInformation(SubscriptionKey);
                             string HostName = string.Format(HostNameTempalte, System.Environment.GetEnvironmentVariable("Region"));
                             log.LogInformation(HostName);
-                            var client = BatchClient.CreateApiV2Client(SubscriptionKey, HostName, Port);
+                            var client = BatchClient.CreateApiV2Client(SubscriptionKey, HostName, Port, log, "2.1");
                             var Transcriptionresult = await client.GetTranscriptionAsync(new Guid(id));
-                            foreach (string channel in Transcriptionresult.ResultsUrls.Keys)
+                            foreach (Result result in Transcriptionresult.Results)
                             {
-                                log.LogInformation(channel);
-                                CloudBlockBlob recording = new CloudBlockBlob(Transcriptionresult.RecordingsUrl);
-                                string url = Transcriptionresult.ResultsUrls[channel];
-                                log.LogInformation(url);
-                                CloudBlockBlob sourceblob = new CloudBlockBlob(new Uri(url));
-                                string filename = recording.Name.Remove(recording.Name.LastIndexOf('.'));
-                                string transcripturl = storageUrl + "/" + filename + channel + "-transcript.json" + SASToken;
-                                log.LogInformation(transcripturl);
-                                CloudBlockBlob targetblob = new CloudBlockBlob(new Uri(transcripturl));
-                                var resutl = await targetblob.StartCopyAsync(sourceblob);
-                                log.LogInformation(resutl);
+                                foreach (ResultUrl resultUrls in result.ResultsUrls)
+                                {
+                                    log.LogInformation(resultUrls.FileName);
+                                    CloudBlockBlob recording = new CloudBlockBlob(result.RecordingsUrl);
+                                    Uri url = resultUrls.ResultsUrl;
+                                    log.LogInformation(url.ToString());
+                                    CloudBlockBlob sourceblob = new CloudBlockBlob(url);
+                                    string filename = recording.Name.Remove(recording.Name.LastIndexOf('.'));
+                                    string transcripturl = storageUrl + "/" + filename + resultUrls.FileName + "-transcript.json" + SASToken;
+                                    log.LogInformation(transcripturl);
+                                    CloudBlockBlob targetblob = new CloudBlockBlob(new Uri(transcripturl));
+                                    var resutl = await targetblob.StartCopyAsync(sourceblob);
+                                    log.LogInformation(resutl);
+                                }
                             }
                             await client.DeleteTranscriptionAsync(new Guid(id));
 
@@ -137,6 +147,7 @@ namespace SpeechToTextDemo
                             string statusMessage = eventData.statusMessage;
                             log.LogWarning(statusMessage);
                         }
+
                         break;
                     default:
                         log.LogInformation(eventTypeHeader);
