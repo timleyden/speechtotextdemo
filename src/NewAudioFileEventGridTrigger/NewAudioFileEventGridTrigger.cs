@@ -21,7 +21,7 @@ namespace SpeechToTextDemo
         private const int Port = 443;
 
         // recordings and locale
-        private const string Locale = "en-US";
+        private const string Locale = "en-AU";
         
          private static Guid[] modelList = new Guid[0];
 
