@@ -53,6 +53,13 @@ namespace SpeechToTextDemo
                     CloudBlockBlob targetblob = new CloudBlockBlob(new Uri(transcripturl));
                     var resutl = await targetblob.StartCopyAsync(sourceblob);
                     log.LogInformation(resutl);
+                     while (targetblob.CopyState.Status == CopyStatus.Pending)
+                                    {
+                                        log.LogInformation($"copy status:{targetblob.CopyState.Status} sleeping for 1 second.");
+                                        await Task.Delay(1000);
+                                        await targetblob.FetchAttributesAsync();
+                                    }
+                    log.LogInformation($"copy status:{targetblob.CopyState.Status}");
                 }
                 await client.DeleteTranscriptionAsync(transcription.Id);
                 }else{
