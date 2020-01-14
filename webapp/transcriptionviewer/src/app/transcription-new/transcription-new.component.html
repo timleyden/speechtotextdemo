@@ -1,0 +1,61 @@
+
+<form [formGroup]="newTranscriptForm"  (ngSubmit)="onSubmit(newTranscriptForm.value)">
+  <fieldset>
+    <div>
+      <label>Speech to Text region</label>
+      <select type="text" formControlName="region" >
+        <option *ngFor="let c of locationOptions" value={{c}}> {{c}} </option>
+      </select>
+    </div>
+    <div>
+      <label>Speech to Text Service key</label>
+      <input type="text" formControlName="servicekey" />
+    </div>
+    <div>
+    <label>Select File</label>
+    <select  formControlName="audiofile" [(ngModel)]="transcriptDef.recordingsUrl">
+      <option *ngFor="let file of audioFiles" >{{file.name}}</option>
+    </select>
+  </div>
+  <div>
+    <label>Title</label>
+    <input type="text"formControlName="title"  [(ngModel)]="transcriptDef.name"/>
+  </div>
+  <div>
+    <label>Description</label>
+    <input type="text" formControlName="description" [(ngModel)]="transcriptDef.description"/>
+  </div>
+
+  </fieldset>
+ <button type="button" (click)="toggleAdvanced($event)">{{showAdvancedText}}</button>
+ <fieldset *ngIf="showAdvanced">
+ <div><label>Locale</label>
+  <select  [(ngModel)]="transcriptDef.locale" formControlName="locale">
+    <option>en-US</option>
+    <option>en-AU</option>
+  </select>
+</div>
+<div>
+  <label>Diarization</label><input type="checkbox" formControlName="diarization"  [(ngModel)]="transcriptDef.properties.AddDiarization"/>
+</div>
+<div>
+  <label>Sentiment</label> <input type="checkbox" formControlName="sentiment"  [(ngModel)]="transcriptDef.properties.AddSentiment"/>
+</div>
+<div>
+  <label>Word Level Time Stamps</label> <input type="checkbox" formControlName="addwordleveltimestamps"  [(ngModel)]="transcriptDef.properties.AddWordLevelTimestamps"/>
+</div>
+<div>
+  <label>Punctuation Mode</label>
+  <select  formControlName="punctuation" [(ngModel)]="transcriptDef.properties.PunctuationMode">
+    <option *ngFor="let c of punctuationOptions" value={{c}}> {{c}} </option>
+  </select>
+</div>
+<div>
+  <label>Profanity filter mode</label>
+  <select formControlName="profanity"  [(ngModel)]="transcriptDef.properties.ProfanityFilterMode">
+    <option *ngFor="let c of profanityOptions" value={{c}}> {{c}} </option>
+  </select>
+</div>
+</fieldset>
+<input type="submit" name="submit" value="submit"/>
+</form>

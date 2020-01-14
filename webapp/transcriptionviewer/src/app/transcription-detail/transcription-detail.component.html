@@ -1,0 +1,16 @@
+<p>transcription-detail works!</p>
+<div *ngIf="transcript">
+<audio (timeupdate)="highlightUtterance($event)" (seeked)="this.nextOffset=0" controls>
+
+  <source [src]="transcript.wavFile" type="audio/mpeg">
+Your browser does not support the audio element.
+</audio>
+<div *ngIf="transcriptData">
+
+<div class="transcript" *ngFor="let res of (transcriptData)">
+ <span class="offset">{{ res.Offset /10000000 }}</span>
+ <a class="utterance" (click)="jumpTo($event)" [attr.offset]="res.Offset /10000000" [title]="'Confidence: '+res.NBest[0].Confidence">
+  {{ res.NBest[0].Display}}</a>
+</div>
+</div>
+</div>
