@@ -5,3 +5,9 @@ left:75px;
   display:inline-block;
   width:100px;
 }
+.hideInput{
+  display: none;
+}
+.utteranceEdit {
+  width:100%;
+}

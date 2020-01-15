@@ -1,16 +1,7 @@
-
+<app-storageaccount-detail #detail (updated)="ngOnChange($event)"></app-storageaccount-detail>
 <form [formGroup]="newTranscriptForm"  (ngSubmit)="onSubmit(newTranscriptForm.value)">
   <fieldset>
-    <div>
-      <label>Speech to Text region</label>
-      <select type="text" formControlName="region" >
-        <option *ngFor="let c of locationOptions" value={{c}}> {{c}} </option>
-      </select>
-    </div>
-    <div>
-      <label>Speech to Text Service key</label>
-      <input type="text" formControlName="servicekey" />
-    </div>
+
     <div>
     <label>Select File</label>
     <select  formControlName="audiofile" [(ngModel)]="transcriptDef.recordingsUrl">
@@ -59,3 +50,6 @@
 </fieldset>
 <input type="submit" name="submit" value="submit"/>
 </form>
+<div *ngFor="let tran of transcriptions">
+  <p>{{tran.createdDateTime}}{{tran.name}}{{tran.status}}{{tran.statusMessage}}<button [routerLink]="['/transcripts',tran.id]">Open</button><button>Delete</button></p>
+</div>

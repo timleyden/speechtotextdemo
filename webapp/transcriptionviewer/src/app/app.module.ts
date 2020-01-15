@@ -10,6 +10,7 @@ import { TranscriptionDetailComponent } from './transcription-detail/transcripti
 import { UploadAudioComponent } from './upload-audio/upload-audio.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TranscriptionNewComponent } from './transcription-new/transcription-new.component';
+import { StorageaccountDetailComponent } from './storageaccount-detail/storageaccount-detail.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { TranscriptionNewComponent } from './transcription-new/transcription-new
     TrancriptListComponent,
     TranscriptionDetailComponent,
     UploadAudioComponent,
-    TranscriptionNewComponent
+    TranscriptionNewComponent,
+    StorageaccountDetailComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,25 @@
+<form>
+<div>
+  <label for="accountName" >
+    Account Name
+  </label>
+  <input id="accountName" type="text" name="accountName" [(ngModel)]="accountDetails.AccountName">
+</div>
+<div>
+  <label for="key">
+    SAS Token
+  </label>
+  <input id="key" type="text" name="key" [(ngModel)]="accountDetails.SASToken">
+</div>
+<div>
+  <label>Speech to Text region</label>
+  <select type="text" name="region" [(ngModel)]="accountDetails.Region" >
+    <option *ngFor="let c of locationOptions" value={{c}}> {{c}} </option>
+  </select>
+</div>
+<div>
+  <label>Speech to Text Service key</label>
+  <input type="text" name="servicekey" [(ngModel)]="accountDetails.ServiceKey" />
+</div>
+<button (click)="refresh()">Update</button>
+</form>

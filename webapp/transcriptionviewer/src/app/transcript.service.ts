@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {TranscriptionDefinition} from './transcript-definition'
+import {TranscriptDefinition} from './transcript-definition'
 import { stringify } from 'querystring';
 
 @Injectable({
@@ -22,6 +22,20 @@ private buildUri(region:string){
       headers = headers.append(this.apiKeyHeaderName,apiKey);
   let options = { headers: headers };
     return this.httpClient.post(this.buildUri(region),JSON.stringify(request),options)
+  }
+  GetTranscriptions(region:string,apiKey:string){
+    let headers = new HttpHeaders({
+      'Content-Type': "application/json" });
+      headers = headers.append(this.apiKeyHeaderName,apiKey);
+  let options = { headers: headers };
+    return this.httpClient.get(this.buildUri(region),options);
+  }
+  GetTranscription(region:string,apiKey:string,transcriptionId:string){
+    let headers = new HttpHeaders({
+      'Content-Type': "application/json" });
+      headers = headers.append(this.apiKeyHeaderName,apiKey);
+  let options = { headers: headers };
+    return this.httpClient.get(this.buildUri(region)+"/"+transcriptionId,options);
   }
 
 }

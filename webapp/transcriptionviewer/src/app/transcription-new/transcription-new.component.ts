@@ -4,6 +4,7 @@ import {FileService} from '../file.service'
 import {TranscriptService} from '../transcript.service'
 import { TranscriptDefinition, TranscriptProperty, AllProfanityFilterMode, AllPunctuationMode } from '../transcript-definition';
 import { Locations } from '../speechLocations';
+import { AccountDetails } from '../storageaccount-detail/storageaccount-detail.component';
 
 @Component({
   selector: 'app-transcription-new',
@@ -19,24 +20,28 @@ export class TranscriptionNewComponent implements OnInit {
   punctuationOptions;
   profanityOptions;
   locationOptions;
+  details:AccountDetails;
+  transcriptions
   transcriptDef= new TranscriptDefinition();
+  timerHandle;
   constructor(private formBuilder: FormBuilder,fileService:FileService, private transcriptService:TranscriptService) {
     this.showAdvanced = false;
     this.fileService = fileService;
     this.showAdvancedText = "Advanced";
     this.audioFiles = Array();
-    this.bindAudioFileChoice();
+    //this.bindAudioFileChoice();
     //this.audioFiles = fileService.getAudioFiles("accountname","sastoken")
     this.newTranscriptForm = this.formBuilder.group({title:'',description:'',servicekey:'',region:'',locale:'',audiofile:'',diarization:false,addwordleveltimestamps:false,sentiment:false,profanity:'',punctuation:''});
     this.punctuationOptions = AllPunctuationMode;
     this.profanityOptions = AllProfanityFilterMode;
     this.locationOptions = Locations;
+
   }
 
   ngOnInit() {
   }
  private async bindAudioFileChoice(){
-    for await (const blob of this.fileService.getAudioFiles("accountname","sastoken")){
+    for await (const blob of this.fileService.getAudioFiles(this.details.AccountName,this.details.SASToken)){
       this.audioFiles.push(blob)
       }
    }
@@ -50,10 +55,24 @@ export class TranscriptionNewComponent implements OnInit {
       this.showAdvancedText = "Advanced"
     }
   }
-  onSubmit(formData){
-this.transcriptDef.recordingsUrl = this.fileService.getRecordingUrl("accountname","sastoken",this.transcriptDef.recordingsUrl);
+  onSubmit(){
+this.transcriptDef.recordingsUrl = this.fileService.getRecordingUrl(this.details.AccountName,this.details.SASToken,this.transcriptDef.recordingsUrl);
 console.info(JSON.stringify(this.transcriptDef));
-this.transcriptService.PostTranscriptionRequest(this.transcriptDef,formData.region,formData.servicekey).subscribe(data=>{console.log(data);window.alert('done')})
+this.transcriptService.PostTranscriptionRequest(this.transcriptDef,this.details.Region,this.details.ServiceKey).subscribe(data=>{console.log(data);window.alert('done')})
 
+  }
+  getTranscriptions(){
+    this.transcriptService.GetTranscriptions(this.details.Region,this.details.ServiceKey).subscribe(data=>{this.transcriptions = Object.assign([],data)},error=>{console.warn(error)});
+
+ }
+  ngOnChange(val:AccountDetails){
+    this.details=val;
+
+    this.bindAudioFileChoice();
+    //enable submit button
+    this.getTranscriptions();
+    this.timerHandle = setInterval(() => {
+      this.getTranscriptions();
+   }, 30000);
   }
 }
