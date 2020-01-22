@@ -5,7 +5,8 @@ import { HttpClient } from '@angular/common/http';
 import { AccountDetails } from '../storageaccount-detail/storageaccount-detail.component';
 import { TranscriptService } from '../transcript.service';
 import { runInThisContext } from 'vm';
-import { DatePipe } from '@angular/common';
+import { DatePipe, KeyValuePipe } from '@angular/common';
+import { Observable,forkJoin } from 'rxjs';
 @Component({
   selector: 'app-transcription-detail',
   templateUrl: './transcription-detail.component.html',
@@ -14,7 +15,7 @@ import { DatePipe } from '@angular/common';
 })
 export class TranscriptionDetailComponent implements OnInit {
   transcript;
-  transcriptData;
+  transcriptData:[];
   nextOffset;
   details: AccountDetails;
   redThreshold: number;
@@ -28,6 +29,7 @@ export class TranscriptionDetailComponent implements OnInit {
   constructor(private route: ActivatedRoute, private http: HttpClient, private transcriptService: TranscriptService, private datePipe:DatePipe) {
     this.redThreshold = 82;
     this.yellowThreshold = 88
+    this.transcriptData = []
   }
 
   ngOnInit() {
@@ -54,19 +56,31 @@ export class TranscriptionDetailComponent implements OnInit {
       //this.transcript = transcripts[+params.get('transcriptId')]
       this.transcriptService.GetTranscription(this.details.Region, this.details.ServiceKey, params.get('transcriptId')).subscribe(data => {
       this.transcript = data;
-        this.http.get(this.transcript.resultsUrls.channel_0).subscribe((data: {}) => {
-          this.transcriptData = data
-          this.transcriptData = this.transcriptData.AudioFileResults[0].SegmentResults.sort((n1, n2) => {
-            var first = Number(n1.Offset);
-            var second = Number(n2.Offset)
-            if (first > second) {
-              return 1;
-            } if (first < second) {
-              return -1;
-            }
-            else return 0;
-          })
-        })
+      var observables:Observable<object>[] = [];
+     for (const key in this.transcript.resultsUrls) {
+       if (this.transcript.resultsUrls.hasOwnProperty(key)) {
+         const element = this.transcript.resultsUrls[key];
+         observables.push (this.http.get(element))
+
+       }
+     }
+     forkJoin(observables).subscribe((results: []) => {
+       results.forEach((element) => {
+         //normalize results
+
+        this.transcriptData = this.transcriptData.concat(Object.assign([], element.AudioFileResults[0].SegmentResults.map((utterance)=>{utterance.ChannelNumber = element.AudioFileResults[0].AudioFileName.split('.')[1]; return utterance})));
+       });
+       this.transcriptData.sort((n1, n2) => {
+        var first = Number(n1.Offset);
+        var second = Number(n2.Offset)
+        if (first > second) {
+          return 1;
+        } if (first < second) {
+          return -1;
+        }
+        else return 0;
+      })
+    })
       });
     });
   }
@@ -103,11 +117,15 @@ export class TranscriptionDetailComponent implements OnInit {
   }
   editButton(id) {
     //window.alert(this.transcriptData[id].Offset);
+    if(!this.transcriptData[id].NBest[0].Original){
+      this.transcriptData[id].NBest[0].Original = this.transcriptData[id].NBest[0].Display
+    }
     document.getElementById('inputdiv' + id).classList.remove("hideInput")
     document.getElementById('displaydiv' + id).classList.add("hideInput")
   }
   saveButton(id) {
-    this.transcriptData[id].NBest[0].Display = document.getElementById('input' + id).value
+
+    //this.transcriptData[id].NBest[0].Display = document.getElementById('input' + id).value
     document.getElementById('inputdiv' + id).classList.add("hideInput")
     document.getElementById('displaydiv' + id).classList.remove("hideInput")
   }
@@ -129,6 +147,24 @@ export class TranscriptionDetailComponent implements OnInit {
         a.download = filename;
         a.href = window.URL.createObjectURL(blob);
         a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+        e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        a.dispatchEvent(e);
+        // window.URL.revokeObjectURL(a.href); // clean the url.createObjectURL resource
+    }
+  }
+  submitForTraining(){
+    var filename = 'traningdata.json'
+    var exportdata = {recordingurl:this.transcript.recordingsUrl,SegmentResults:this.transcriptData}
+    var blob = new Blob([(JSON.stringify(exportdata))], {type: 'text/plain'});
+    //var blob = new Blob(blobparts, {type: 'text/json'});
+    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveOrOpenBlob(blob, filename);
+    } else{
+        var e = document.createEvent('MouseEvents'),
+        a = document.createElement('a');
+        a.download = filename;
+        a.href = window.URL.createObjectURL(blob);
+        a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
         e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
         a.dispatchEvent(e);
         // window.URL.revokeObjectURL(a.href); // clean the url.createObjectURL resource

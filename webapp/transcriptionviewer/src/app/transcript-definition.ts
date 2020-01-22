@@ -1,3 +1,5 @@
+import { ConvertPropertyBindingResult } from '@angular/compiler/src/compiler_util/expression_converter';
+
 export class TranscriptDefinition{
   name:string;
   description:string;
@@ -41,6 +43,14 @@ set AddDiarization(value:boolean){
   }
 }
 TranscriptionResultsContainerUrl:string
+toJSON() {
+  // copy all fields from `this` to an empty object and return in
+  return Object.assign({}, this, {
+    // convert fields that need converting
+    AddDiarization: this._addDiarization,
+    AddWordLevelTimestamps: this._addWordLevelTimestamps
+  });
+}
 }
 export type PunctuationMode = "DictatedAndAutomatic"|"Automatic"|"Dictated"|"None"
 

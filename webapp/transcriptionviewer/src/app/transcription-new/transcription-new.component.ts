@@ -5,6 +5,7 @@ import {TranscriptService} from '../transcript.service'
 import { TranscriptDefinition, TranscriptProperty, AllProfanityFilterMode, AllPunctuationMode } from '../transcript-definition';
 import { Locations } from '../speechLocations';
 import { AccountDetails } from '../storageaccount-detail/storageaccount-detail.component';
+import { KeyValuePipe } from '@angular/common';
 
 @Component({
   selector: 'app-transcription-new',
@@ -58,6 +59,12 @@ export class TranscriptionNewComponent implements OnInit {
   onSubmit(){
 this.transcriptDef.recordingsUrl = this.fileService.getRecordingUrl(this.details.AccountName,this.details.SASToken,this.transcriptDef.recordingsUrl);
 console.info(JSON.stringify(this.transcriptDef));
+if(this.transcriptDef.properties.AddDiarization){
+  this.transcriptDef.properties.AddDiarization = "True";
+}
+if(this.transcriptDef.properties.AddWordLevelTimestamps){
+  this.transcriptDef.properties.AddWordLevelTimestamps = "True"
+}
 this.transcriptService.PostTranscriptionRequest(this.transcriptDef,this.details.Region,this.details.ServiceKey).subscribe(data=>{console.log(data);window.alert('done')})
 
   }

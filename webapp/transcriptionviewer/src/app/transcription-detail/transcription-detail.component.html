@@ -11,9 +11,10 @@
 <div>Enable Editing<input type="checkbox" [(ngModel)]="enableEditing"/></div>
 <button (click)="processAndCreateFile()">Download as txt file</button>
 <button *ngIf="transcript != null" (click)="downloadRawResults()">Download raw transcript results</button>
-<button onclick="window.alert('not yet implemented')">Submit for model training</button>
+<button (click)="submitForTraining()">Submit for model training</button>
 <hr/>
 <div *ngIf="transcript">
+  <span>audio file: {{transcript.recordingsUrl.split('?')[0]}}</span>
 <audio (timeupdate)="highlightUtterance($event)" (seeked)="this.nextOffset=0" controls>
 
   <source [src]="transcript.recordingsUrl" type="audio/mpeg">
@@ -24,13 +25,15 @@ Your browser does not support the audio element.
 <div class="transcript" *ngFor="let res of (transcriptData); index as utteranceId">
   <div  [id]="['displaydiv'+utteranceId]" [ngStyle]="{'background-color':getColor(res.NBest[0].Confidence)}">
     <span *ngIf="showSequence" class="sequence">{{utteranceId}}</span>
+    <span *ngIf="res.SpeakerId != null" class="speakerId">Speaker {{res.SpeakerId}}</span>
+    <span *ngIf="res.ChannelNumber != null" class="channel">Channel {{res.ChannelNumber}}</span>
  <span *ngIf="showOffset" class="offset">{{formatOffset(res.Offset) }}</span>
  <span *ngIf="showConfidence" class="confidence">{{ (res.NBest[0].Confidence*100) | number:'1.0-0' }}%</span>
- <a class="utterance" (click)="jumpTo($event)" [attr.offset]="res.Offset /10000000" [title]="'Confidence: '+res.NBest[0].Confidence+' Time offset: '+res.Offset /10000000+'s'">
+ <a class="utterance" (click)="jumpTo($event)" [attr.offset]="res.Offset /10000000" [title]="'Confidence: '+res.NBest[0].Confidence+' Time offset: '+formatOffset(res.Offset)+'s'">
   {{ res.NBest[0].Display}}</a><button  *ngIf="enableEditing" (click)="editButton(utteranceId)">edit</button>
 </div>
   <div  *ngIf="enableEditing" [id]="['inputdiv'+utteranceId]" class="hideInput">
-  <input class="utteranceEdit" [id]="['input'+utteranceId]"   type="text" value="{{ res.NBest[0].Display}}"/>
+  <input class="utteranceEdit" [id]="['input'+utteranceId]"   type="text" [(ngModel)]="res.NBest[0].Display"/>
   <button (click)="saveButton(utteranceId)" >Save</button>
 </div>
 </div>

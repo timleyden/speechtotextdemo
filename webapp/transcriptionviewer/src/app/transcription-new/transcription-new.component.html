@@ -50,6 +50,16 @@
 </fieldset>
 <input type="submit" name="submit" value="submit"/>
 </form>
-<div *ngFor="let tran of transcriptions">
-  <p>{{tran.createdDateTime}}{{tran.name}}{{tran.status}}{{tran.statusMessage}}<button [routerLink]="['/transcripts',tran.id]">Open</button><button>Delete</button></p>
-</div>
+<table>
+  <tr><th>Created</th><th>Title</th><th>Description</th><th>Status</th><th>Locale</th><th>Properties</th><th>Actions</th></tr>
+  <tr *ngFor="let tran of transcriptions">
+    <td>{{tran.createdDateTime | date:'short'}}</td>
+    <td>{{tran.name}}</td>
+    <td>{{tran.description}}</td>
+    <td>{{tran.status}}:{{tran.statusMessage}}</td>
+    <td>{{tran.locale}}</td>
+    <td><span *ngFor="let item of tran.properties | keyvalue"> {{item.key}}:{{item.value}}</span></td>
+    <td><button [routerLink]="['/transcripts',tran.id]">Open</button><button>Delete</button></td>
+  </tr>
+</table>
+
