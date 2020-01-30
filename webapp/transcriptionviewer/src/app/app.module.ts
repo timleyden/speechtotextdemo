@@ -13,6 +13,8 @@ import { TranscriptionNewComponent } from './transcription-new/transcription-new
 import { StorageaccountDetailComponent } from './storageaccount-detail/storageaccount-detail.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatToolbarModule, MatButtonModule } from '@angular/material';
+import { FlexLayoutModule } from '@angular/flex-layout';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,7 +32,8 @@ import { MatToolbarModule, MatButtonModule } from '@angular/material';
     FormsModule,
     BrowserAnimationsModule,
     MatToolbarModule,
-    MatButtonModule
+    MatButtonModule,
+    FlexLayoutModule
   ],
   providers: [],
   bootstrap: [AppComponent]
