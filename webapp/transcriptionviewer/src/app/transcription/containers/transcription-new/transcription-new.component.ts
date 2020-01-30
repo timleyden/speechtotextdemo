@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormsModule } from '@angular/forms';
-import { FileService } from '../file.service'
-import { TranscriptService } from '../transcript.service'
-import { TranscriptDefinition, TranscriptProperty, AllProfanityFilterMode, AllPunctuationMode } from '../transcript-definition';
-import { Locations } from '../speechLocations';
-import { AccountDetails } from '../storageaccount-detail/storageaccount-detail.component';
+import { FormBuilder } from '@angular/forms';
 import { KeyValuePipe } from '@angular/common';
+
+import { FileService } from '../../../file.service'
+import { TranscriptService } from '../../../transcript.service'
+import { TranscriptDefinition, TranscriptProperty, AllProfanityFilterMode, AllPunctuationMode } from '../../../transcript-definition';
+import { Locations } from '../../../speechLocations';
+import { AccountDetails } from '../../../storageaccount-detail/storageaccount-detail.component';
 
 @Component({
   selector: 'app-transcription-new',

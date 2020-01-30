@@ -1,0 +1,5 @@
+<h2>Transcripts</h2>
+<div *ngFor="let transcript of transcripts; index as productId">
+
+  <h3><a [routerLink]="['/transcripts',productId]">{{transcript.name}}</a></h3>
+</div>
