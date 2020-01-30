@@ -1,8 +1,0 @@
-
-<app-storageaccount-detail #detail (updated)="ngOnChange($event)"></app-storageaccount-detail>
-<form [formGroup]="uploadForm" (ngSubmit)="onSubmit(uploadForm.value)">
-
-  <input id="name" type="file"  accept="audio/*" formControlName="name" (change)="getFile($event)">
-  <button class="button" type="submit">Upload</button>
-
-</form>
