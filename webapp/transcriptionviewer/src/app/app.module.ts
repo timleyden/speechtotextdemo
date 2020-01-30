@@ -11,7 +11,8 @@ import { UploadAudioComponent } from './upload-audio/upload-audio.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TranscriptionNewComponent } from './transcription-new/transcription-new.component';
 import { StorageaccountDetailComponent } from './storageaccount-detail/storageaccount-detail.component';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatToolbarModule, MatButtonModule } from '@angular/material';
 @NgModule({
   declarations: [
     AppComponent,
@@ -26,7 +27,10 @@ import { StorageaccountDetailComponent } from './storageaccount-detail/storageac
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    BrowserAnimationsModule,
+    MatToolbarModule,
+    MatButtonModule
   ],
   providers: [],
   bootstrap: [AppComponent]
