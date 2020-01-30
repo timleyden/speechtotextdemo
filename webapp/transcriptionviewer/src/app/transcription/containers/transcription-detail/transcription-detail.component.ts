@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { transcripts } from '../../../trancripts';
 import { HttpClient } from '@angular/common/http';
-import { AccountDetails } from '../../../storageaccount-detail/storageaccount-detail.component';
 import { TranscriptService } from '../../../transcript.service';
 import { runInThisContext } from 'vm';
 import { DatePipe, KeyValuePipe } from '@angular/common';
 import { Observable,forkJoin } from 'rxjs';
+
+import { AccountDetails } from '../../components/storageaccount-detail/storageaccount-detail.component';
 
 
 @Component({
