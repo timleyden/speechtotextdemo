@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { transcripts } from '../trancripts';
+import { transcripts } from '../../../trancripts';
 import { HttpClient } from '@angular/common/http';
-import { AccountDetails } from '../storageaccount-detail/storageaccount-detail.component';
-import { TranscriptService } from '../transcript.service';
+import { TranscriptService } from '../../../transcript.service';
 import { runInThisContext } from 'vm';
 import { DatePipe, KeyValuePipe } from '@angular/common';
 import { Observable,forkJoin } from 'rxjs';
+
+import { AccountDetails } from '../../components/storageaccount-detail/storageaccount-detail.component';
+
+
 @Component({
   selector: 'app-transcription-detail',
   templateUrl: './transcription-detail.component.html',
@@ -15,7 +18,7 @@ import { Observable,forkJoin } from 'rxjs';
 })
 export class TranscriptionDetailComponent implements OnInit {
   transcript;
-  transcriptData:[];
+  transcriptData: any[];
   nextOffset;
   details: AccountDetails;
   redThreshold: number;
@@ -65,7 +68,7 @@ export class TranscriptionDetailComponent implements OnInit {
        }
      }
      forkJoin(observables).subscribe((results: []) => {
-       results.forEach((element) => {
+       results.forEach((element: any) => {
          //normalize results
 
         this.transcriptData = this.transcriptData.concat(Object.assign([], element.AudioFileResults[0].SegmentResults.map((utterance)=>{utterance.ChannelNumber = element.AudioFileResults[0].AudioFileName.split('.')[1]; return utterance})));
@@ -142,7 +145,7 @@ export class TranscriptionDetailComponent implements OnInit {
     if (window.navigator && window.navigator.msSaveOrOpenBlob) {
         window.navigator.msSaveOrOpenBlob(blob, filename);
     } else{
-        var e = document.createEvent('MouseEvents'),
+        var e: any = document.createEvent('MouseEvents'),
         a = document.createElement('a');
         a.download = filename;
         a.href = window.URL.createObjectURL(blob);
@@ -160,7 +163,7 @@ export class TranscriptionDetailComponent implements OnInit {
     if (window.navigator && window.navigator.msSaveOrOpenBlob) {
         window.navigator.msSaveOrOpenBlob(blob, filename);
     } else{
-        var e = document.createEvent('MouseEvents'),
+        var e:any = document.createEvent('MouseEvents'),
         a = document.createElement('a');
         a.download = filename;
         a.href = window.URL.createObjectURL(blob);

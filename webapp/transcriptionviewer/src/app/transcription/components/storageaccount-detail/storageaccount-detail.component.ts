@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter} from '@angular/core';
-import { Locations } from '../speechLocations';
+import { Locations } from '../../../speechLocations';
 
 
 @Component({

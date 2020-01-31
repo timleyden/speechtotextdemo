@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {FileService} from '../file.service'
 import { FormBuilder } from '@angular/forms';
-import { AccountDetails } from '../storageaccount-detail/storageaccount-detail.component';
+
+import {FileService} from '../../../file.service'
+import { AccountDetails } from '../../components/storageaccount-detail/storageaccount-detail.component';
 
 @Component({
   selector: 'app-upload-audio',

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {transcripts} from '../trancripts';
-import {FileService} from '../file.service'
+import {transcripts} from '../../../trancripts';
+import {FileService} from '../../../file.service'
 @Component({
   selector: 'app-trancript-list',
   templateUrl: './trancript-list.component.html',
