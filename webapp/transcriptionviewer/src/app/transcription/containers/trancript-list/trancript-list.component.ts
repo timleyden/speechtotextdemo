@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {transcripts} from '../../../trancripts';
-import {FileService} from '../../../file.service'
+import { transcripts } from '../../../trancripts';
+import { FileService } from '../../../file.service'
 import { TranscriptDefinition } from 'src/app/transcript-definition';
 import { AccountDetails } from '../../../account-details';
 import { TranscriptService } from 'src/app/transcript.service';
@@ -11,20 +11,20 @@ import { AccountService } from 'src/app/account.service';
   styleUrls: ['./trancript-list.component.css']
 })
 export class TrancriptListComponent implements OnInit {
-transcriptions:any[]
-details:AccountDetails;
-timerHandle
-  constructor(fileService:FileService, private transcriptService: TranscriptService, private accountService:AccountService) {
-     fileService.getTranscripts("accountname","sastoken")
-     fileService.getAudioFiles("accountname","sastoken")
-     if(this.accountService.Details.Region && this.accountService.Details.ServiceKey){
-       this.ngOnChange(this.accountService.Details);
-     }
-   }
+  transcriptions: any[]
+  details: AccountDetails;
+  timerHandle
+  constructor(fileService: FileService, private transcriptService: TranscriptService, private accountService: AccountService) {
+    fileService.getTranscripts("accountname", "sastoken")
+    fileService.getAudioFiles("accountname", "sastoken")
+    if (this.accountService.Details.Region && this.accountService.Details.ServiceKey) {
+      this.ngOnChange(this.accountService.Details);
+    }
+  }
 
   ngOnInit() {
   }
-  ngOnDestroy(){
+  ngOnDestroy() {
     clearInterval(this.timerHandle);
   }
   getTranscriptions() {
@@ -38,8 +38,8 @@ timerHandle
       this.getTranscriptions();
     }, 30000);
   }
-  deleteTranscription(id){
-    this.transcriptService.DeleteTranscription(this.details.Region,this.details.ServiceKey,id).subscribe(()=>{window.alert('transcription deleted');this.getTranscriptions();},error=>{console.error(error)})
+  deleteTranscription(id) {
+    this.transcriptService.DeleteTranscription(this.details.Region, this.details.ServiceKey, id).subscribe(() => { window.alert('transcription deleted'); this.getTranscriptions(); }, error => { console.error(error) })
   }
 
 }

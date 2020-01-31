@@ -1,55 +1,57 @@
 <app-storageaccount-detail #detail (updated)="ngOnChange($event)"></app-storageaccount-detail>
 <h2><a [routerLink]="['../']">Transcripts</a> > New Transcription</h2>
-<form >
+<form>
   <fieldset>
     <mat-form-field>
-    <mat-label>Select File</mat-label>
-    <mat-select name="audioFile"  [(ngModel)]="transcriptDef.recordingsUrl">
-      <mat-option *ngFor="let file of audioFiles" [value]="file.name" >{{file.name}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <button matt-button (click)="toggleUpload()">Upload New</button>
-  <div *ngIf="showUpload">
-    <app-upload-audio #upload></app-upload-audio>
-  </div>
-  <mat-form-field>
-    <mat-label>Title</mat-label>
-    <input name="name" matInput type="text" [(ngModel)]="transcriptDef.name"/>
-  </mat-form-field>
-  <mat-form-field>
-    <mat-label>Description</mat-label>
-    <input name="description" matInput type="text"  [(ngModel)]="transcriptDef.description"/>
-  </mat-form-field>
+      <mat-label>Select File</mat-label>
+      <mat-select name="audioFile" [(ngModel)]="transcriptDef.recordingsUrl">
+        <mat-option *ngFor="let file of audioFiles" [value]="file.name">{{file.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button matt-button (click)="toggleUpload()">Upload New</button>
+    <div *ngIf="showUpload">
+      <app-upload-audio #upload></app-upload-audio>
+    </div>
+    <mat-form-field>
+      <mat-label>Title</mat-label>
+      <input name="name" matInput type="text" [(ngModel)]="transcriptDef.name" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Description</mat-label>
+      <input name="description" matInput type="text" [(ngModel)]="transcriptDef.description" />
+    </mat-form-field>
 
   </fieldset>
- <button mat-button type="button" (click)="toggleAdvanced($event)">{{showAdvancedText}}</button>
- <fieldset *ngIf="showAdvanced">
- <mat-form-field><mat-label>Locale</mat-label>
-  <mat-select name="locale" [(ngModel)]="transcriptDef.locale" >
-    <mat-option value="en-US">en-US</mat-option>
-    <mat-option value="en-AU">en-AU</mat-option>
-  </mat-select>
-</mat-form-field>
-  <mat-checkbox  name="diarisazation" [(ngModel)]="transcriptDef.properties.AddDiarization" [checked]="transcriptDef.properties.AddDiarization" >Diarisazation</mat-checkbox>
+  <button mat-button type="button" (click)="toggleAdvanced($event)">{{showAdvancedText}}</button>
+  <fieldset *ngIf="showAdvanced">
+    <mat-form-field>
+      <mat-label>Locale</mat-label>
+      <mat-select name="locale" [(ngModel)]="transcriptDef.locale">
+        <mat-option value="en-US">en-US</mat-option>
+        <mat-option value="en-AU">en-AU</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-checkbox name="diarisazation" [(ngModel)]="transcriptDef.properties.AddDiarization"
+      [checked]="transcriptDef.properties.AddDiarization">Diarisazation</mat-checkbox>
 
- <mat-checkbox name="sentiment"  [(ngModel)]="transcriptDef.properties.AddSentiment" [checked]="transcriptDef.properties.AddSentiment" >Sentiment</mat-checkbox>
+    <mat-checkbox name="sentiment" [(ngModel)]="transcriptDef.properties.AddSentiment"
+      [checked]="transcriptDef.properties.AddSentiment">Sentiment</mat-checkbox>
 
-<mat-checkbox name="addwordleveltimestamps" [(ngModel)]="transcriptDef.properties.AddWordLevelTimestamps" checked="transcriptDef.properties.AddWordLevelTimestamps" >Add word level timestamps</mat-checkbox>
+    <mat-checkbox name="addwordleveltimestamps" [(ngModel)]="transcriptDef.properties.AddWordLevelTimestamps"
+      checked="transcriptDef.properties.AddWordLevelTimestamps">Add word level timestamps</mat-checkbox>
 
-<mat-form-field>
-  <mat-label>Punctuation Mode</mat-label>
-  <mat-select name="punctuationMode"  [(ngModel)]="transcriptDef.properties.PunctuationMode">
-    <mat-option *ngFor="let c of punctuationOptions" value={{c}}> {{c}} </mat-option>
-  </mat-select>
-</mat-form-field>
-<mat-form-field>
-  <mat-label>Profanity filter mode</mat-label>
-  <mat-select name="profanityMode" [(ngModel)]="transcriptDef.properties.ProfanityFilterMode">
-    <mat-option *ngFor="let c of profanityOptions" value={{c}}> {{c}} </mat-option>
-  </mat-select>
-</mat-form-field>
-</fieldset>
-<button mat-button (click)="onSubmit()">Submit</button>
+    <mat-form-field>
+      <mat-label>Punctuation Mode</mat-label>
+      <mat-select name="punctuationMode" [(ngModel)]="transcriptDef.properties.PunctuationMode">
+        <mat-option *ngFor="let c of punctuationOptions" value={{c}}> {{c}} </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Profanity filter mode</mat-label>
+      <mat-select name="profanityMode" [(ngModel)]="transcriptDef.properties.ProfanityFilterMode">
+        <mat-option *ngFor="let c of profanityOptions" value={{c}}> {{c}} </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </fieldset>
+  <button mat-button (click)="onSubmit()">Submit</button>
 </form>
-
-

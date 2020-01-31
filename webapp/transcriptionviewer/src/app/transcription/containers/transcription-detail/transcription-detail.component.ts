@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { TranscriptService } from '../../../transcript.service';
 import { runInThisContext } from 'vm';
 import { DatePipe, KeyValuePipe } from '@angular/common';
-import { Observable,forkJoin } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { AccountDetails } from '../../../account-details';
 import { AccountService } from 'src/app/account.service';
 
@@ -15,7 +15,7 @@ import { AccountService } from 'src/app/account.service';
   selector: 'app-transcription-detail',
   templateUrl: './transcription-detail.component.html',
   styleUrls: ['./transcription-detail.component.css'],
-  providers:[DatePipe]
+  providers: [DatePipe]
 })
 export class TranscriptionDetailComponent implements OnInit {
   transcript;
@@ -25,16 +25,16 @@ export class TranscriptionDetailComponent implements OnInit {
   redThreshold: number;
   yellowThreshold: number;
   enableHighlighting: boolean;
-  showConfidence:boolean;
-  showSequence:boolean;
-  showOffset:boolean;
-  enableEditing:boolean
+  showConfidence: boolean;
+  showSequence: boolean;
+  showOffset: boolean;
+  enableEditing: boolean
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, private transcriptService: TranscriptService, private datePipe:DatePipe, private ads:AccountService) {
+  constructor(private route: ActivatedRoute, private http: HttpClient, private transcriptService: TranscriptService, private datePipe: DatePipe, private ads: AccountService) {
     this.redThreshold = 82;
     this.yellowThreshold = 88
     this.transcriptData = []
-    if(this.ads.Details.Region && this.ads.Details.ServiceKey){
+    if (this.ads.Details.Region && this.ads.Details.ServiceKey) {
       this.ngOnChange(this.ads.Details);
     }
 
@@ -64,32 +64,32 @@ export class TranscriptionDetailComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       //this.transcript = transcripts[+params.get('transcriptId')]
       this.transcriptService.GetTranscription(this.details.Region, this.details.ServiceKey, params.get('transcriptId')).subscribe(data => {
-      this.transcript = data;
-      var observables:Observable<object>[] = [];
-     for (const key in this.transcript.resultsUrls) {
-       if (this.transcript.resultsUrls.hasOwnProperty(key)) {
-         const element = this.transcript.resultsUrls[key];
-         observables.push (this.http.get(element))
+        this.transcript = data;
+        var observables: Observable<object>[] = [];
+        for (const key in this.transcript.resultsUrls) {
+          if (this.transcript.resultsUrls.hasOwnProperty(key)) {
+            const element = this.transcript.resultsUrls[key];
+            observables.push(this.http.get(element))
 
-       }
-     }
-     forkJoin(observables).subscribe((results: []) => {
-       results.forEach((element: any) => {
-         //normalize results
-
-        this.transcriptData = this.transcriptData.concat(Object.assign([], element.AudioFileResults[0].SegmentResults.map((utterance)=>{utterance.ChannelNumber = element.AudioFileResults[0].AudioFileName.split('.')[1]; return utterance})));
-       });
-       this.transcriptData.sort((n1, n2) => {
-        var first = Number(n1.Offset);
-        var second = Number(n2.Offset)
-        if (first > second) {
-          return 1;
-        } if (first < second) {
-          return -1;
+          }
         }
-        else return 0;
-      })
-    })
+        forkJoin(observables).subscribe((results: []) => {
+          results.forEach((element: any) => {
+            //normalize results
+
+            this.transcriptData = this.transcriptData.concat(Object.assign([], element.AudioFileResults[0].SegmentResults.map((utterance) => { utterance.ChannelNumber = element.AudioFileResults[0].AudioFileName.split('.')[1]; return utterance })));
+          });
+          this.transcriptData.sort((n1, n2) => {
+            var first = Number(n1.Offset);
+            var second = Number(n2.Offset)
+            if (first > second) {
+              return 1;
+            } if (first < second) {
+              return -1;
+            }
+            else return 0;
+          })
+        })
       });
     });
   }
@@ -126,7 +126,7 @@ export class TranscriptionDetailComponent implements OnInit {
   }
   editButton(id) {
     //window.alert(this.transcriptData[id].Offset);
-    if(!this.transcriptData[id].NBest[0].Original){
+    if (!this.transcriptData[id].NBest[0].Original) {
       this.transcriptData[id].NBest[0].Original = this.transcriptData[id].NBest[0].Display
     }
     document.getElementById('inputdiv' + id).classList.remove("hideInput")
@@ -138,45 +138,45 @@ export class TranscriptionDetailComponent implements OnInit {
     document.getElementById('inputdiv' + id).classList.add("hideInput")
     document.getElementById('displaydiv' + id).classList.remove("hideInput")
   }
-  formatOffset(offset){
-    return this.datePipe.transform((new Date(1970, 0, 1).setSeconds(offset/10000000)),'HH:mm:ss')
+  formatOffset(offset) {
+    return this.datePipe.transform((new Date(1970, 0, 1).setSeconds(offset / 10000000)), 'HH:mm:ss')
   }
-  downloadRawResults(){
-    location.href=this.transcript.resultsUrls.channel_0
+  downloadRawResults() {
+    location.href = this.transcript.resultsUrls.channel_0
   }
-  processAndCreateFile(){
+  processAndCreateFile() {
     var filename = 'transcript.txt'
-    const blobparts = this.transcriptData.map((data)=>this.formatOffset(data.Offset) +':\t'+data.NBest[0].Display+'\n')
-    var blob = new Blob(blobparts, {type: 'text/plain'});
+    const blobparts = this.transcriptData.map((data) => this.formatOffset(data.Offset) + ':\t' + data.NBest[0].Display + '\n')
+    var blob = new Blob(blobparts, { type: 'text/plain' });
     if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-        window.navigator.msSaveOrOpenBlob(blob, filename);
-    } else{
-        var e: any = document.createEvent('MouseEvents'),
+      window.navigator.msSaveOrOpenBlob(blob, filename);
+    } else {
+      var e: any = document.createEvent('MouseEvents'),
         a = document.createElement('a');
-        a.download = filename;
-        a.href = window.URL.createObjectURL(blob);
-        a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
-        e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-        a.dispatchEvent(e);
-        // window.URL.revokeObjectURL(a.href); // clean the url.createObjectURL resource
+      a.download = filename;
+      a.href = window.URL.createObjectURL(blob);
+      a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+      e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+      a.dispatchEvent(e);
+      // window.URL.revokeObjectURL(a.href); // clean the url.createObjectURL resource
     }
   }
-  submitForTraining(){
+  submitForTraining() {
     var filename = 'traningdata.json'
-    var exportdata = {recordingurl:this.transcript.recordingsUrl,SegmentResults:this.transcriptData}
-    var blob = new Blob([(JSON.stringify(exportdata))], {type: 'text/plain'});
+    var exportdata = { recordingurl: this.transcript.recordingsUrl, SegmentResults: this.transcriptData }
+    var blob = new Blob([(JSON.stringify(exportdata))], { type: 'text/plain' });
     //var blob = new Blob(blobparts, {type: 'text/json'});
     if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-        window.navigator.msSaveOrOpenBlob(blob, filename);
-    } else{
-        var e:any = document.createEvent('MouseEvents'),
+      window.navigator.msSaveOrOpenBlob(blob, filename);
+    } else {
+      var e: any = document.createEvent('MouseEvents'),
         a = document.createElement('a');
-        a.download = filename;
-        a.href = window.URL.createObjectURL(blob);
-        a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
-        e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-        a.dispatchEvent(e);
-        // window.URL.revokeObjectURL(a.href); // clean the url.createObjectURL resource
+      a.download = filename;
+      a.href = window.URL.createObjectURL(blob);
+      a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
+      e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+      a.dispatchEvent(e);
+      // window.URL.revokeObjectURL(a.href); // clean the url.createObjectURL resource
     }
   }
 }

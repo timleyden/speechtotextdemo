@@ -1,8 +1,6 @@
-
-
 <form [formGroup]="uploadForm" (ngSubmit)="onSubmit(uploadForm.value)">
 
-  <input id="name" type="file"  accept="audio/*" formControlName="name" (change)="getFile($event)">
+  <input id="name" type="file" accept="audio/*" formControlName="name" (change)="getFile($event)">
   <button class="button" type="submit">Upload</button>
 
 </form>

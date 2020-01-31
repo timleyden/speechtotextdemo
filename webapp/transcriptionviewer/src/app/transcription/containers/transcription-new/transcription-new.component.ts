@@ -26,9 +26,9 @@ export class TranscriptionNewComponent implements OnInit {
   locationOptions;
   details: AccountDetails;
   transcriptDef = new TranscriptDefinition();
-  showUpload:boolean;
+  showUpload: boolean;
 
-  constructor(private formBuilder: FormBuilder, fileService: FileService, private transcriptService: TranscriptService, private accountService:AccountService) {
+  constructor(private formBuilder: FormBuilder, fileService: FileService, private transcriptService: TranscriptService, private accountService: AccountService) {
     this.showAdvanced = false;
     this.fileService = fileService;
     this.showAdvancedText = "Advanced";
@@ -38,7 +38,7 @@ export class TranscriptionNewComponent implements OnInit {
     this.punctuationOptions = AllPunctuationMode;
     this.profanityOptions = AllProfanityFilterMode;
     this.locationOptions = Locations;
-    if(this.accountService.Details.AccountName && this.accountService.Details.SASToken){
+    if (this.accountService.Details.AccountName && this.accountService.Details.SASToken) {
       this.ngOnChange(this.accountService.Details);
     }
 
@@ -51,7 +51,7 @@ export class TranscriptionNewComponent implements OnInit {
       this.audioFiles.push(blob)
     }
   }
-  toggleUpload(){
+  toggleUpload() {
     this.showUpload = !this.showUpload;
   }
   toggleAdvanced(event) {

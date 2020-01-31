@@ -1,7 +1,15 @@
-<h2>Transcripts</h2><button  [routerLink]="['./new']" mat-raised-button color="primary">Create</button>
+<h2>Transcripts</h2><button [routerLink]="['./new']" mat-raised-button color="primary">Create</button>
 <app-storageaccount-detail #detail (updated)="ngOnChange($event)"></app-storageaccount-detail>
 <table>
-  <tr><th>Created</th><th>Title</th><th>Description</th><th>Status</th><th>Locale</th><th>Properties</th><th>Actions</th></tr>
+  <tr>
+    <th>Created</th>
+    <th>Title</th>
+    <th>Description</th>
+    <th>Status</th>
+    <th>Locale</th>
+    <th>Properties</th>
+    <th>Actions</th>
+  </tr>
   <tr *ngFor="let tran of transcriptions">
     <td>{{tran.createdDateTime | date:'short'}}</td>
     <td>{{tran.name}}</td>
@@ -9,6 +17,7 @@
     <td>{{tran.status}}:{{tran.statusMessage}}</td>
     <td>{{tran.locale}}</td>
     <td><span *ngFor="let item of tran.properties | keyvalue"> {{item.key}}:{{item.value}}</span></td>
-    <td><button mat-button [routerLink]="['./detail',tran.id]">Open</button><button (click)="deleteTranscription(tran.id)" mat-button>Delete</button></td>
+    <td><button mat-button [routerLink]="['./detail',tran.id]">Open</button><button
+        (click)="deleteTranscription(tran.id)" mat-button>Delete</button></td>
   </tr>
 </table>

@@ -4,8 +4,8 @@ import { AccountDetails } from './account-details'
   providedIn: 'root'
 })
 export class AccountService {
-Details:AccountDetails;
+  Details: AccountDetails;
   constructor() {
     this.Details = new AccountDetails();
-   }
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input} from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { Locations } from '../../../speechLocations';
 import { AccountService } from '../../../account.service';
 import { AccountDetails } from '../../../account-details';
@@ -11,17 +11,17 @@ import { AccountDetails } from '../../../account-details';
 })
 export class StorageaccountDetailComponent implements OnInit {
   @Output() updated = new EventEmitter<AccountDetails>();
-accountDetails:AccountDetails;
-//accountDetails:AccountDetails;
-locationOptions;
-  constructor(private accountDetailsService :AccountService) {
+  accountDetails: AccountDetails;
+  //accountDetails:AccountDetails;
+  locationOptions;
+  constructor(private accountDetailsService: AccountService) {
     this.locationOptions = Locations;
     this.accountDetails = accountDetailsService.Details
-   }
+  }
 
   ngOnInit() {
   }
-  refresh(){
+  refresh() {
     this.updated.emit(this.accountDetails);
   }
 
