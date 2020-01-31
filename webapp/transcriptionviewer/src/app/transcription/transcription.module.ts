@@ -30,9 +30,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     FlexLayoutModule,
     RouterModule.forChild([
       { path: '', component: TrancriptListComponent },
-      { path: 'transcripts/:transcriptId', component: TranscriptionDetailComponent },
-      { path: 'newtranscripts', component: TranscriptionNewComponent },
-      { path: 'upload', component: UploadAudioComponent }
+      { path: 'detail/:transcriptId', component: TranscriptionDetailComponent },
+      { path: 'new', component: TranscriptionNewComponent }
+
     ])
   ]
 })

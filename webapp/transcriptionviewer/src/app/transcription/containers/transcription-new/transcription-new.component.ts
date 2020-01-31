@@ -6,7 +6,7 @@ import { FileService } from '../../../file.service'
 import { TranscriptService } from '../../../transcript.service'
 import { TranscriptDefinition, TranscriptProperty, AllProfanityFilterMode, AllPunctuationMode } from '../../../transcript-definition';
 import { Locations } from '../../../speechLocations';
-import { AccountDetails } from '../../../storageaccount-detail/storageaccount-detail.component';
+import { AccountDetails } from '../../components/storageaccount-detail/storageaccount-detail.component';
 
 @Component({
   selector: 'app-transcription-new',

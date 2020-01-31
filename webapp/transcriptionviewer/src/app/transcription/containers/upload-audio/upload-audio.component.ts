@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 
 import {FileService} from '../../../file.service'
-import { AccountDetails } from '../../../storageaccount-detail/storageaccount-detail.component';
+import { AccountDetails } from '../../components/storageaccount-detail/storageaccount-detail.component';
 
 @Component({
   selector: 'app-upload-audio',
