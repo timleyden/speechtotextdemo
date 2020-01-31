@@ -1,25 +1,25 @@
 <form>
-<div>
-  <label for="accountName" >
+<mat-form-field>
+  <mat-label for="accountName" >
     Account Name
-  </label>
-  <input id="accountName" type="text" name="accountName" [(ngModel)]="accountDetails.AccountName">
-</div>
-<div>
-  <label for="key">
+  </mat-label>
+  <input matInput id="accountName" type="text" name="accountName" [(ngModel)]="accountDetails.AccountName"/>
+</mat-form-field>
+<mat-form-field>
+  <mat-label for="key">
     SAS Token
-  </label>
-  <input id="key" type="text" name="key" [(ngModel)]="accountDetails.SASToken">
-</div>
-<div>
-  <label>Speech to Text region</label>
-  <select type="text" name="region" [(ngModel)]="accountDetails.Region" >
-    <option *ngFor="let c of locationOptions" value={{c}}> {{c}} </option>
-  </select>
-</div>
-<div>
-  <label>Speech to Text Service key</label>
-  <input type="text" name="servicekey" [(ngModel)]="accountDetails.ServiceKey" />
-</div>
-<button (click)="refresh()">Update</button>
+  </mat-label>
+  <input matInput id="key" type="text" name="key" [(ngModel)]="accountDetails.SASToken">
+</mat-form-field>
+<mat-form-field>
+  <mat-label>Speech to Text region</mat-label>
+  <mat-select type="text" name="region" [(ngModel)]="accountDetails.Region" >
+    <mat-option *ngFor="let c of locationOptions" [value]="c"> {{c}} </mat-option>
+  </mat-select>
+</mat-form-field>
+<mat-form-field>
+  <mat-label>Speech to Text Service key</mat-label>
+  <input matInput type="text" name="servicekey" [(ngModel)]="accountDetails.ServiceKey" />
+</mat-form-field>
+<button mat-button (click)="refresh()">Load</button>
 </form>

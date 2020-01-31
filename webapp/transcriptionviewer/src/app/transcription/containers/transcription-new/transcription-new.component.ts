@@ -23,17 +23,18 @@ export class TranscriptionNewComponent implements OnInit {
   profanityOptions;
   locationOptions;
   details: AccountDetails;
-  transcriptions
   transcriptDef = new TranscriptDefinition();
-  timerHandle;
+  showUpload:boolean;
+
   constructor(private formBuilder: FormBuilder, fileService: FileService, private transcriptService: TranscriptService) {
     this.showAdvanced = false;
     this.fileService = fileService;
     this.showAdvancedText = "Advanced";
     this.audioFiles = Array();
+    this.showUpload = false;
     //this.bindAudioFileChoice();
     //this.audioFiles = fileService.getAudioFiles("accountname","sastoken")
-    this.newTranscriptForm = this.formBuilder.group({ title: '', description: '', servicekey: '', region: '', locale: '', audiofile: '', diarization: false, addwordleveltimestamps: false, sentiment: false, profanity: '', punctuation: '' });
+  //  this.newTranscriptForm = this.formBuilder.group({ title: '', description: '', servicekey: '', region: '', locale: '', audiofile: '', diarization: false, addwordleveltimestamps: false, sentiment: false, profanity: '', punctuation: '' });
     this.punctuationOptions = AllPunctuationMode;
     this.profanityOptions = AllProfanityFilterMode;
     this.locationOptions = Locations;
@@ -46,6 +47,9 @@ export class TranscriptionNewComponent implements OnInit {
     for await (const blob of <any>(this.fileService.getAudioFiles(this.details.AccountName, this.details.SASToken))) {
       this.audioFiles.push(blob)
     }
+  }
+  toggleUpload(){
+    this.showUpload = !this.showUpload;
   }
   toggleAdvanced(event) {
     this.showAdvanced = !this.showAdvanced
@@ -60,27 +64,15 @@ export class TranscriptionNewComponent implements OnInit {
   onSubmit() {
     this.transcriptDef.recordingsUrl = this.fileService.getRecordingUrl(this.details.AccountName, this.details.SASToken, this.transcriptDef.recordingsUrl);
     console.info(JSON.stringify(this.transcriptDef));
-    // if (this.transcriptDef.properties.AddDiarization) {
-    //   this.transcriptDef.properties.AddDiarization = "True";
-    // }
-    // if (this.transcriptDef.properties.AddWordLevelTimestamps) {
-    //   this.transcriptDef.properties.AddWordLevelTimestamps = "True"
-    // }
     this.transcriptService.PostTranscriptionRequest(this.transcriptDef, this.details.Region, this.details.ServiceKey).subscribe(data => { console.log(data); window.alert('done') })
 
   }
-  getTranscriptions() {
-    this.transcriptService.GetTranscriptions(this.details.Region, this.details.ServiceKey).subscribe(data => { this.transcriptions = Object.assign([], data) }, error => { console.warn(error) });
 
-  }
   ngOnChange(val: AccountDetails) {
     this.details = val;
 
     this.bindAudioFileChoice();
     //enable submit button
-    this.getTranscriptions();
-    this.timerHandle = setInterval(() => {
-      this.getTranscriptions();
-    }, 30000);
+
   }
 }

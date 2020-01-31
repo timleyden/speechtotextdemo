@@ -1,17 +1,17 @@
 <app-storageaccount-detail #detail (updated)="ngOnChange($event)"></app-storageaccount-detail>
-<div>Show Offset <input type="checkbox" [(ngModel)]="showOffset"/></div>
-<div>Show Sequence number <input type="checkbox" [(ngModel)]="showSequence"/></div>
-  <div>Show Confidence <input type="checkbox" [(ngModel)]="showConfidence"/></div>
-    <div>Confidence Highlighting <input type="checkbox" [(ngModel)]="enableHighlighting"/></div>
+<div><mat-checkbox [(ngModel)]="showOffset" >Show Offset</mat-checkbox></div>
+<div><mat-checkbox [(ngModel)]="showSequence" >Show Sequence no.</mat-checkbox></div>
+  <div><mat-checkbox [(ngModel)]="showConfidence" >Show Confidence</mat-checkbox></div>
+    <div><mat-checkbox [(ngModel)]="enableHighlighting" >Show Confidence Highlighting</mat-checkbox></div>
 <table *ngIf="enableHighlighting">
-  <tr><td style="background-color: salmon;width: 30px;"> </td><td><input type="text" [(ngModel)]="redThreshold"/></td></tr>
-  <tr><td style="background-color: palegoldenrod;width: 30px;"></td><td><input type="text" [(ngModel)]="yellowThreshold"/></td></tr>
+  <tr><td style="background-color: salmon;width: 30px;"> </td><td><input matInput type="text" [(ngModel)]="redThreshold"/></td></tr>
+  <tr><td style="background-color: palegoldenrod;width: 30px;"></td><td><input matInput type="text" [(ngModel)]="yellowThreshold"/> </td></tr>
   <tr><td style="background-color: lightgreen;width: 30px;"></td><td>&nbsp;</td></tr>
 </table>
-<div>Enable Editing<input type="checkbox" [(ngModel)]="enableEditing"/></div>
-<button (click)="processAndCreateFile()">Download as txt file</button>
-<button *ngIf="transcript != null" (click)="downloadRawResults()">Download raw transcript results</button>
-<button (click)="submitForTraining()">Submit for model training</button>
+<div><mat-checkbox [(ngModel)]="enableEditing">Enable Editing</mat-checkbox></div>
+<button mat-button (click)="processAndCreateFile()">Download as txt file</button>
+<button mat-button *ngIf="transcript != null" (click)="downloadRawResults()">Download raw transcript results</button>
+<button mat-button (click)="submitForTraining()">Submit for model training</button>
 <hr/>
 <div *ngIf="transcript">
   <span>audio file: {{transcript.recordingsUrl.split('?')[0]}}</span>
@@ -29,12 +29,13 @@ Your browser does not support the audio element.
     <span *ngIf="res.ChannelNumber != null" class="channel">Channel {{res.ChannelNumber}}</span>
  <span *ngIf="showOffset" class="offset">{{formatOffset(res.Offset) }}</span>
  <span *ngIf="showConfidence" class="confidence">{{ (res.NBest[0].Confidence*100) | number:'1.0-0' }}%</span>
+ <span *ngIf="res.NBest[0].Original" style="text-decoration:line-through;">{{res.NBest[0].Original}}</span>
  <a class="utterance" (click)="jumpTo($event)" [attr.offset]="res.Offset /10000000" [title]="'Confidence: '+res.NBest[0].Confidence+' Time offset: '+formatOffset(res.Offset)+'s'">
-  {{ res.NBest[0].Display}}</a><button  *ngIf="enableEditing" (click)="editButton(utteranceId)">edit</button>
+  {{ res.NBest[0].Display}}</a><button mat-button  *ngIf="enableEditing" (click)="editButton(utteranceId)">edit</button>
 </div>
   <div  *ngIf="enableEditing" [id]="['inputdiv'+utteranceId]" class="hideInput">
-  <input class="utteranceEdit" [id]="['input'+utteranceId]"   type="text" [(ngModel)]="res.NBest[0].Display"/>
-  <button (click)="saveButton(utteranceId)" >Save</button>
+  <input matInput class="utteranceEdit" [id]="['input'+utteranceId]"   type="text" [(ngModel)]="res.NBest[0].Display"/>
+  <button mat-button (click)="saveButton(utteranceId)" >Save</button>
 </div>
 </div>
 </div>

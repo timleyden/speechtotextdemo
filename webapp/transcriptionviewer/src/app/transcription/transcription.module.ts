@@ -9,7 +9,7 @@ import { TranscriptionNewComponent } from './containers/transcription-new/transc
 import { StorageaccountDetailComponent } from './components/storageaccount-detail/storageaccount-detail.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material';
+import { MatButtonModule, MatInputModule, MatSelectModule, MatFormFieldModule, MatCheckboxModule } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 
@@ -27,6 +27,10 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     ReactiveFormsModule,
     FormsModule,
     MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCheckboxModule,
     FlexLayoutModule,
     RouterModule.forChild([
       { path: '', component: TrancriptListComponent },
