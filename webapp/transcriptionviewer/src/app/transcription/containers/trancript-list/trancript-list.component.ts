@@ -28,7 +28,7 @@ timerHandle
     clearInterval(this.timerHandle);
   }
   getTranscriptions() {
-    this.transcriptService.GetTranscriptions(this.details.Region, this.details.ServiceKey).subscribe(data => { this.transcriptions = Object.assign([], data) }, error => { console.warn(error) });
+    this.transcriptService.GetTranscriptions(this.details.Region, this.details.ServiceKey).subscribe(data => { this.transcriptions = Object.assign([], data) }, error => { console.error(error) });
 
   }
   ngOnChange(val: AccountDetails) {
@@ -37,6 +37,9 @@ timerHandle
     this.timerHandle = setInterval(() => {
       this.getTranscriptions();
     }, 30000);
+  }
+  deleteTranscription(id){
+    this.transcriptService.DeleteTranscription(this.details.Region,this.details.ServiceKey,id).subscribe(()=>{window.alert('transcription deleted');this.getTranscriptions();},error=>{console.error(error)})
   }
 
 }

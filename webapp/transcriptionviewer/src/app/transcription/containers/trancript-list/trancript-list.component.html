@@ -9,6 +9,6 @@
     <td>{{tran.status}}:{{tran.statusMessage}}</td>
     <td>{{tran.locale}}</td>
     <td><span *ngFor="let item of tran.properties | keyvalue"> {{item.key}}:{{item.value}}</span></td>
-    <td><button mat-button [routerLink]="['./detail',tran.id]">Open</button><button mat-button>Delete</button></td>
+    <td><button mat-button [routerLink]="['./detail',tran.id]">Open</button><button (click)="deleteTranscription(tran.id)" mat-button>Delete</button></td>
   </tr>
 </table>

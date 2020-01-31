@@ -32,6 +32,14 @@ export class TranscriptService {
     let options = { headers: headers };
     return this.httpClient.get(this.buildUri(region), options);
   }
+  DeleteTranscription(region: string, apiKey: string, transcriptionId: string) {
+    let headers = new HttpHeaders({
+      'Content-Type': "application/json"
+    });
+    headers = headers.append(this.apiKeyHeaderName, apiKey);
+    let options = { headers: headers };
+    return this.httpClient.delete(this.buildUri(region) + "/" + transcriptionId, options);
+  }
   GetTranscription(region: string, apiKey: string, transcriptionId: string) {
     let headers = new HttpHeaders({
       'Content-Type': "application/json"
