@@ -1,5 +1,7 @@
-import { Component, OnInit, Output, EventEmitter} from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input} from '@angular/core';
 import { Locations } from '../../../speechLocations';
+import { AccountService } from '../../../account.service';
+import { AccountDetails } from '../../../account-details';
 
 
 @Component({
@@ -10,10 +12,11 @@ import { Locations } from '../../../speechLocations';
 export class StorageaccountDetailComponent implements OnInit {
   @Output() updated = new EventEmitter<AccountDetails>();
 accountDetails:AccountDetails;
+//accountDetails:AccountDetails;
 locationOptions;
-  constructor() {
+  constructor(private accountDetailsService :AccountService) {
     this.locationOptions = Locations;
-    this.accountDetails = new AccountDetails();
+    this.accountDetails = accountDetailsService.Details
    }
 
   ngOnInit() {
@@ -23,9 +26,4 @@ locationOptions;
   }
 
 }
-export class AccountDetails{
-  AccountName:string;
-  SASToken:string;
-  Region:string;
-  ServiceKey:string;
-}
+

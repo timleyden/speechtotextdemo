@@ -1,4 +1,5 @@
-<app-storageaccount-detail #detail (updated)="ngOnChange($event)"></app-storageaccount-detail>
+<app-storageaccount-detail #detail (updated)="ngOnChange($event)" ></app-storageaccount-detail>
+<h2 *ngIf="transcript"><a  [routerLink]="['../../']">Transcripts</a> > {{transcript.name}}</h2>
 <div><mat-checkbox [(ngModel)]="showOffset" >Show Offset</mat-checkbox></div>
 <div><mat-checkbox [(ngModel)]="showSequence" >Show Sequence no.</mat-checkbox></div>
   <div><mat-checkbox [(ngModel)]="showConfidence" >Show Confidence</mat-checkbox></div>

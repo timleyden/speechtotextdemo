@@ -1,5 +1,6 @@
 <app-storageaccount-detail #detail (updated)="ngOnChange($event)"></app-storageaccount-detail>
-<form   >
+<h2><a [routerLink]="['../']">Transcripts</a> > New Transcription</h2>
+<form >
   <fieldset>
     <mat-form-field>
     <mat-label>Select File</mat-label>
@@ -25,8 +26,8 @@
  <fieldset *ngIf="showAdvanced">
  <mat-form-field><mat-label>Locale</mat-label>
   <mat-select name="locale" [(ngModel)]="transcriptDef.locale" >
-    <mat-option>en-US</mat-option>
-    <mat-option>en-AU</mat-option>
+    <mat-option value="en-US">en-US</mat-option>
+    <mat-option value="en-AU">en-AU</mat-option>
   </mat-select>
 </mat-form-field>
   <mat-checkbox  name="diarisazation" [(ngModel)]="transcriptDef.properties.AddDiarization" [checked]="transcriptDef.properties.AddDiarization" >Diarisazation</mat-checkbox>

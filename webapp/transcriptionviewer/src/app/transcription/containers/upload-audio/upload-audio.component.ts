@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 
 import {FileService} from '../../../file.service'
-import { AccountDetails } from '../../components/storageaccount-detail/storageaccount-detail.component';
+import { AccountDetails } from '../../../account-details'
+import { AccountService } from 'src/app/account.service';
 
 @Component({
   selector: 'app-upload-audio',
@@ -12,9 +13,9 @@ import { AccountDetails } from '../../components/storageaccount-detail/storageac
 export class UploadAudioComponent implements OnInit {
 uploadForm;
 file;
-accountDetail:AccountDetails
-  constructor(private fileService: FileService, private formBuilder: FormBuilder) {
+  constructor(private fileService: FileService, private formBuilder: FormBuilder, private accountService:AccountService) {
     this.uploadForm = this.formBuilder.group({accountName:'',key:'',name:[null]});
+
    }
 
   ngOnInit() {
@@ -22,7 +23,7 @@ accountDetail:AccountDetails
   onSubmit(customerData) {
     // Process checkout data here
     console.warn('Your order has been submitted', customerData);
-    this.fileService.uploadAudioFile(this.accountDetail.AccountName,this.accountDetail.SASToken,this.file)
+    this.fileService.uploadAudioFile(this.accountService.Details.AccountName,this.accountService.Details.SASToken,this.file)
     this.uploadForm.reset();
   }
   getFile(event){
@@ -31,7 +32,5 @@ accountDetail:AccountDetails
       avatar: this.file
     });
   }
-ngOnChange(val:AccountDetails){
-  this.accountDetail = val;
-}
+
 }

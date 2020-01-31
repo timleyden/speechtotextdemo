@@ -6,8 +6,9 @@ import { TranscriptService } from '../../../transcript.service';
 import { runInThisContext } from 'vm';
 import { DatePipe, KeyValuePipe } from '@angular/common';
 import { Observable,forkJoin } from 'rxjs';
+import { AccountDetails } from '../../../account-details';
+import { AccountService } from 'src/app/account.service';
 
-import { AccountDetails } from '../../components/storageaccount-detail/storageaccount-detail.component';
 
 
 @Component({
@@ -29,14 +30,19 @@ export class TranscriptionDetailComponent implements OnInit {
   showOffset:boolean;
   enableEditing:boolean
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, private transcriptService: TranscriptService, private datePipe:DatePipe) {
+  constructor(private route: ActivatedRoute, private http: HttpClient, private transcriptService: TranscriptService, private datePipe:DatePipe, private ads:AccountService) {
     this.redThreshold = 82;
     this.yellowThreshold = 88
     this.transcriptData = []
+    if(this.ads.Details.Region && this.ads.Details.ServiceKey){
+      this.ngOnChange(this.ads.Details);
+    }
+
   }
 
   ngOnInit() {
     this.nextOffset = 0;
+
 
   }
   getColor(confidence) {

@@ -6,7 +6,9 @@ import { FileService } from '../../../file.service'
 import { TranscriptService } from '../../../transcript.service'
 import { TranscriptDefinition, TranscriptProperty, AllProfanityFilterMode, AllPunctuationMode } from '../../../transcript-definition';
 import { Locations } from '../../../speechLocations';
-import { AccountDetails } from '../../components/storageaccount-detail/storageaccount-detail.component';
+import { AccountDetails } from 'src/app/account-details';
+import { AccountService } from 'src/app/account.service';
+
 
 @Component({
   selector: 'app-transcription-new',
@@ -26,18 +28,19 @@ export class TranscriptionNewComponent implements OnInit {
   transcriptDef = new TranscriptDefinition();
   showUpload:boolean;
 
-  constructor(private formBuilder: FormBuilder, fileService: FileService, private transcriptService: TranscriptService) {
+  constructor(private formBuilder: FormBuilder, fileService: FileService, private transcriptService: TranscriptService, private accountService:AccountService) {
     this.showAdvanced = false;
     this.fileService = fileService;
     this.showAdvancedText = "Advanced";
     this.audioFiles = Array();
     this.showUpload = false;
-    //this.bindAudioFileChoice();
-    //this.audioFiles = fileService.getAudioFiles("accountname","sastoken")
-  //  this.newTranscriptForm = this.formBuilder.group({ title: '', description: '', servicekey: '', region: '', locale: '', audiofile: '', diarization: false, addwordleveltimestamps: false, sentiment: false, profanity: '', punctuation: '' });
+
     this.punctuationOptions = AllPunctuationMode;
     this.profanityOptions = AllProfanityFilterMode;
     this.locationOptions = Locations;
+    if(this.accountService.Details.AccountName && this.accountService.Details.SASToken){
+      this.ngOnChange(this.accountService.Details);
+    }
 
   }
 
