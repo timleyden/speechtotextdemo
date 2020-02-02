@@ -43,7 +43,7 @@ transcripts
     );
     const containerClient = blobServiceClient.getContainerClient('audio');
      const blobClient = containerClient.getBlockBlobClient(file.name);
-     blobClient.uploadBrowserData(file,{blobHTTPHeaders:{blobContentType:file.type}}).then(()=>{window.alert('upload complete')})
+     return blobClient.uploadBrowserData(file,{blobHTTPHeaders:{blobContentType:file.type}})
 
   }
 }

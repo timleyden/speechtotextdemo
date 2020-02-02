@@ -1,6 +1,8 @@
-<form [formGroup]="uploadForm" (ngSubmit)="onSubmit(uploadForm.value)">
-
-  <input id="name" type="file" accept="audio/*" formControlName="name" (change)="getFile($event)">
-  <button class="button" type="submit">Upload</button>
-
+<form>
+  <input name="uploadfile" type="file" accept="audio/*" (change)="getFile($event)" />
+  <button mat-button  (click)="uploadClick()" >Upload</button>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button [mat-dialog-close]="data.blobName" cdkFocusInitial>Ok</button>
+  </div>
 </form>

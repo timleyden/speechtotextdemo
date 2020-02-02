@@ -6,8 +6,10 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatToolbarModule, MatButtonModule } from '@angular/material';
+import { MatToolbarModule, MatButtonModule, MatSnackBarModule, MatDialogModule } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { TranscriptionModule } from './transcription/transcription.module';
+import { UploadAudioComponent } from './transcription/containers/upload-audio/upload-audio.component';
 
 @NgModule({
   declarations: [
@@ -22,9 +24,14 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     BrowserAnimationsModule,
     MatToolbarModule,
     MatButtonModule,
-    FlexLayoutModule
+    MatSnackBarModule,
+    MatDialogModule,
+    FlexLayoutModule,
+    TranscriptionModule
   ],
+entryComponents:[UploadAudioComponent],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+
 })
 export class AppModule { }

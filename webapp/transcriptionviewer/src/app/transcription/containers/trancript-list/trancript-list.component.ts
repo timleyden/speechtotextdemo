@@ -5,6 +5,7 @@ import { TranscriptDefinition } from 'src/app/transcript-definition';
 import { AccountDetails } from '../../../account-details';
 import { TranscriptService } from 'src/app/transcript.service';
 import { AccountService } from 'src/app/account.service';
+import { MatSnackBar } from '@angular/material';
 @Component({
   selector: 'app-trancript-list',
   templateUrl: './trancript-list.component.html',
@@ -14,7 +15,7 @@ export class TrancriptListComponent implements OnInit {
   transcriptions: any[]
   details: AccountDetails;
   timerHandle
-  constructor(fileService: FileService, private transcriptService: TranscriptService, private accountService: AccountService) {
+  constructor(fileService: FileService, private transcriptService: TranscriptService, private accountService: AccountService, private _snackbar:MatSnackBar) {
     fileService.getTranscripts("accountname", "sastoken")
     fileService.getAudioFiles("accountname", "sastoken")
     if (this.accountService.Details.Region && this.accountService.Details.ServiceKey) {
@@ -39,7 +40,7 @@ export class TrancriptListComponent implements OnInit {
     }, 30000);
   }
   deleteTranscription(id) {
-    this.transcriptService.DeleteTranscription(this.details.Region, this.details.ServiceKey, id).subscribe(() => { window.alert('transcription deleted'); this.getTranscriptions(); }, error => { console.error(error) })
+    this.transcriptService.DeleteTranscription(this.details.Region, this.details.ServiceKey, id).subscribe(() => { this._snackbar.open('transcription deleted','Dismiss',{duration:5000}); this.getTranscriptions(); }, error => { console.error(error) })
   }
 
 }

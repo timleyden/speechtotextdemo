@@ -8,6 +8,9 @@ import { TranscriptDefinition, TranscriptProperty, AllProfanityFilterMode, AllPu
 import { Locations } from '../../../speechLocations';
 import { AccountDetails } from 'src/app/account-details';
 import { AccountService } from 'src/app/account.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { UploadAudioComponent } from '../upload-audio/upload-audio.component';
+import { MatDialog } from '@angular/material';
 
 
 @Component({
@@ -27,8 +30,9 @@ export class TranscriptionNewComponent implements OnInit {
   details: AccountDetails;
   transcriptDef = new TranscriptDefinition();
   showUpload: boolean;
+  uploadedBlobName:string;
 
-  constructor(private formBuilder: FormBuilder, fileService: FileService, private transcriptService: TranscriptService, private accountService: AccountService) {
+  constructor(private formBuilder: FormBuilder, fileService: FileService, private transcriptService: TranscriptService, private accountService: AccountService,private _snackbar:MatSnackBar, public dialog:MatDialog) {
     this.showAdvanced = false;
     this.fileService = fileService;
     this.showAdvancedText = "Advanced";
@@ -52,7 +56,17 @@ export class TranscriptionNewComponent implements OnInit {
     }
   }
   toggleUpload() {
-    this.showUpload = !this.showUpload;
+    const dialogRef = this.dialog.open(UploadAudioComponent, {
+      width: '250px',
+      data: {blobName:""}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      console.log(result);
+      this.bindAudioFileChoice();
+      this.transcriptDef.recordingsUrl = result;
+    });
   }
   toggleAdvanced(event) {
     this.showAdvanced = !this.showAdvanced
@@ -67,7 +81,7 @@ export class TranscriptionNewComponent implements OnInit {
   onSubmit() {
     this.transcriptDef.recordingsUrl = this.fileService.getRecordingUrl(this.details.AccountName, this.details.SASToken, this.transcriptDef.recordingsUrl);
     console.info(JSON.stringify(this.transcriptDef));
-    this.transcriptService.PostTranscriptionRequest(this.transcriptDef, this.details.Region, this.details.ServiceKey).subscribe(data => { console.log(data); window.alert('done') })
+    this.transcriptService.PostTranscriptionRequest(this.transcriptDef, this.details.Region, this.details.ServiceKey).subscribe(data => { console.log(data); this._snackbar.open("Transcription queued","Dismiss",{duration:5000}) })
 
   }
 

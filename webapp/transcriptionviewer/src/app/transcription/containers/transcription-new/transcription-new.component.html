@@ -8,7 +8,7 @@
         <mat-option *ngFor="let file of audioFiles" [value]="file.name">{{file.name}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <button matt-button (click)="toggleUpload()">Upload New</button>
+    <button mat-button (click)="toggleUpload()">Upload New</button>
     <div *ngIf="showUpload">
       <app-upload-audio #upload></app-upload-audio>
     </div>
