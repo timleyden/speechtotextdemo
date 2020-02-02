@@ -6,6 +6,15 @@ import { AccountDetails } from './account-details'
 export class AccountService {
   Details: AccountDetails;
   constructor() {
-    this.Details = new AccountDetails();
+    let detailsFromStorage = JSON.parse(localStorage.getItem('accountDetails')) as AccountDetails;
+    if (detailsFromStorage != null) {
+      this.Details = detailsFromStorage;
+    } else {
+      this.Details = new AccountDetails();
+    }
   }
+  save() {
+    localStorage.setItem('accountDetails', JSON.stringify(this.Details));
+  }
+
 }

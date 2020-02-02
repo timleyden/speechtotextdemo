@@ -12,18 +12,23 @@ import { AccountDetails } from '../../../account-details';
 export class StorageaccountDetailComponent implements OnInit {
   @Output() updated = new EventEmitter<AccountDetails>();
   accountDetails: AccountDetails;
+  showAccountDetails:boolean;
   //accountDetails:AccountDetails;
   locationOptions;
   constructor(private accountDetailsService: AccountService) {
     this.locationOptions = Locations;
     this.accountDetails = accountDetailsService.Details
+    this.showAccountDetails = false;
   }
 
   ngOnInit() {
   }
   refresh() {
     this.updated.emit(this.accountDetails);
+    this.accountDetailsService.save();
   }
-
+toggleAccountDetails(){
+  this.showAccountDetails = !this.showAccountDetails
+}
 }
 

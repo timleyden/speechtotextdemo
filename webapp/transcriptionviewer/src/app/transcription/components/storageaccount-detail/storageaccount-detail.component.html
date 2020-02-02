@@ -1,4 +1,5 @@
-<form>
+<button mat-button (click)="toggleAccountDetails()">Account Details</button>
+<form *ngIf="showAccountDetails">
 <mat-form-field>
   <mat-label for="accountName" >
     Account Name
@@ -21,5 +22,5 @@
   <mat-label>Speech to Text Service key</mat-label>
   <input matInput type="text" name="servicekey" [(ngModel)]="accountDetails.ServiceKey" />
 </mat-form-field>
-<button mat-button (click)="refresh()">Load</button>
+<button mat-button (click)="refresh()">Save details</button>
 </form>
