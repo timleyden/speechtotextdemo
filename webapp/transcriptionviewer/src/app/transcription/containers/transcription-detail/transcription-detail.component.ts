@@ -29,7 +29,8 @@ export class TranscriptionDetailComponent implements OnInit {
   showSequence: boolean;
   showOffset: boolean;
   enableEditing: boolean
-  displayedColumns:string[]=["duration","diarization","wordleveltimestamps","profanity","punctuation"]
+  availableColumns:string[]=["index","speaker","channel","offset","confidence","text","original","actions"]
+  displayedColumns:string[]=["offset","text","actions"]
 
   constructor(private route: ActivatedRoute, private http: HttpClient, private transcriptService: TranscriptService, private datePipe: DatePipe, private ads: AccountService) {
     this.redThreshold = 82;
