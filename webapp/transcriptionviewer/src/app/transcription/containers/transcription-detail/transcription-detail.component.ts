@@ -181,4 +181,19 @@ export class TranscriptionDetailComponent implements OnInit {
       // window.URL.revokeObjectURL(a.href); // clean the url.createObjectURL resource
     }
   }
+  //only worked in edge
+  // audioError(eventData){
+  //   window.alert('audio error: check the audio file exists and the SAStoken is valid');
+  //   console.log(eventData);
+  // }
+  audioEmptied(eventData){
+    console.log(eventData);
+    setTimeout(() => {
+      console.log(eventData.srcElement.networkState)
+if(eventData.srcElement.networkState == eventData.srcElement.NETWORK_NO_SOURCE){
+  window.alert('audio error: recording url is like invalid. check the recording file still exists.')
+}
+    }, 2000);
+
+  }
 }

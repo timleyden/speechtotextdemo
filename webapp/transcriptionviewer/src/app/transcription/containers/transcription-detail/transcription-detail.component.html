@@ -59,7 +59,7 @@
 <button mat-button (click)="submitForTraining()">Submit for model training</button>
 <hr />
 <div *ngIf="transcript">
-  <audio (timeupdate)="highlightUtterance($event)" (seeked)="this.nextOffset=0" controls>
+  <audio (timeupdate)="highlightUtterance($event)" (seeked)="this.nextOffset=0"  (loadstart)="audioEmptied($event)" controls>
 
     <source [src]="transcript.recordingsUrl" type="audio/mpeg">
     Your browser does not support the audio element.
