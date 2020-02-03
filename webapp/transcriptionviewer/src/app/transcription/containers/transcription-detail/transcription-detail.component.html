@@ -1,5 +1,30 @@
 <app-storageaccount-detail #detail (updated)="ngOnChange($event)"></app-storageaccount-detail>
+<div style="padding-left: 40px;padding-right: 40px;">
 <h2 *ngIf="transcript"><a [routerLink]="['../../']">Transcripts</a> > {{transcript.name}}</h2>
+<table *ngIf="transcript" class="mat-table">
+  <thead>
+  <tr class="mat-header-row">
+    <th class="mat-header-cell">File</th>
+    <th class="mat-header-cell">Locale</th>
+    <th class="mat-header-cell">Duration</th>
+    <th class="mat-header-cell">Diarization</th>
+    <th class="mat-header-cell">Word Level Timestamps</th>
+    <th  class="mat-header-cell">Punctuation Mode</th>
+    <th class="mat-header-cell">Profanity Mode</th>
+  </tr>
+  </thead>
+
+  <tr class="mat-row">
+    <td class="mat-cell"><a href="{{transcript.recordingsUrl}}">{{transcript.recordingsUrl.split('?')[0].split('/').pop()}}</a></td>
+    <td class="mat-cell">{{transcript.locale}}</td>
+    <td class="mat-cell">{{transcript.properties.Duration}}</td>
+    <td class="mat-cell">{{transcript.properties.AddDiarization}}</td>
+    <td class="mat-cell">{{transcript.properties.AddWordLevelTimestamps}}</td>
+    <td class="mat-cell">{{transcript.properties.PunctuationMode}}</td>
+    <td class="mat-cell">{{transcript.properties.ProfanityFilterMode}}</td>
+  </tr>
+</table>
+
 <div>
   <mat-checkbox [(ngModel)]="showOffset">Show Offset</mat-checkbox>
 </div>
@@ -34,7 +59,6 @@
 <button mat-button (click)="submitForTraining()">Submit for model training</button>
 <hr />
 <div *ngIf="transcript">
-  <span>audio file: {{transcript.recordingsUrl.split('?')[0]}}</span>
   <audio (timeupdate)="highlightUtterance($event)" (seeked)="this.nextOffset=0" controls>
 
     <source [src]="transcript.recordingsUrl" type="audio/mpeg">
@@ -43,7 +67,7 @@
   <div *ngIf="transcriptData">
 
     <div class="transcript" *ngFor="let res of (transcriptData); index as utteranceId">
-      <div [id]="['displaydiv'+utteranceId]" [ngStyle]="{'background-color':getColor(res.NBest[0].Confidence)}">
+      <div [id]="['displaydiv'+utteranceId]" style="padding-top:8px;font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;" [ngStyle]="{'background-color':getColor(res.NBest[0].Confidence)}">
         <span *ngIf="showSequence" class="sequence">{{utteranceId}}</span>
         <span *ngIf="res.SpeakerId != null" class="speakerId">Speaker {{res.SpeakerId}}</span>
         <span *ngIf="res.ChannelNumber != null" class="channel">Channel {{res.ChannelNumber}}</span>
@@ -62,4 +86,5 @@
       </div>
     </div>
   </div>
+</div>
 </div>

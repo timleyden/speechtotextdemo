@@ -11,3 +11,7 @@ left:75px;
 .utteranceEdit {
   width:100%;
 }
+mat-cell, .mat-cell {
+  min-height:auto;
+  padding: 12px 16px 12px 0;
+}

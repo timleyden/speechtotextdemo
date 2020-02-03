@@ -29,6 +29,7 @@ export class TranscriptionDetailComponent implements OnInit {
   showSequence: boolean;
   showOffset: boolean;
   enableEditing: boolean
+  displayedColumns:string[]=["duration","diarization","wordleveltimestamps","profanity","punctuation"]
 
   constructor(private route: ActivatedRoute, private http: HttpClient, private transcriptService: TranscriptService, private datePipe: DatePipe, private ads: AccountService) {
     this.redThreshold = 82;
@@ -65,6 +66,7 @@ export class TranscriptionDetailComponent implements OnInit {
       //this.transcript = transcripts[+params.get('transcriptId')]
       this.transcriptService.GetTranscription(this.details.Region, this.details.ServiceKey, params.get('transcriptId')).subscribe(data => {
         this.transcript = data;
+        this.transcript.recordingsUrl = this.transcript.recordingsUrl.split('?')[0]+this.details.SASToken
         var observables: Observable<object>[] = [];
         for (const key in this.transcript.resultsUrls) {
           if (this.transcript.resultsUrls.hasOwnProperty(key)) {
