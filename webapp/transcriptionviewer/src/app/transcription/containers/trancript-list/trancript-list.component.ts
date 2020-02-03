@@ -14,6 +14,7 @@ import { MatSnackBar } from '@angular/material';
 export class TrancriptListComponent implements OnInit {
   transcriptions: any[]
   details: AccountDetails;
+  displayedColumns:string[] = ["created","name","status","locale","open","delete"]
   timerHandle
   constructor(fileService: FileService, private transcriptService: TranscriptService, private accountService: AccountService, private _snackbar:MatSnackBar) {
     fileService.getTranscripts("accountname", "sastoken")
