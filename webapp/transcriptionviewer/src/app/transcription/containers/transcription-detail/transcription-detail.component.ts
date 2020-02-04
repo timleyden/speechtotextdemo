@@ -29,8 +29,8 @@ export class TranscriptionDetailComponent implements OnInit {
   showSequence: boolean;
   showOffset: boolean;
   enableEditing: boolean
-  availableColumns:string[]=["index","speaker","channel","offset","confidence","text","original","actions"]
-  displayedColumns:string[]=["offset","text","actions"]
+  availableColumns:string[]=["index","speaker","channel","offset","confidence","text","original","edit"]
+  displayedColumns:string[]=["offset","text","edit"]
 
   constructor(private route: ActivatedRoute, private http: HttpClient, private transcriptService: TranscriptService, private datePipe: DatePipe, private ads: AccountService) {
     this.redThreshold = 82;
@@ -127,19 +127,16 @@ export class TranscriptionDetailComponent implements OnInit {
       }
     }
   }
-  editButton(id) {
+  editButton(eventData, id) {
     //window.alert(this.transcriptData[id].Offset);
     if (!this.transcriptData[id].NBest[0].Original) {
       this.transcriptData[id].NBest[0].Original = this.transcriptData[id].NBest[0].Display
     }
-    document.getElementById('inputdiv' + id).classList.remove("hideInput")
-    document.getElementById('displaydiv' + id).classList.add("hideInput")
+    this.transcriptData[id].NBest[0].isEditable = true;
   }
-  saveButton(id) {
+  saveButton(eventData,id) {
 
-    //this.transcriptData[id].NBest[0].Display = document.getElementById('input' + id).value
-    document.getElementById('inputdiv' + id).classList.add("hideInput")
-    document.getElementById('displaydiv' + id).classList.remove("hideInput")
+    this.transcriptData[id].NBest[0].isEditable = false;
   }
   formatOffset(offset) {
     return this.datePipe.transform((new Date(1970, 0, 1).setSeconds(offset / 10000000)), 'HH:mm:ss')
