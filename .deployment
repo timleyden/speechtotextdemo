@@ -1,2 +1,2 @@
 [config]
-project = webapp/transcriptionviewer
+command = bash deploy.sh
