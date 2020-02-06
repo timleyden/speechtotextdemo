@@ -99,6 +99,28 @@ selectNodeVersion () {
 # ----------
 
 echo Handling node.js deployment.
+# 2. Select node version
+selectNodeVersion
+
+
+# 3. Install npm packages
+if [ -e "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/package.json" ]; then
+  cd "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/"
+  echo "Running $NPM_CMD install --production"
+  eval $NPM_CMD install --production
+  exitWithMessageOnError "npm failed"
+  cd - > /dev/null
+fi
+
+# 3. Angular Prod Build
+if [ -e "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/angular.json" ]; then
+  cd "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer"
+  pwd
+ 
+ eval ./node_modules/.bin/ng build --prod
+  exitWithMessageOnError "Angular build failed"
+  cd - > /dev/null
+fi
 
 # 1. KuduSync
 if [[ "$IN_PLACE_DEPLOYMENT" -ne "1" ]]; then
@@ -106,17 +128,8 @@ if [[ "$IN_PLACE_DEPLOYMENT" -ne "1" ]]; then
   exitWithMessageOnError "Kudu Sync failed"
 fi
 
-# 2. Select node version
-selectNodeVersion
 
-# 3. Install npm packages
-if [ -e "$DEPLOYMENT_TARGET/package.json" ]; then
-  cd "$DEPLOYMENT_TARGET"
-  echo "Running $NPM_CMD install --production"
-  eval $NPM_CMD install --production
-  exitWithMessageOnError "npm failed"
-  cd - > /dev/null
-fi
+
 
 ##################################################################################################################################
 echo "Finished successfully."
