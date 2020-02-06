@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --port 8080",
+    "start": "ng build && cp app.js dist/app.js && node dist/app.js",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -23,8 +23,14 @@
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
     "@azure/storage-blob": "^12.0.1",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.4",
+    "express": "^4.17.1",
     "hammerjs": "^2.0.8",
+    "method-override": "^3.0.0",
+    "morgan": "^1.9.1",
     "ng-audio": "0.0.2",
+    "nodemon": "^2.0.2",
     "rxjs": "~6.4.0",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
