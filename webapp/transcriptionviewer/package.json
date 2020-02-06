@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng build && cp app.js dist/app.js && node dist/app.js",
+    "start": "./node_modules/.bin/ng build && copy app.js dist/app.js && node dist/app.js",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
