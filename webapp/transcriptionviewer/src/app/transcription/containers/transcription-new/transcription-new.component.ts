@@ -11,6 +11,7 @@ import { AccountService } from 'src/app/account.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UploadAudioComponent } from '../upload-audio/upload-audio.component';
 import { MatDialog } from '@angular/material';
+import { BlobItem, ContainerListBlobFlatSegmentResponse } from '@azure/storage-blob';
 
 
 @Component({
@@ -30,9 +31,9 @@ export class TranscriptionNewComponent implements OnInit {
   details: AccountDetails;
   transcriptDef = new TranscriptDefinition();
   showUpload: boolean;
-  uploadedBlobName:string;
+  uploadedBlobName: string;
 
-  constructor(private formBuilder: FormBuilder, fileService: FileService, private transcriptService: TranscriptService, private accountService: AccountService,private _snackbar:MatSnackBar, public dialog:MatDialog) {
+  constructor(private formBuilder: FormBuilder, fileService: FileService, private transcriptService: TranscriptService, private accountService: AccountService, private _snackbar: MatSnackBar, public dialog: MatDialog) {
     this.showAdvanced = false;
     this.fileService = fileService;
     this.showAdvancedText = "Advanced";
@@ -42,7 +43,7 @@ export class TranscriptionNewComponent implements OnInit {
     this.punctuationOptions = AllPunctuationMode;
     this.profanityOptions = AllProfanityFilterMode;
     this.locationOptions = Locations;
-    if (this.accountService.Details.AccountName && this.accountService.Details.SASToken) {
+    if (this.accountService.IsStorageValid.value) {
       this.ngOnChange(this.accountService.Details);
     }
 
@@ -51,14 +52,20 @@ export class TranscriptionNewComponent implements OnInit {
   ngOnInit() {
   }
   private async bindAudioFileChoice() {
-    for await (const blob of <any>(this.fileService.getAudioFiles(this.details.AccountName, this.details.SASToken))) {
-      this.audioFiles.push(blob)
+    try {
+      for await (const blob of <any>(this.fileService.getAudioFiles(this.details.AccountName, this.details.SASToken))) {
+        this.audioFiles.push(blob)
+      }
+    } catch (e) {
+      this.accountService.IsStorageValid.next(false);
+      console.error(e);
+      this._snackbar.open("An error occurred loading the blobs from the storage account. Please check storage account details.", "Dismiss", { duration: 8000 })
     }
   }
   toggleUpload() {
     const dialogRef = this.dialog.open(UploadAudioComponent, {
       width: '250px',
-      data: {blobName:""}
+      data: { blobName: "" }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -81,7 +88,7 @@ export class TranscriptionNewComponent implements OnInit {
   onSubmit() {
     this.transcriptDef.recordingsUrl = this.fileService.getRecordingUrl(this.details.AccountName, this.details.SASToken, this.transcriptDef.recordingsUrl);
     console.info(JSON.stringify(this.transcriptDef));
-    this.transcriptService.PostTranscriptionRequest(this.transcriptDef, this.details.Region, this.details.ServiceKey).subscribe(data => { console.log(data); this._snackbar.open("Transcription queued","Dismiss",{duration:5000}) })
+    this.transcriptService.PostTranscriptionRequest(this.transcriptDef, this.details.Region, this.details.ServiceKey).subscribe(data => { console.log(data); this._snackbar.open("Transcription queued", "Dismiss", { duration: 5000 }) })
 
   }
 

@@ -16,7 +16,7 @@ export interface DialogData {
   templateUrl: './upload-audio.component.html',
   styleUrls: ['./upload-audio.component.css']
 })
-export class UploadAudioComponent  {
+export class UploadAudioComponent {
 
   file;
   constructor(private fileService: FileService, private formBuilder: FormBuilder, private accountService: AccountService, public dialogRef: MatDialogRef<UploadAudioComponent>,
@@ -28,7 +28,7 @@ export class UploadAudioComponent  {
   uploadClick() {
 
     console.info('file', this.file);
-    this.fileService.uploadAudioFile(this.accountService.Details.AccountName, this.accountService.Details.SASToken, this.file).then(value=>{this.data.blobName = this.file.name})
+    this.fileService.uploadAudioFile(this.accountService.Details.AccountName, this.accountService.Details.SASToken, this.file).then(value => { this.data.blobName = this.file.name })
 
 
   }

@@ -29,8 +29,8 @@ export class TranscriptionDetailComponent implements OnInit {
   showSequence: boolean;
   showOffset: boolean;
   enableEditing: boolean
-  availableColumns:string[]=["index","speaker","channel","offset","confidence","text","original","edit"]
-  displayedColumns:string[]=["offset","text","edit"]
+  availableColumns: string[] = ["index", "speaker", "channel", "offset", "confidence", "text", "original", "edit"]
+  displayedColumns: string[] = ["offset", "text", "edit"]
 
   constructor(private route: ActivatedRoute, private http: HttpClient, private transcriptService: TranscriptService, private datePipe: DatePipe, private ads: AccountService) {
     this.redThreshold = 82;
@@ -67,7 +67,7 @@ export class TranscriptionDetailComponent implements OnInit {
       //this.transcript = transcripts[+params.get('transcriptId')]
       this.transcriptService.GetTranscription(this.details.Region, this.details.ServiceKey, params.get('transcriptId')).subscribe(data => {
         this.transcript = data;
-        this.transcript.recordingsUrl = this.transcript.recordingsUrl.split('?')[0]+this.details.SASToken
+        this.transcript.recordingsUrl = this.transcript.recordingsUrl.split('?')[0] + this.details.SASToken
         var observables: Observable<object>[] = [];
         for (const key in this.transcript.resultsUrls) {
           if (this.transcript.resultsUrls.hasOwnProperty(key)) {
@@ -110,12 +110,12 @@ export class TranscriptionDetailComponent implements OnInit {
     var utterances = document.getElementsByClassName('utterance')
     console.log(audio.currentTime)
     for (var i = 0; i < utterances.length; i++) {
-      var u1 = utterances[i]
-      var offset = Number(u1.getAttribute("offset"))
-      var next = 0;
+      const u1 = utterances[i];
+      const offset = Number(u1.getAttribute("offset"));
+      let next = 0;
       if (i + 1 < utterances.length) {
-        var u2 = utterances[i + 1]
-        next = Number(u2.getAttribute("offset"))
+        const u2 = utterances[i + 1];
+        next = Number(u2.getAttribute("offset"));
       } else {
         next = offset + 30; //we are at the end of the transcript add 30 seconds to allow for long utterance
       }
@@ -134,7 +134,7 @@ export class TranscriptionDetailComponent implements OnInit {
     }
     this.transcriptData[id].NBest[0].isEditable = true;
   }
-  saveButton(eventData,id) {
+  saveButton(eventData, id) {
 
     this.transcriptData[id].NBest[0].isEditable = false;
   }
@@ -184,13 +184,13 @@ export class TranscriptionDetailComponent implements OnInit {
   //   window.alert('audio error: check the audio file exists and the SAStoken is valid');
   //   console.log(eventData);
   // }
-  audioEmptied(eventData){
+  audioEmptied(eventData) {
     console.log(eventData);
     setTimeout(() => {
       console.log(eventData.srcElement.networkState)
-if(eventData.srcElement.networkState == eventData.srcElement.NETWORK_NO_SOURCE){
-  window.alert('audio error: recording url is like invalid. check the recording file still exists.')
-}
+      if (eventData.srcElement.networkState == eventData.srcElement.NETWORK_NO_SOURCE) {
+        window.alert('audio error: recording url is like invalid. check the recording file still exists.')
+      }
     }, 2000);
 
   }

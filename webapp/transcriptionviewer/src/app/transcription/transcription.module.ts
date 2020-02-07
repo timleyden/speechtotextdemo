@@ -9,7 +9,7 @@ import { TranscriptionNewComponent } from './containers/transcription-new/transc
 import { StorageaccountDetailComponent } from './components/storageaccount-detail/storageaccount-detail.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatButtonModule, MatInputModule, MatSelectModule, MatFormFieldModule, MatCheckboxModule, MatDialogModule, MatTableModule } from '@angular/material';
+import { MatButtonModule, MatInputModule, MatSelectModule, MatFormFieldModule, MatCheckboxModule, MatDialogModule, MatTableModule, MatDividerModule, MatStepperModule, MatToolbarModule } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 
@@ -19,7 +19,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     TranscriptionDetailComponent,
     TranscriptionNewComponent,
     StorageaccountDetailComponent,
-UploadAudioComponent
+    UploadAudioComponent
   ],
   imports: [
     CommonModule,
@@ -34,6 +34,8 @@ UploadAudioComponent
     FlexLayoutModule,
     MatDialogModule,
     MatTableModule,
+    MatStepperModule,
+    MatToolbarModule,
     RouterModule.forChild([
       { path: '', component: TrancriptListComponent },
       { path: 'detail/:transcriptId', component: TranscriptionDetailComponent },
@@ -41,7 +43,7 @@ UploadAudioComponent
 
     ])
   ],
-  exports:[UploadAudioComponent],
-  entryComponents:[]
+  exports: [UploadAudioComponent],
+  entryComponents: []
 })
 export class TranscriptionModule { }

@@ -1,5 +1,6 @@
-<h2>Transcripts</h2><button [routerLink]="['./new']" mat-raised-button color="primary">Create</button>
 <app-storageaccount-detail #detail (updated)="ngOnChange($event)"></app-storageaccount-detail>
+<div *ngIf="accountService.IsSpeechValid.value">
+<h2>Transcripts</h2><button [routerLink]="['./new']" mat-raised-button color="primary">Create</button>
 
 <table mat-table [dataSource]="transcriptions" class="mat-elevation-z8">
 
@@ -45,3 +46,5 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
+</div>
+<div *ngIf="!accountService.IsSpeechValid.value">Please complete the speech service account details</div>
