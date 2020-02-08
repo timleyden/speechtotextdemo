@@ -10,12 +10,14 @@ import { MatToolbarModule, MatButtonModule, MatSnackBarModule, MatDialogModule, 
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TranscriptionModule } from './transcription/transcription.module';
 import { NavigationComponent } from './navigation/navigation.component';
+import { SortByPipe } from './sort-by.pipe';
 //import { UploadAudioComponent } from './transcription/containers/upload-audio/upload-audio.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavigationComponent
+    NavigationComponent,
+    SortByPipe
   ],
   imports: [
     BrowserModule,

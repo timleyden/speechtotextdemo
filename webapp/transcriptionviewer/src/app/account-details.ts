@@ -5,4 +5,5 @@ export class AccountDetails {
   SASToken: string;
   Region: string;
   ServiceKey: string;
+  RefreshRate:number = 30;
 }

@@ -26,7 +26,9 @@ export class StorageaccountDetailComponent implements OnInit {
     this.locationOptions = Locations;
     this.accountDetails = accountDetailsService.Details
     this.showAccountDetails = false;
-    this.navService.MenuIcons = this.navService.DefaultMenuIcons.concat([{ "icon": "more_vert", "toolTip": "Account Details", "click": () => { this.toggleAccountDetails() } }]);
+    this.navService.MenuIcons = [{ "icon":"lock", "toolTip": this.showAccountDetailsLabel,"order":100, "click": (icon) => { this.toggleAccountDetails();icon.icon = (this.showAccountDetails) ?'minimize':'lock'; icon.toolTip = this.showAccountDetailsLabel } },
+    { "toolTip": "Refresh", "icon": "refresh","click":(icon)=>{this.refresh()} }
+  ];
     if (!this.accountDetailsService.IsSpeechValid.value || !this.accountDetailsService.IsStorageValid.value) {
       this.showAccountDetails = true;
     }

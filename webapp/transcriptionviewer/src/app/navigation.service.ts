@@ -17,6 +17,7 @@ export class NavigationService {
 export class MenuIcon {
   toolTip: string;
   icon: string;
-  path?: string
-  click?: Function
+  order?:number=100;
+  path?: string;
+  click?: (icon:MenuIcon)=>void;
 }

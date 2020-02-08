@@ -69,7 +69,7 @@ export class TranscriptionDetailComponent implements OnInit {
       this.transcriptService.GetTranscription(this.details.Region, this.details.ServiceKey, params.get('transcriptId')).subscribe(data => {
         this.transcript = data;
         this.navService.NavTitle = this.navService.DefaultTitle + " - View: " + this.transcript.name
-        this.navService.MenuIcons = this.navService.MenuIcons.concat([{ "icon": "delete", "toolTip": "Delete Transcription", "click": () => { this.transcriptService.DeleteTranscription(this.details.Region, this.details.ServiceKey, this.transcript.id).subscribe(data => { window.alert('transcription deleted') }) } }]);
+        this.navService.MenuIcons = this.navService.MenuIcons.concat([{ "icon": "delete", "toolTip": "Delete Transcription", "order":50, "click": () => { this.transcriptService.DeleteTranscription(this.details.Region, this.details.ServiceKey, this.transcript.id).subscribe(data => { window.alert('transcription deleted') }) } },{"icon":"save","toolTip":"Save modified Transcript","click":(icon)=>{},"order":60},{"icon":"train","toolTip":"Submit for model training","click":(icon)=>{},"order":70}]);
         this.transcript.recordingsUrl = this.transcript.recordingsUrl.split('?')[0] + this.details.SASToken
         var observables: Observable<object>[] = [];
         for (const key in this.transcript.resultsUrls) {
@@ -187,8 +187,8 @@ export class TranscriptionDetailComponent implements OnInit {
   //   window.alert('audio error: check the audio file exists and the SAStoken is valid');
   //   console.log(eventData);
   // }
+  //for some reason audio control does not fire error event when network request returns a 404, used this as a work around to detect bad link
   audioEmptied(eventData) {
-    console.log(eventData);
     setTimeout(() => {
       console.log(eventData.srcElement.networkState)
       if (eventData.srcElement.networkState == eventData.srcElement.NETWORK_NO_SOURCE) {

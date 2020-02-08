@@ -22,6 +22,9 @@ export class AccountService {
     this.validateDetails();
   }
   validateDetails() {
+    if(!this.Details.RefreshRate){
+      this.Details.RefreshRate = 30;
+    }
     if (this.Details.Region && this.Details.ServiceKey) {
       this.IsSpeechValid.next(true);
     } else {
