@@ -4,6 +4,7 @@ import { AccountService } from '../../../account.service';
 import { AccountDetails } from '../../../account-details';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { MatVerticalStepper } from '@angular/material';
+import { NavigationService } from 'src/app/navigation.service';
 
 
 @Component({
@@ -21,11 +22,11 @@ export class StorageaccountDetailComponent implements OnInit {
 
   //accountDetails:AccountDetails;
   locationOptions;
-  constructor(private accountDetailsService: AccountService) {
+  constructor(private accountDetailsService: AccountService, private navService: NavigationService) {
     this.locationOptions = Locations;
     this.accountDetails = accountDetailsService.Details
     this.showAccountDetails = false;
-
+    this.navService.MenuIcons = this.navService.DefaultMenuIcons.concat([{ "icon": "more_vert", "toolTip": "Account Details", "click": () => { this.toggleAccountDetails() } }]);
     if (!this.accountDetailsService.IsSpeechValid.value || !this.accountDetailsService.IsStorageValid.value) {
       this.showAccountDetails = true;
     }

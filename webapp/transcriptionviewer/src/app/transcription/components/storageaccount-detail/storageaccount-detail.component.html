@@ -1,5 +1,3 @@
-<button mat-button (click)="toggleAccountDetails()">{{showAccountDetailsLabel}}</button>
-
 <form *ngIf="showAccountDetails">
   <mat-vertical-stepper [linear]="isLinear" #stepper [selectedIndex]="selectedIndex">
     <mat-step label="Storage Account Details">

@@ -1,0 +1,10 @@
+<mat-toolbar color="primary"><span>{{navigationService.NavTitle}}</span>
+  <span class="spacer"></span>
+  <ng-container *ngFor="let icon of navigationService.MenuIcons">
+    <mat-icon *ngIf="icon.path" class="icon" matTooltip="{{icon.toolTip}}" [routerLink]="[icon.path]">{{icon.icon}}
+    </mat-icon>
+    <mat-icon *ngIf="icon.click" class="icon" matTooltip="{{icon.toolTip}}" (click)="[icon.click()]">{{icon.icon}}
+    </mat-icon>
+  </ng-container>
+  <mat-icon class="icon">help_outline</mat-icon>
+</mat-toolbar>

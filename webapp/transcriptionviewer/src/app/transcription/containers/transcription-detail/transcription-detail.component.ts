@@ -8,6 +8,7 @@ import { DatePipe, KeyValuePipe } from '@angular/common';
 import { Observable, forkJoin } from 'rxjs';
 import { AccountDetails } from '../../../account-details';
 import { AccountService } from 'src/app/account.service';
+import { NavigationService } from 'src/app/navigation.service';
 
 
 
@@ -32,7 +33,7 @@ export class TranscriptionDetailComponent implements OnInit {
   availableColumns: string[] = ["index", "speaker", "channel", "offset", "confidence", "text", "original", "edit"]
   displayedColumns: string[] = ["offset", "text", "edit"]
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, private transcriptService: TranscriptService, private datePipe: DatePipe, private ads: AccountService) {
+  constructor(private route: ActivatedRoute, private http: HttpClient, private transcriptService: TranscriptService, private datePipe: DatePipe, private ads: AccountService, private navService: NavigationService) {
     this.redThreshold = 82;
     this.yellowThreshold = 88
     this.transcriptData = []
@@ -67,6 +68,8 @@ export class TranscriptionDetailComponent implements OnInit {
       //this.transcript = transcripts[+params.get('transcriptId')]
       this.transcriptService.GetTranscription(this.details.Region, this.details.ServiceKey, params.get('transcriptId')).subscribe(data => {
         this.transcript = data;
+        this.navService.NavTitle = this.navService.DefaultTitle + " - View: " + this.transcript.name
+        this.navService.MenuIcons = this.navService.MenuIcons.concat([{ "icon": "delete", "toolTip": "Delete Transcription", "click": () => { this.transcriptService.DeleteTranscription(this.details.Region, this.details.ServiceKey, this.transcript.id).subscribe(data => { window.alert('transcription deleted') }) } }]);
         this.transcript.recordingsUrl = this.transcript.recordingsUrl.split('?')[0] + this.details.SASToken
         var observables: Observable<object>[] = [];
         for (const key in this.transcript.resultsUrls) {

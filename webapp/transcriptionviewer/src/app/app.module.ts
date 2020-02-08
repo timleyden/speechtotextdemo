@@ -6,14 +6,16 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatToolbarModule, MatButtonModule, MatSnackBarModule, MatDialogModule } from '@angular/material';
+import { MatToolbarModule, MatButtonModule, MatSnackBarModule, MatDialogModule, MatIcon, MatIconModule, MatTooltip, MatTooltipModule } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TranscriptionModule } from './transcription/transcription.module';
-import { UploadAudioComponent } from './transcription/containers/upload-audio/upload-audio.component';
+import { NavigationComponent } from './navigation/navigation.component';
+//import { UploadAudioComponent } from './transcription/containers/upload-audio/upload-audio.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    NavigationComponent
   ],
   imports: [
     BrowserModule,
@@ -27,9 +29,10 @@ import { UploadAudioComponent } from './transcription/containers/upload-audio/up
     MatSnackBarModule,
     MatDialogModule,
     FlexLayoutModule,
-    TranscriptionModule
+    MatIconModule,
+    MatTooltipModule,
   ],
-entryComponents:[UploadAudioComponent],
+entryComponents:[],
   providers: [],
   bootstrap: [AppComponent],
 

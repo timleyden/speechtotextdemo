@@ -6,6 +6,7 @@ import { AccountDetails } from '../../../account-details';
 import { TranscriptService } from 'src/app/transcript.service';
 import { AccountService } from 'src/app/account.service';
 import { MatSnackBar } from '@angular/material';
+import { NavigationService } from 'src/app/navigation.service';
 @Component({
   selector: 'app-trancript-list',
   templateUrl: './trancript-list.component.html',
@@ -17,10 +18,11 @@ export class TrancriptListComponent implements OnInit {
   displayedColumns: string[] = ["created", "name", "status", "locale", "open", "delete"]
   timerHandle: any;
   detailsValid: boolean = false
-  constructor(fileService: FileService, private transcriptService: TranscriptService, private accountService: AccountService, private _snackbar: MatSnackBar) {
+  constructor(fileService: FileService, private transcriptService: TranscriptService, private accountService: AccountService, private _snackbar: MatSnackBar, private navService: NavigationService) {
     if (this.accountService.IsSpeechValid.value) {
       this.ngOnChange(this.accountService.Details);
     }
+    navService.NavTitle = navService.DefaultTitle + ' List'
   }
 
   ngOnInit() {

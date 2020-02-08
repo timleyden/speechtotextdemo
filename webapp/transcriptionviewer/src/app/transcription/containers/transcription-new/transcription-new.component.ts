@@ -12,6 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { UploadAudioComponent } from '../upload-audio/upload-audio.component';
 import { MatDialog } from '@angular/material';
 import { BlobItem, ContainerListBlobFlatSegmentResponse } from '@azure/storage-blob';
+import { NavigationService } from 'src/app/navigation.service';
 
 
 @Component({
@@ -33,7 +34,7 @@ export class TranscriptionNewComponent implements OnInit {
   showUpload: boolean;
   uploadedBlobName: string;
 
-  constructor(private formBuilder: FormBuilder, fileService: FileService, private transcriptService: TranscriptService, private accountService: AccountService, private _snackbar: MatSnackBar, public dialog: MatDialog) {
+  constructor(private formBuilder: FormBuilder, fileService: FileService, private transcriptService: TranscriptService, private accountService: AccountService, private _snackbar: MatSnackBar, public dialog: MatDialog, private navService: NavigationService) {
     this.showAdvanced = false;
     this.fileService = fileService;
     this.showAdvancedText = "Advanced";
@@ -43,6 +44,7 @@ export class TranscriptionNewComponent implements OnInit {
     this.punctuationOptions = AllPunctuationMode;
     this.profanityOptions = AllProfanityFilterMode;
     this.locationOptions = Locations;
+    this.navService.NavTitle = this.navService.DefaultTitle + " Create - New Transcription"
     if (this.accountService.IsStorageValid.value) {
       this.ngOnChange(this.accountService.Details);
     }
