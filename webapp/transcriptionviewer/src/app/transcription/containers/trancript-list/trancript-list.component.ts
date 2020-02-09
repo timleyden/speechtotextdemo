@@ -23,7 +23,7 @@ export class TrancriptListComponent implements OnInit {
     if (this.accountService.IsSpeechValid.value) {
       this.ngOnChange(this.accountService.Details);
     }
-    navService.NavTitle = navService.DefaultTitle + ' List'
+    navService.NavTitle = ' - List'
 
   }
 

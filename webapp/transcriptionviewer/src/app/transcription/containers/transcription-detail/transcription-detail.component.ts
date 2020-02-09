@@ -68,7 +68,7 @@ export class TranscriptionDetailComponent implements OnInit {
       //this.transcript = transcripts[+params.get('transcriptId')]
       this.transcriptService.GetTranscription(this.details.Region, this.details.ServiceKey, params.get('transcriptId')).subscribe(data => {
         this.transcript = data;
-        this.navService.NavTitle = this.navService.DefaultTitle + " - View: " + this.transcript.name
+        this.navService.NavTitle = " - View: " + this.transcript.name
         this.navService.MenuIcons = this.navService.MenuIcons.concat([{ "icon": "delete", "toolTip": "Delete Transcription", "order":50, "click": () => { this.transcriptService.DeleteTranscription(this.details.Region, this.details.ServiceKey, this.transcript.id).subscribe(data => { window.alert('transcription deleted') }) } },{"icon":"save","toolTip":"Save modified Transcript","click":(icon)=>{},"order":60},{"icon":"train","toolTip":"Submit for model training","click":(icon)=>{},"order":70}]);
         this.transcript.recordingsUrl = this.transcript.recordingsUrl.split('?')[0] + this.details.SASToken
         var observables: Observable<object>[] = [];

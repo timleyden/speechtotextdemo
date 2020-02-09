@@ -5,12 +5,11 @@ import { Injectable } from '@angular/core';
 })
 export class NavigationService {
   NavTitle: string
-  readonly DefaultTitle: string = "Transcription Viewer"
+  readonly DefaultTitle: string
   MenuIcons: MenuIcon[]
   readonly DefaultMenuIcons: MenuIcon[] = [{ "toolTip": "Create Transcription", "icon": "create", "path": "/transcription/new" }, { "toolTip": "List Transcriptions", "icon": "list", "path": "/transcription" }]
   constructor() {
-    this.NavTitle = this.DefaultTitle
-    this.MenuIcons = this.DefaultMenuIcons
+    this.DefaultTitle =  "Transcription Viewer"
   }
 
 }

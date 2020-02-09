@@ -44,7 +44,7 @@ export class TranscriptionNewComponent implements OnInit {
     this.punctuationOptions = AllPunctuationMode;
     this.profanityOptions = AllProfanityFilterMode;
     this.locationOptions = Locations;
-    this.navService.NavTitle = this.navService.DefaultTitle + " Create - New Transcription"
+    this.navService.NavTitle =" - Create - New Transcription"
     if (this.accountService.IsStorageValid.value) {
       this.ngOnChange(this.accountService.Details);
     }

@@ -6,18 +6,20 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatToolbarModule, MatButtonModule, MatSnackBarModule, MatDialogModule, MatIcon, MatIconModule, MatTooltip, MatTooltipModule } from '@angular/material';
+import { MatToolbarModule, MatButtonModule, MatSnackBarModule, MatDialogModule, MatIcon, MatIconModule, MatTooltip, MatTooltipModule, MatDividerModule, MatCardModule, MatListModule } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TranscriptionModule } from './transcription/transcription.module';
 import { NavigationComponent } from './navigation/navigation.component';
 import { SortByPipe } from './sort-by.pipe';
+import { HelpComponent } from './help/help.component';
 //import { UploadAudioComponent } from './transcription/containers/upload-audio/upload-audio.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavigationComponent,
-    SortByPipe
+    SortByPipe,
+    HelpComponent
   ],
   imports: [
     BrowserModule,
@@ -33,6 +35,9 @@ import { SortByPipe } from './sort-by.pipe';
     FlexLayoutModule,
     MatIconModule,
     MatTooltipModule,
+    MatDividerModule,
+    MatCardModule,
+    MatListModule
   ],
 entryComponents:[],
   providers: [],
