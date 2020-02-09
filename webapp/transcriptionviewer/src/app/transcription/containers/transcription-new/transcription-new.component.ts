@@ -44,7 +44,7 @@ export class TranscriptionNewComponent implements OnInit {
     this.punctuationOptions = AllPunctuationMode;
     this.profanityOptions = AllProfanityFilterMode;
     this.locationOptions = Locations;
-    this.navService.NavTitle =" - Create - New Transcription"
+    this.navService.NavTitle = " - Create - New Transcription"
     if (this.accountService.IsStorageValid.value) {
       this.ngOnChange(this.accountService.Details);
     }
@@ -90,7 +90,7 @@ export class TranscriptionNewComponent implements OnInit {
   onSubmit() {
     this.transcriptDef.recordingsUrl = this.fileService.getRecordingUrl(this.details.AccountName, this.details.SASToken, this.transcriptDef.recordingsUrl);
     console.info(JSON.stringify(this.transcriptDef));
-    this.transcriptService.PostTranscriptionRequest(this.transcriptDef, this.details.Region, this.details.ServiceKey).subscribe(data => { console.log(data); this._snackbar.open("Transcription queued", "Dismiss", { duration: 5000 }) })
+    this.transcriptService.PostTranscriptionRequest(this.transcriptDef, this.details.Region, this.details.ServiceKey).subscribe(data => { console.log(data); this._snackbar.open("Transcription queued", "Dismiss", { duration: 5000 }) }, error => { const errorMsg = (error.error.message)?error.error.message:"Check the console for more information"; this._snackbar.open("Failed to queue transcription. " + errorMsg, "Dismiss", { duration: 5000 });console.log(error) });
 
   }
 
