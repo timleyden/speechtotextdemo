@@ -44,20 +44,32 @@
       <td>&nbsp;</td>
     </tr>
   </table>
-
-  <mat-form-field>
+<div>
+  <mat-form-field style="width: 100%;">
     <mat-label>Columns</mat-label>
     <mat-select name="selectedColumns" [(ngModel)]="displayedColumns" multiple>
       <mat-option *ngFor="let column of availableColumns" [value]="column.Value" matTooltip="{{column.Tooltip}}">{{column.Display}}</mat-option>
     </mat-select>
   </mat-form-field>
+</div><div>
+  <mat-form-field>
 
-  <button mat-button (click)="processAndCreateFile()">Download as txt file</button>
-  <button mat-button *ngIf="transcript != null" (click)="downloadRawResults()">Download raw transcript results</button>
+  <mat-label>Playback Speed</mat-label>
+  <mat-select name="playbackRate" [(ngModel)]="playbackRate" >
+    <mat-option [value]=".7">.5</mat-option>
+    <mat-option [value]=".7">.7</mat-option>
+    <mat-option [value]="1">1</mat-option>
+    <mat-option [value]="1.2">1.2</mat-option>
+    <mat-option [value]="1.5">1.5</mat-option>
+    <mat-option [value]="1.7">1.7</mat-option>
+    <mat-option [value]="2">2</mat-option>
+  </mat-select>
 
-  <hr />
+</mat-form-field>
+</div>
+  <mat-divider></mat-divider>
   <div *ngIf="transcript">
-    <audio (timeupdate)="highlightUtterance($event)" (seeked)="this.nextOffset=0" (loadstart)="audioEmptied($event)"
+    <audio style="width: 100%;" [playbackRate]="[playbackRate]" (timeupdate)="highlightUtterance($event)" (seeked)="this.nextOffset=0" (loadstart)="audioEmptied($event)"
       controls>
 
       <source [src]="transcript.recordingsUrl" type="audio/mpeg">

@@ -28,6 +28,7 @@ export class TranscriptionDetailComponent implements OnInit {
   redThreshold: number;
   yellowThreshold: number;
   enableHighlighting: boolean;
+  playbackRate:number;
   availableColumns: SelectItem[] = [{ "Value": "index", "Display": "Index", "Tooltip": "gives each utterance a line number to help reference" },
   { "Value": "speaker", "Display": "Speaker", "Tooltip": "If Diarization enabled, shows the identified speaker id" },
   { "Value": "channel", "Display": "Channel", "Tooltip": "if multi channel audio shows the channel number" },
@@ -44,6 +45,7 @@ export class TranscriptionDetailComponent implements OnInit {
     this.redThreshold = 82;
     this.yellowThreshold = 88
     this.transcriptData = []
+    this.playbackRate = 1;
     if (this.ads.Details.Region && this.ads.Details.ServiceKey) {
       this.ngOnChange(this.ads.Details);
     }
