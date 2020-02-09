@@ -48,7 +48,7 @@
   <mat-form-field>
     <mat-label>Columns</mat-label>
     <mat-select name="selectedColumns" [(ngModel)]="displayedColumns" multiple>
-      <mat-option *ngFor="let column of availableColumns" [value]="column">{{column}}</mat-option>
+      <mat-option *ngFor="let column of availableColumns" [value]="column.Value" matTooltip="{{column.Tooltip}}">{{column.Display}}</mat-option>
     </mat-select>
   </mat-form-field>
 

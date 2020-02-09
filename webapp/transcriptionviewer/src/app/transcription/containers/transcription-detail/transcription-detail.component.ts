@@ -30,7 +30,16 @@ export class TranscriptionDetailComponent implements OnInit {
   showSequence: boolean;
   showOffset: boolean;
   enableEditing: boolean
-  availableColumns: string[] = ["index", "speaker", "channel", "offset", "confidence", "text", "original","sentiment", "edit"]
+  availableColumns: SelectItem[] = [{"Value":"index","Display":"Index","Tooltip":"gives each utterance a line number to help reference"},
+   {"Value":"speaker","Display":"Speaker","Tooltip":"If Diarization enabled, shows the identified speaker id"},
+    {"Value":"channel","Display":"Channel","Tooltip":"if multi channel audio shows the channel number"},
+     {"Value":"offset","Display":"Offset","Tooltip":"shows the time in seconds since the start of the audio"},
+      {"Value":"confidence","Display":"Confidence","Tooltip":"confidence of the model for this utterance"},
+       {"Value":"text","Display":"Utterance","Tooltip":"the transcribed text (utterance)"},
+        {"Value":"original","Display":"Original","Tooltip":"If the transcript has been modified, this column shows the original generated text"},
+        {"Value":"sentiment","Display":"Sentiment","Tooltip":"If sentiment enabled, show sentiment in the format of Negative, Neutral, Positive"},
+         {"Value":"edit","Display":"Edit Controls","Tooltip":"Display the Edit and Save buttons for editing transcript"}
+        ];
   displayedColumns: string[] = ["offset", "text", "edit"]
 
   constructor(private route: ActivatedRoute, private http: HttpClient, private transcriptService: TranscriptService, private datePipe: DatePipe, private ads: AccountService, private navService: NavigationService) {
@@ -197,4 +206,9 @@ export class TranscriptionDetailComponent implements OnInit {
     }, 2000);
 
   }
+}
+export class SelectItem{
+  Display:string;
+  Value:string;
+  Tooltip:string
 }
