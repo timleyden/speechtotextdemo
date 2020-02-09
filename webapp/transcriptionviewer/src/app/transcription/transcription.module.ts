@@ -9,8 +9,9 @@ import { TranscriptionNewComponent } from './containers/transcription-new/transc
 import { StorageaccountDetailComponent } from './components/storageaccount-detail/storageaccount-detail.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatButtonModule, MatInputModule, MatSelectModule, MatFormFieldModule, MatCheckboxModule, MatDialogModule, MatTableModule, MatDividerModule, MatStepperModule, MatToolbarModule, MatIconModule, MatTooltipModule } from '@angular/material';
+import { MatButtonModule, MatInputModule, MatSelectModule, MatFormFieldModule, MatCheckboxModule, MatDialogModule, MatTableModule, MatDividerModule, MatStepperModule, MatToolbarModule, MatIconModule, MatTooltipModule, MatBottomSheetModule, MatSidenavModule, MatListModule } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { TranscriptionSaveBottomsheetComponent } from './components/transcription-save-bottomsheet/transcription-save-bottomsheet.component';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     TranscriptionDetailComponent,
     TranscriptionNewComponent,
     StorageaccountDetailComponent,
-    UploadAudioComponent
+    UploadAudioComponent,
+    TranscriptionSaveBottomsheetComponent
   ],
   imports: [
     CommonModule,
@@ -38,6 +40,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     MatToolbarModule,
     MatIconModule,
     MatTooltipModule,
+    MatBottomSheetModule,
+    MatListModule,
     RouterModule.forChild([
       { path: '', component: TrancriptListComponent },
       { path: 'detail/:transcriptId', component: TranscriptionDetailComponent },
@@ -46,6 +50,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     ])
   ],
   exports: [UploadAudioComponent],
-  entryComponents: [UploadAudioComponent]
+  entryComponents: [UploadAudioComponent,TranscriptionSaveBottomsheetComponent]
 })
 export class TranscriptionModule { }

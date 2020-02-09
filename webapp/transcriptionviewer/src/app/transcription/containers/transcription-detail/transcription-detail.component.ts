@@ -9,6 +9,8 @@ import { Observable, forkJoin } from 'rxjs';
 import { AccountDetails } from '../../../account-details';
 import { AccountService } from 'src/app/account.service';
 import { NavigationService } from 'src/app/navigation.service';
+import { MatBottomSheet } from '@angular/material';
+import { TranscriptionSaveBottomsheetComponent } from '../../components/transcription-save-bottomsheet/transcription-save-bottomsheet.component';
 
 
 
@@ -26,23 +28,19 @@ export class TranscriptionDetailComponent implements OnInit {
   redThreshold: number;
   yellowThreshold: number;
   enableHighlighting: boolean;
-  showConfidence: boolean;
-  showSequence: boolean;
-  showOffset: boolean;
-  enableEditing: boolean
-  availableColumns: SelectItem[] = [{"Value":"index","Display":"Index","Tooltip":"gives each utterance a line number to help reference"},
-   {"Value":"speaker","Display":"Speaker","Tooltip":"If Diarization enabled, shows the identified speaker id"},
-    {"Value":"channel","Display":"Channel","Tooltip":"if multi channel audio shows the channel number"},
-     {"Value":"offset","Display":"Offset","Tooltip":"shows the time in seconds since the start of the audio"},
-      {"Value":"confidence","Display":"Confidence","Tooltip":"confidence of the model for this utterance"},
-       {"Value":"text","Display":"Utterance","Tooltip":"the transcribed text (utterance)"},
-        {"Value":"original","Display":"Original","Tooltip":"If the transcript has been modified, this column shows the original generated text"},
-        {"Value":"sentiment","Display":"Sentiment","Tooltip":"If sentiment enabled, show sentiment in the format of Negative, Neutral, Positive"},
-         {"Value":"edit","Display":"Edit Controls","Tooltip":"Display the Edit and Save buttons for editing transcript"}
-        ];
+  availableColumns: SelectItem[] = [{ "Value": "index", "Display": "Index", "Tooltip": "gives each utterance a line number to help reference" },
+  { "Value": "speaker", "Display": "Speaker", "Tooltip": "If Diarization enabled, shows the identified speaker id" },
+  { "Value": "channel", "Display": "Channel", "Tooltip": "if multi channel audio shows the channel number" },
+  { "Value": "offset", "Display": "Offset", "Tooltip": "shows the time in seconds since the start of the audio" },
+  { "Value": "confidence", "Display": "Confidence", "Tooltip": "confidence of the model for this utterance" },
+  { "Value": "text", "Display": "Utterance", "Tooltip": "the transcribed text (utterance)" },
+  { "Value": "original", "Display": "Original", "Tooltip": "If the transcript has been modified, this column shows the original generated text" },
+  { "Value": "sentiment", "Display": "Sentiment", "Tooltip": "If sentiment enabled, show sentiment in the format of Negative, Neutral, Positive" },
+  { "Value": "edit", "Display": "Edit Controls", "Tooltip": "Display the Edit and Save buttons for editing transcript" }
+  ];
   displayedColumns: string[] = ["offset", "text", "edit"]
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, private transcriptService: TranscriptService, private datePipe: DatePipe, private ads: AccountService, private navService: NavigationService) {
+  constructor(private route: ActivatedRoute, private http: HttpClient, private transcriptService: TranscriptService, private datePipe: DatePipe, private ads: AccountService, private navService: NavigationService,private _bottomSheet: MatBottomSheet) {
     this.redThreshold = 82;
     this.yellowThreshold = 88
     this.transcriptData = []
@@ -78,7 +76,7 @@ export class TranscriptionDetailComponent implements OnInit {
       this.transcriptService.GetTranscription(this.details.Region, this.details.ServiceKey, params.get('transcriptId')).subscribe(data => {
         this.transcript = data;
         this.navService.NavTitle = " - View: " + this.transcript.name
-        this.navService.MenuIcons = this.navService.MenuIcons.concat([{ "icon": "delete", "toolTip": "Delete Transcription", "order":50, "click": () => { this.transcriptService.DeleteTranscription(this.details.Region, this.details.ServiceKey, this.transcript.id).subscribe(data => { window.alert('transcription deleted') }) } },{"icon":"save","toolTip":"Save modified Transcript","click":(icon)=>{},"order":60},{"icon":"train","toolTip":"Submit for model training","click":(icon)=>{},"order":70}]);
+        this.navService.MenuIcons = this.navService.MenuIcons.concat([{ "icon": "delete", "toolTip": "Delete Transcription", "order": 50, "click": () => { this.transcriptService.DeleteTranscription(this.details.Region, this.details.ServiceKey, this.transcript.id).subscribe(data => { window.alert('transcription deleted') }) } }, { "icon": "save", "toolTip": "Save modified Transcript", "click": (icon) => { this._bottomSheet.open(TranscriptionSaveBottomsheetComponent,{data: {"transcript":this.transcript,"transcriptData":this.transcriptData}}) }, "order": 60 }, { "icon": "train", "toolTip": "Submit for model training", "click": (icon) => { this.submitForTraining()}, "order": 70 }]);
         this.transcript.recordingsUrl = this.transcript.recordingsUrl.split('?')[0] + this.details.SASToken
         var observables: Observable<object>[] = [];
         for (const key in this.transcript.resultsUrls) {
@@ -153,26 +151,7 @@ export class TranscriptionDetailComponent implements OnInit {
   formatOffset(offset) {
     return this.datePipe.transform((new Date(1970, 0, 1).setSeconds(offset / 10000000)), 'HH:mm:ss')
   }
-  downloadRawResults() {
-    location.href = this.transcript.resultsUrls.channel_0
-  }
-  processAndCreateFile() {
-    var filename = 'transcript.txt'
-    const blobparts = this.transcriptData.map((data) => this.formatOffset(data.Offset) + ':\t' + data.NBest[0].Display + '\n')
-    var blob = new Blob(blobparts, { type: 'text/plain' });
-    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-      window.navigator.msSaveOrOpenBlob(blob, filename);
-    } else {
-      var e: any = document.createEvent('MouseEvents'),
-        a = document.createElement('a');
-      a.download = filename;
-      a.href = window.URL.createObjectURL(blob);
-      a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
-      e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-      a.dispatchEvent(e);
-      // window.URL.revokeObjectURL(a.href); // clean the url.createObjectURL resource
-    }
-  }
+
   submitForTraining() {
     var filename = 'traningdata.json'
     var exportdata = { recordingurl: this.transcript.recordingsUrl, SegmentResults: this.transcriptData }
@@ -207,8 +186,8 @@ export class TranscriptionDetailComponent implements OnInit {
 
   }
 }
-export class SelectItem{
-  Display:string;
-  Value:string;
-  Tooltip:string
+export class SelectItem {
+  Display: string;
+  Value: string;
+  Tooltip: string
 }

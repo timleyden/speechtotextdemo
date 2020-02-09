@@ -1,0 +1,17 @@
+<mat-nav-list>
+  <a  mat-list-item (click)="processAndCreateFile()">
+    <span mat-line>Download as text</span>
+    <span mat-line>Preserves time stamp and text only</span>
+  </a>
+
+  <a  mat-list-item (click)="downloadRawResults()">
+    <span mat-line>Download original transcript</span>
+    <span mat-line>saves original from transcription service</span>
+  </a>
+
+  <a  mat-list-item (click)="downloadModifiedResults()">
+    <span mat-line>Download modified transcript data</span>
+    <span mat-line>Saves all data including updated text</span>
+  </a>
+
+</mat-nav-list>

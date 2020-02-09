@@ -54,7 +54,7 @@
 
   <button mat-button (click)="processAndCreateFile()">Download as txt file</button>
   <button mat-button *ngIf="transcript != null" (click)="downloadRawResults()">Download raw transcript results</button>
-  <button mat-button (click)="submitForTraining()">Submit for model training</button>
+
   <hr />
   <div *ngIf="transcript">
     <audio (timeupdate)="highlightUtterance($event)" (seeked)="this.nextOffset=0" (loadstart)="audioEmptied($event)"
