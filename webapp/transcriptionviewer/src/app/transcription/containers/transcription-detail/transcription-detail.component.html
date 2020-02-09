@@ -113,12 +113,14 @@
           </td>
         </ng-container>
             <!-- sentiment Column -->
-            <ng-container matColumnDef="sentiment">
+            <ng-container matColumnDef="sentiment"  >
               <th mat-header-cell *matHeaderCellDef> Sentiment </th>
               <td mat-cell *matCellDef="let element;let i = index;">
+                <span *ngIf="element.NBest[0].Sentiment">
                 Negative: {{element.NBest[0].Sentiment.Negative}}
                 Neutral: {{element.NBest[0].Sentiment.Neutral}}
                 Positive: {{element.NBest[0].Sentiment.Positive}}
+              </span>
               </td>
             </ng-container>
         <!-- actions Column -->
