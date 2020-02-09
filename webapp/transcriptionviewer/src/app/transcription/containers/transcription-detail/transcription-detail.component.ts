@@ -30,7 +30,7 @@ export class TranscriptionDetailComponent implements OnInit {
   showSequence: boolean;
   showOffset: boolean;
   enableEditing: boolean
-  availableColumns: string[] = ["index", "speaker", "channel", "offset", "confidence", "text", "original", "edit"]
+  availableColumns: string[] = ["index", "speaker", "channel", "offset", "confidence", "text", "original","sentiment", "edit"]
   displayedColumns: string[] = ["offset", "text", "edit"]
 
   constructor(private route: ActivatedRoute, private http: HttpClient, private transcriptService: TranscriptService, private datePipe: DatePipe, private ads: AccountService, private navService: NavigationService) {
