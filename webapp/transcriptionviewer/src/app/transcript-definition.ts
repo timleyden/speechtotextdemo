@@ -5,7 +5,7 @@ export class TranscriptDefinition{
   description:string;
   recordingsUrl:string;
   locale:string;
-  models:[ModelIdentity];
+  models:ModelIdentity[] = [];
   properties:TranscriptProperty
   public constructor(){
     //set defaults

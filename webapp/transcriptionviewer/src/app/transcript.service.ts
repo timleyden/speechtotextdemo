@@ -8,11 +8,16 @@ import { stringify } from 'querystring';
 })
 
 export class TranscriptService {
-  private uriPath = ".cris.ai/api/speechtotext/v2.0/transcriptions";
-  private apiKeyHeaderName = "Ocp-Apim-Subscription-Key";
+  private transcriptionPath:string = ".cris.ai/api/speechtotext/v2.0/transcriptions";
+  private modelsPath:string = ".cris.ai/api/speechtotext/v2.0/models"
+  private apiKeyHeaderName:string = "Ocp-Apim-Subscription-Key";
 
   private buildUri(region: string) {
-    let hostName = `https://${region}${this.uriPath}`;
+    let hostName = `https://${region}${this.transcriptionPath}`;
+    return hostName;
+  }
+  private buildModelsUri(region: string) {
+    let hostName = `https://${region}${this.modelsPath}`;
     return hostName;
   }
   constructor(private httpClient: HttpClient) { }
@@ -48,5 +53,14 @@ export class TranscriptService {
     let options = { headers: headers };
     return this.httpClient.get(this.buildUri(region) + "/" + transcriptionId, options);
   }
+  GetModels(region: string, apiKey: string) {
+    let headers = new HttpHeaders({
+      'Content-Type': "application/json"
+    });
+    headers = headers.append(this.apiKeyHeaderName, apiKey);
+    let options = { headers: headers };
+    return this.httpClient.get(this.buildModelsUri(region), options);
+  }
+
 
 }

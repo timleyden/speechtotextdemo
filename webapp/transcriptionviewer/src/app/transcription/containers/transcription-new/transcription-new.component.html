@@ -25,7 +25,7 @@
   <fieldset *ngIf="showAdvanced">
     <mat-form-field>
       <mat-label>Locale</mat-label>
-      <mat-select name="locale" [(ngModel)]="transcriptDef.locale">
+      <mat-select name="locale" [(ngModel)]="transcriptDef.locale" (ngModelChange)="filterModels()">
         <mat-option *ngFor="let locale of localeOptions" value="{{locale}}">{{locale}}</mat-option>
       </mat-select>
     </mat-form-field>
@@ -48,6 +48,12 @@
       <mat-label>Profanity filter mode</mat-label>
       <mat-select name="profanityMode" [(ngModel)]="transcriptDef.properties.ProfanityFilterMode">
         <mat-option *ngFor="let c of profanityOptions" value={{c}}> {{c}} </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Select Model</mat-label>
+      <mat-select name="audioFile" [(ngModel)]="selectedModels" multiple>
+        <mat-option *ngFor="let model of filteredModels" value="{{model.id}}">{{model.name}}</mat-option>
       </mat-select>
     </mat-form-field>
   </fieldset>

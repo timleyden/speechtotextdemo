@@ -23,6 +23,7 @@ import { NavigationService } from 'src/app/navigation.service';
 export class TranscriptionNewComponent implements OnInit {
   showAdvanced;
   showAdvancedText;
+  selectedModels:string[];
   audioFiles: any[];
   newTranscriptForm;
   fileService: FileService;
@@ -34,6 +35,8 @@ export class TranscriptionNewComponent implements OnInit {
   transcriptDef = new TranscriptDefinition();
   showUpload: boolean;
   uploadedBlobName: string;
+  Models:any[];
+  filteredModels:any[];
 
   constructor(private formBuilder: FormBuilder, fileService: FileService, private transcriptService: TranscriptService, private accountService: AccountService, private _snackbar: MatSnackBar, public dialog: MatDialog, private navService: NavigationService) {
     this.showAdvanced = false;
@@ -66,6 +69,13 @@ export class TranscriptionNewComponent implements OnInit {
       this._snackbar.open("An error occurred loading the blobs from the storage account. Please check storage account details.", "Dismiss", { duration: 8000 })
     }
   }
+  private bindModelsChoice(){
+    this.transcriptService.GetModels(this.accountService.Details.Region,this.accountService.Details.ServiceKey).subscribe(data=>{this.Models = <any[]>data; this.filterModels();})
+
+  }
+  private filterModels(){
+    this.filteredModels = this.Models.filter(value=>{return value.locale == this.transcriptDef.locale})
+  }
   toggleUpload() {
     const dialogRef = this.dialog.open(UploadAudioComponent, {
       width: '250px',
@@ -91,6 +101,7 @@ export class TranscriptionNewComponent implements OnInit {
   }
   onSubmit() {
     this.transcriptDef.recordingsUrl = this.fileService.getRecordingUrl(this.details.AccountName, this.details.SASToken, this.transcriptDef.recordingsUrl);
+    this.transcriptDef.models = this.selectedModels.map(value=>{return {"Id":value}})
     console.info(JSON.stringify(this.transcriptDef));
     this.transcriptService.PostTranscriptionRequest(this.transcriptDef, this.details.Region, this.details.ServiceKey).subscribe(data => { console.log(data); this._snackbar.open("Transcription queued", "Dismiss", { duration: 5000 }) }, error => { const errorMsg = (error.error.message)?error.error.message:"Check the console for more information"; this._snackbar.open("Failed to queue transcription. " + errorMsg, "Dismiss", { duration: 5000 });console.log(error) });
 
@@ -100,6 +111,7 @@ export class TranscriptionNewComponent implements OnInit {
     this.details = val;
 
     this.bindAudioFileChoice();
+    this.bindModelsChoice();
     //enable submit button
 
   }
