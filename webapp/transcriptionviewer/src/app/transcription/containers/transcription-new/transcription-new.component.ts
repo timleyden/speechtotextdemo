@@ -5,7 +5,7 @@ import { KeyValuePipe } from '@angular/common';
 import { FileService } from '../../../file.service'
 import { TranscriptService } from '../../../transcript.service'
 import { TranscriptDefinition, TranscriptProperty, AllProfanityFilterMode, AllPunctuationMode } from '../../../transcript-definition';
-import { Locations } from '../../../speechLocations';
+import { Locations, Locales } from '../../../speechReferenceData';
 import { AccountDetails } from 'src/app/account-details';
 import { AccountService } from 'src/app/account.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -29,6 +29,7 @@ export class TranscriptionNewComponent implements OnInit {
   punctuationOptions;
   profanityOptions;
   locationOptions;
+  localeOptions
   details: AccountDetails;
   transcriptDef = new TranscriptDefinition();
   showUpload: boolean;
@@ -44,6 +45,7 @@ export class TranscriptionNewComponent implements OnInit {
     this.punctuationOptions = AllPunctuationMode;
     this.profanityOptions = AllProfanityFilterMode;
     this.locationOptions = Locations;
+    this.localeOptions =  Locales;
     this.navService.NavTitle = " - Create - New Transcription"
     if (this.accountService.IsStorageValid.value) {
       this.ngOnChange(this.accountService.Details);

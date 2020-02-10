@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, Input, ViewChild } from '@angular/core';
-import { Locations } from '../../../speechLocations';
+import { Locations } from '../../../speechReferenceData';
 import { AccountService } from '../../../account.service';
 import { AccountDetails } from '../../../account-details';
 import { Observable, BehaviorSubject } from 'rxjs';

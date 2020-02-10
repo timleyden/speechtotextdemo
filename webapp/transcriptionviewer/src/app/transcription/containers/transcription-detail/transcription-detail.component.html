@@ -69,12 +69,7 @@
 </div>
   <mat-divider></mat-divider>
   <div *ngIf="transcript">
-    <audio style="width: 100%;" [playbackRate]="[playbackRate]" (timeupdate)="highlightUtterance($event)" (seeked)="this.nextOffset=0" (loadstart)="audioEmptied($event)"
-      controls>
 
-      <source [src]="transcript.recordingsUrl" type="audio/mpeg">
-      Your browser does not support the audio element.
-    </audio>
     <div *ngIf="transcriptData">
       <table mat-table [dataSource]="transcriptData" class="mat-elevation-z8">
 
@@ -143,10 +138,15 @@
             <button mat-button *ngIf="!element.NBest[0].isEditable" (click)="editButton($event,i)">edit</button>
           </td>
         </ng-container>
-        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" ></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
+      <audio style="width: 100%; position:sticky;bottom:0px" [playbackRate]="[playbackRate]" (timeupdate)="highlightUtterance($event)" (seeked)="this.nextOffset=0" (loadstart)="audioEmptied($event)"
+      controls>
 
+      <source [src]="transcript.recordingsUrl" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
     </div>
   </div>
 </div>

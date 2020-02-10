@@ -26,8 +26,7 @@
     <mat-form-field>
       <mat-label>Locale</mat-label>
       <mat-select name="locale" [(ngModel)]="transcriptDef.locale">
-        <mat-option value="en-US">en-US</mat-option>
-        <mat-option value="en-AU">en-AU</mat-option>
+        <mat-option *ngFor="let locale of localeOptions" value="{{locale}}">{{locale}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-checkbox name="diarisazation" [(ngModel)]="transcriptDef.properties.AddDiarization"
