@@ -117,7 +117,8 @@ if [ -e "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/angular.json" ]; then
   cd "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer"
   pwd
  
-  eval $NPM_CMD run-script build --production
+  #eval $NPM_CMD run-script build   --production
+  eval npm run-script build
   exitWithMessageOnError "Angular build failed"
   cd - > /dev/null
 fi
