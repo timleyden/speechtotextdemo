@@ -1,8 +1,7 @@
 <form>
   <input name="uploadfile" type="file" accept="audio/*" (change)="getFile($event)" />
-  <button mat-button  (click)="uploadClick()" >Upload</button>
   <div mat-dialog-actions>
     <button mat-button (click)="onNoClick()">Cancel</button>
-    <button mat-button [mat-dialog-close]="data.blobName" cdkFocusInitial>Ok</button>
+    <button mat-button color="primary" (click)="uploadClick()" cdkFocusInitial>Upload</button>
   </div>
 </form>

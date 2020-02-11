@@ -82,7 +82,9 @@ export class TranscriptionNewComponent implements OnInit {
   }
   toggleUpload() {
     const dialogRef = this.dialog.open(UploadAudioComponent, {
-      width: '250px',
+      height:'300px',
+      width: '400px',
+
       data: { blobName: "" }
     });
 
@@ -103,14 +105,15 @@ export class TranscriptionNewComponent implements OnInit {
       this.showAdvancedText = "Advanced"
     }
   }
-  onSubmit() {
+  onSubmit(valid) {
+    if(valid){
     this.transcriptDef.recordingsUrl = this.fileService.getRecordingUrl(this.details.AccountName, this.details.SASToken, this.transcriptDef.recordingsUrl);
     if(this.selectedModels){
       this.transcriptDef.models = this.selectedModels.map(value=>{return {"Id":value}})
     }
     console.info(JSON.stringify(this.transcriptDef));
     this.transcriptService.PostTranscriptionRequest(this.transcriptDef, this.details.Region, this.details.ServiceKey).subscribe(data => { console.log(data); this._snackbar.open("Transcription queued", "Dismiss", { duration: 5000 });this.router.navigate(['/transcription']) }, error => { const errorMsg = (error.error.message)?error.error.message:"Check the console for more information"; this._snackbar.open("Failed to queue transcription. " + errorMsg, "Dismiss", { duration: 5000 });console.log(error) });
-
+  }
   }
 
   ngOnChange(val: AccountDetails) {
