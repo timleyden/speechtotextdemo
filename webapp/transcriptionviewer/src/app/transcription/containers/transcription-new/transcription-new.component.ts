@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { KeyValuePipe } from '@angular/common';
+import { Router } from '@angular/router';
+
+import { MatDialog } from '@angular/material';
 
 import { FileService } from '../../../file.service'
 import { TranscriptService } from '../../../transcript.service'
@@ -10,9 +13,10 @@ import { AccountDetails } from 'src/app/account-details';
 import { AccountService } from 'src/app/account.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UploadAudioComponent } from '../upload-audio/upload-audio.component';
-import { MatDialog } from '@angular/material';
+
 import { BlobItem, ContainerListBlobFlatSegmentResponse } from '@azure/storage-blob';
 import { NavigationService } from 'src/app/navigation.service';
+
 
 
 @Component({
@@ -38,7 +42,7 @@ export class TranscriptionNewComponent implements OnInit {
   Models:any[];
   filteredModels:any[];
 
-  constructor(private formBuilder: FormBuilder, fileService: FileService, private transcriptService: TranscriptService, private accountService: AccountService, private _snackbar: MatSnackBar, public dialog: MatDialog, private navService: NavigationService) {
+  constructor(private formBuilder: FormBuilder, fileService: FileService, private transcriptService: TranscriptService, private accountService: AccountService, private _snackbar: MatSnackBar, public dialog: MatDialog, private navService: NavigationService, private router:Router) {
     this.showAdvanced = false;
     this.fileService = fileService;
     this.showAdvancedText = "Advanced";
@@ -101,9 +105,11 @@ export class TranscriptionNewComponent implements OnInit {
   }
   onSubmit() {
     this.transcriptDef.recordingsUrl = this.fileService.getRecordingUrl(this.details.AccountName, this.details.SASToken, this.transcriptDef.recordingsUrl);
-    this.transcriptDef.models = this.selectedModels.map(value=>{return {"Id":value}})
+    if(this.selectedModels){
+      this.transcriptDef.models = this.selectedModels.map(value=>{return {"Id":value}})
+    }
     console.info(JSON.stringify(this.transcriptDef));
-    this.transcriptService.PostTranscriptionRequest(this.transcriptDef, this.details.Region, this.details.ServiceKey).subscribe(data => { console.log(data); this._snackbar.open("Transcription queued", "Dismiss", { duration: 5000 }) }, error => { const errorMsg = (error.error.message)?error.error.message:"Check the console for more information"; this._snackbar.open("Failed to queue transcription. " + errorMsg, "Dismiss", { duration: 5000 });console.log(error) });
+    this.transcriptService.PostTranscriptionRequest(this.transcriptDef, this.details.Region, this.details.ServiceKey).subscribe(data => { console.log(data); this._snackbar.open("Transcription queued", "Dismiss", { duration: 5000 });this.router.navigate(['/transcription']) }, error => { const errorMsg = (error.error.message)?error.error.message:"Check the console for more information"; this._snackbar.open("Failed to queue transcription. " + errorMsg, "Dismiss", { duration: 5000 });console.log(error) });
 
   }
 
