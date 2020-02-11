@@ -28,11 +28,14 @@ export class UploadAudioComponent {
   uploadClick() {
 
     console.info('file', this.file);
-    this.fileService.uploadAudioFile(this.accountService.Details.AccountName, this.accountService.Details.SASToken, this.file).then(value => { this.data.blobName = this.file.name;this.dialogRef.close(this.data.blobName) })
+    this.fileService.uploadAudioFile(this.accountService.Details.AccountName, this.accountService.Details.SASToken, this.file).then(value => { this.data.blobName = this.file.name; this.dialogRef.close(this.data.blobName) })
 
 
   }
 
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 
   getFile(event) {
     this.file = (event.target as HTMLInputElement).files[0];
