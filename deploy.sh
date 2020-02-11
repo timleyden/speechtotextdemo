@@ -106,7 +106,7 @@ selectNodeVersion
 # 3. Install npm packages
 if [ -e "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/package.json" ]; then
   cd "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/"
-  echo "Running $NPM_CMD install --production"
+  echo "Running npm install"
   #eval $NPM_CMD install --production
   eval npm install
   exitWithMessageOnError "npm failed"
@@ -117,7 +117,7 @@ fi
 if [ -e "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/angular.json" ]; then
   cd "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer"
   pwd
- 
+ echo "running npm run-script build"
   #eval $NPM_CMD run-script build   --production
   eval npm run-script build
   exitWithMessageOnError "Angular build failed"
