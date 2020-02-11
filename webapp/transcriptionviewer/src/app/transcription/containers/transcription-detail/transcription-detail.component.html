@@ -124,7 +124,6 @@
               <th mat-header-cell *matHeaderCellDef> Sentiment </th>
               <td mat-cell *matCellDef="let element;let i = index;">
                 <span *ngIf="element.NBest[0].Sentiment">
-
                 <mat-icon matTooltip="Negative: {{element.NBest[0].Sentiment.Negative}}
                 Neutral: {{element.NBest[0].Sentiment.Neutral}}
                 Positive: {{element.NBest[0].Sentiment.Positive}}" *ngIf="+element.NBest[0].Sentiment.Negative > .50">sentiment_very_dissatisfied</mat-icon>
