@@ -108,7 +108,7 @@ if [ -e "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/package.json" ]; then
   cd "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/"
   echo "Running $NPM_CMD install --production"
   #eval $NPM_CMD install --production
-  eval npm install --production
+  eval npm install
   exitWithMessageOnError "npm failed"
   cd - > /dev/null
 fi
