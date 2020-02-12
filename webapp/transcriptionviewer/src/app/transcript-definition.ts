@@ -32,7 +32,7 @@ set AddWordLevelTimestamps(value:boolean){
     this.AddDiarization = false;
   }
 }
-AddSentiment:boolean;
+AddSentiment:boolean = false;
 get AddDiarization():boolean{
  return this._addDiarization;
 }

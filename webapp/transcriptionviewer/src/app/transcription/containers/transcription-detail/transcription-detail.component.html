@@ -11,6 +11,7 @@
         <th class="mat-header-cell">Sentiment</th>
         <th class="mat-header-cell">Punctuation Mode</th>
         <th class="mat-header-cell">Profanity Mode</th>
+        <th class="mat-header-cell">Models</th>
       </tr>
     </thead>
 
@@ -24,6 +25,7 @@
       <td class="mat-cell">{{transcript.properties.AddSentiment}}</td>
       <td class="mat-cell">{{transcript.properties.PunctuationMode}}</td>
       <td class="mat-cell">{{transcript.properties.ProfanityFilterMode}}</td>
+      <td class="mat-cell"><span *ngFor="let model of transcript.models">{{model.name}}, </span></td>
     </tr>
   </table>
 
