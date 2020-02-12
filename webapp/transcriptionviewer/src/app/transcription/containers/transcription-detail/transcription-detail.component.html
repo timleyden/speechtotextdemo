@@ -134,10 +134,10 @@
                 Positive: {{element.NBest[0].Sentiment.Positive}}" *ngIf="+element.NBest[0].Sentiment.Neutral > .50">sentiment_dissatisfied</mat-icon>
                 <mat-icon matTooltip="Negative: {{element.NBest[0].Sentiment.Negative}}
                 Neutral: {{element.NBest[0].Sentiment.Neutral}}
-                Positive: {{element.NBest[0].Sentiment.Positive}}" *ngIf="+element.NBest[0].Sentiment.Positive > .50">sentiment_satisfied</mat-icon>
+                Positive: {{element.NBest[0].Sentiment.Positive}}" *ngIf="+element.NBest[0].Sentiment.Positive > .50 && +element.NBest[0].Sentiment.Positive < 0.75">sentiment_satisfied</mat-icon>
                 <mat-icon matTooltip="Negative: {{element.NBest[0].Sentiment.Negative}}
                 Neutral: {{element.NBest[0].Sentiment.Neutral}}
-                Positive: {{element.NBest[0].Sentiment.Positive}}" *ngIf="+element.NBest[0].Sentiment.Positive > .75">sentiment_very_satisfied</mat-icon>
+                Positive: {{element.NBest[0].Sentiment.Positive}}" *ngIf="+element.NBest[0].Sentiment.Positive > .74">sentiment_very_satisfied</mat-icon>
               </span>
               </td>
             </ng-container>
