@@ -29,6 +29,7 @@ export class TranscriptionNewComponent implements OnInit {
   showAdvancedText;
   selectedModels:string[];
   audioFiles: any[];
+  selectedFile:string;
   newTranscriptForm;
   fileService: FileService;
   punctuationOptions;
@@ -107,7 +108,7 @@ export class TranscriptionNewComponent implements OnInit {
   }
   onSubmit(valid) {
     if(valid){
-    this.transcriptDef.recordingsUrl = this.fileService.getRecordingUrl(this.details.AccountName, this.details.SASToken, this.transcriptDef.recordingsUrl);
+    this.transcriptDef.recordingsUrl = this.fileService.getRecordingUrl(this.details.AccountName, this.details.SASToken,this.selectedFile);
     if(this.selectedModels){
       this.transcriptDef.models = this.selectedModels.map(value=>{return {"Id":value}})
     }
