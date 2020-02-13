@@ -28,10 +28,13 @@
       <td class="mat-cell"><span *ngFor="let model of transcript.models">{{model.name}}, </span></td>
     </tr>
   </table>
-
+<div>
+  <mat-checkbox [(ngModel)]="autoScroll">Auto Scroll</mat-checkbox>
+</div>
   <div>
     <mat-checkbox [(ngModel)]="enableHighlighting">Show Confidence Highlighting</mat-checkbox>
   </div>
+
   <table *ngIf="enableHighlighting">
     <tr>
       <td style="background-color: salmon;width: 30px;"> </td>

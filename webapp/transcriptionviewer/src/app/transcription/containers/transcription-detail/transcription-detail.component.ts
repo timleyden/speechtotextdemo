@@ -27,7 +27,8 @@ export class TranscriptionDetailComponent implements OnInit {
   details: AccountDetails;
   redThreshold: number;
   yellowThreshold: number;
-  enableHighlighting: boolean;
+  enableHighlighting: boolean = false;
+  autoScroll:boolean = false;
   playbackRate: number;
   availableColumns: SelectItem[] = [{ "Value": "index", "Display": "Index", "Tooltip": "gives each utterance a line number to help reference" },
   { "Value": "speaker", "Display": "Speaker", "Tooltip": "If Diarization enabled, shows the identified speaker id" },
@@ -135,6 +136,9 @@ export class TranscriptionDetailComponent implements OnInit {
       }
       if (audio.currentTime > offset && audio.currentTime < next) {
         utterances[i].classList.add("selected");
+        if(this.autoScroll){
+         utterances[i].scrollIntoView({block:"center"})
+        }
         this.nextOffset = next;
       } else {
         utterances[i].classList.remove("selected");
