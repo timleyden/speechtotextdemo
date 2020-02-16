@@ -1,0 +1,50 @@
+<app-storageaccount-detail #detail (updated)="ngOnChange($event)"></app-storageaccount-detail>
+<div *ngIf="accountService.IsSpeechValid.value">
+  <table mat-table [dataSource]="transcriptions" class="mat-elevation-z8" >
+
+    <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="created">
+      <th mat-header-cell *matHeaderCellDef> Created </th>
+      <td mat-cell *matCellDef="let element"> {{element.createdDateTime| date:'short'}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+    </ng-container>
+
+    <!-- status Column -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef> Status </th>
+      <td mat-cell *matCellDef="let element"> {{element.status}} <span *ngIf="element.status != 'Succeeded'">:
+          {{element.statusMessage}}</span> </td>
+    </ng-container>
+
+    <!-- locale  Column -->
+    <ng-container matColumnDef="locale">
+      <th mat-header-cell *matHeaderCellDef> Locale </th>
+      <td mat-cell *matCellDef="let element"> {{element.locale}} </td>
+    </ng-container>
+
+    <!-- open  Column -->
+    <ng-container matColumnDef="open">
+      <th mat-header-cell *matHeaderCellDef> Open </th>
+      <td mat-cell *matCellDef="let element"> <button mat-button [routerLink]="['./detail',element.id]">Open</button>
+      </td>
+    </ng-container>
+    <!-- delete  Column -->
+    <ng-container matColumnDef="delete">
+      <th mat-header-cell *matHeaderCellDef> Delete </th>
+      <td mat-cell *matCellDef="let element"> <button (click)="deleteTranscription(element.id)"
+          mat-button>Delete</button> </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
+<div *ngIf="!accountService.IsSpeechValid.value">Please complete the speech service account details</div>

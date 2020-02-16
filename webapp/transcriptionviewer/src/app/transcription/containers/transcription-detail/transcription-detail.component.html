@@ -1,0 +1,166 @@
+<app-storageaccount-detail #detail (updated)="ngOnChange($event)"></app-storageaccount-detail>
+<div style="padding-left: 40px;padding-right: 40px;">
+  <table *ngIf="transcript" class="mat-table">
+    <thead>
+      <tr class="mat-header-row">
+        <th class="mat-header-cell">File</th>
+        <th class="mat-header-cell">Locale</th>
+        <th class="mat-header-cell">Duration</th>
+        <th class="mat-header-cell">Diarization</th>
+        <th class="mat-header-cell">Word Level Timestamps</th>
+        <th class="mat-header-cell">Sentiment</th>
+        <th class="mat-header-cell">Punctuation Mode</th>
+        <th class="mat-header-cell">Profanity Mode</th>
+        <th class="mat-header-cell">Models</th>
+      </tr>
+    </thead>
+
+    <tr class="mat-row">
+      <td class="mat-cell"><a
+          href="{{transcript.recordingsUrl}}">{{transcript.recordingsUrl.split('?')[0].split('/').pop()}}</a></td>
+      <td class="mat-cell">{{transcript.locale}}</td>
+      <td class="mat-cell">{{transcript.properties.Duration}}</td>
+      <td class="mat-cell">{{transcript.properties.AddDiarization}}</td>
+      <td class="mat-cell">{{transcript.properties.AddWordLevelTimestamps}}</td>
+      <td class="mat-cell">{{transcript.properties.AddSentiment}}</td>
+      <td class="mat-cell">{{transcript.properties.PunctuationMode}}</td>
+      <td class="mat-cell">{{transcript.properties.ProfanityFilterMode}}</td>
+      <td class="mat-cell"><span *ngFor="let model of transcript.models">{{model.name}}, </span></td>
+    </tr>
+  </table>
+<div>
+  <mat-checkbox [(ngModel)]="autoScroll">Auto Scroll</mat-checkbox>
+</div>
+  <div>
+    <mat-checkbox [(ngModel)]="enableHighlighting">Show Confidence Highlighting</mat-checkbox>
+  </div>
+
+  <table *ngIf="enableHighlighting">
+    <tr>
+      <td style="background-color: salmon;width: 30px;"> </td>
+      <td><input matInput type="text" [(ngModel)]="redThreshold" /></td>
+    </tr>
+    <tr>
+      <td style="background-color: palegoldenrod;width: 30px;"></td>
+      <td><input matInput type="text" [(ngModel)]="yellowThreshold" /> </td>
+    </tr>
+    <tr>
+      <td style="background-color: lightgreen;width: 30px;"></td>
+      <td>&nbsp;</td>
+    </tr>
+  </table>
+<div>
+  <mat-form-field style="width: 100%;">
+    <mat-label>Columns</mat-label>
+    <mat-select name="selectedColumns" [(ngModel)]="displayedColumns" multiple>
+      <mat-option *ngFor="let column of availableColumns" [value]="column.Value" matTooltip="{{column.Tooltip}}">{{column.Display}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div><div>
+  <mat-form-field>
+
+  <mat-label>Playback Speed</mat-label>
+  <mat-select name="playbackRate" [(ngModel)]="playbackRate" >
+    <mat-option [value]=".7">.5</mat-option>
+    <mat-option [value]=".7">.7</mat-option>
+    <mat-option [value]="1">1</mat-option>
+    <mat-option [value]="1.2">1.2</mat-option>
+    <mat-option [value]="1.5">1.5</mat-option>
+    <mat-option [value]="1.7">1.7</mat-option>
+    <mat-option [value]="2">2</mat-option>
+  </mat-select>
+
+</mat-form-field>
+</div>
+  <mat-divider></mat-divider>
+  <div *ngIf="transcript">
+
+    <div *ngIf="transcriptData">
+      <table mat-table [dataSource]="transcriptData" class="mat-elevation-z8">
+
+        <!--- Note that these columns can be defined in any order.
+            The actual rendered columns are set as a property on the row definition" -->
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="index">
+          <th mat-header-cell *matHeaderCellDef> Index </th>
+          <td mat-cell *matCellDef="let element; let i = index;">{{i}}</td>
+        </ng-container>
+        <!-- speaker Column -->
+        <ng-container matColumnDef="speaker">
+          <th mat-header-cell *matHeaderCellDef> Speaker </th>
+          <td mat-cell *matCellDef="let element"> {{element.SpeakerId}} </td>
+        </ng-container>
+        <!-- channel Column -->
+        <ng-container matColumnDef="channel">
+          <th mat-header-cell *matHeaderCellDef> Channel </th>
+          <td mat-cell *matCellDef="let element"> {{element.ChannelNumber}} </td>
+        </ng-container>
+        <!-- offset Column -->
+        <ng-container matColumnDef="offset">
+          <th mat-header-cell *matHeaderCellDef> Offset </th>
+          <td mat-cell *matCellDef="let element">{{formatOffset(element.Offset) }} </td>
+        </ng-container>
+        <!-- confidence Column -->
+        <ng-container matColumnDef="confidence">
+          <th mat-header-cell *matHeaderCellDef> Confidence </th>
+          <td mat-cell *matCellDef="let element"> {{ (element.NBest[0].Confidence*100) | number:'1.0-0' }}% </td>
+        </ng-container>
+        <!-- utterance Column -->
+        <ng-container matColumnDef="text">
+          <th mat-header-cell *matHeaderCellDef> Text </th>
+          <td [ngStyle]="{'background-color':getColor(element.NBest[0].Confidence)}" mat-cell
+            *matCellDef="let element; let i = index;"> <a class="utterance" *ngIf="!element.NBest[0].isEditable"
+              (click)="jumpTo($event)" [attr.offset]="element.Offset /10000000"
+              [title]="'Confidence: '+element.NBest[0].Confidence+' Time offset: '+formatOffset(element.Offset)+'s'">
+              {{ element.NBest[0].Display}}</a> <input style="font-style:italic;font-weight: bold;"
+              *ngIf="element.NBest[0].isEditable" matInput class="utteranceEdit" type="text"
+              [(ngModel)]="element.NBest[0].Display" /></td>
+        </ng-container>
+        <!-- original Column -->
+        <ng-container matColumnDef="original">
+          <th mat-header-cell *matHeaderCellDef> Original Text </th>
+          <td mat-cell *matCellDef="let element;let i = index;">
+            {{element.NBest[0].Original}}
+          </td>
+        </ng-container>
+            <!-- sentiment Column -->
+            <ng-container matColumnDef="sentiment"  >
+              <th mat-header-cell *matHeaderCellDef> Sentiment </th>
+              <td mat-cell *matCellDef="let element;let i = index;">
+                <span *ngIf="element.NBest[0].Sentiment">
+                <mat-icon matTooltip="Negative: {{element.NBest[0].Sentiment.Negative}}
+                Neutral: {{element.NBest[0].Sentiment.Neutral}}
+                Positive: {{element.NBest[0].Sentiment.Positive}}" *ngIf="+element.NBest[0].Sentiment.Negative > .50">sentiment_very_dissatisfied</mat-icon>
+                <mat-icon matTooltip="Negative: {{element.NBest[0].Sentiment.Negative}}
+                Neutral: {{element.NBest[0].Sentiment.Neutral}}
+                Positive: {{element.NBest[0].Sentiment.Positive}}" *ngIf="+element.NBest[0].Sentiment.Neutral > .50">sentiment_dissatisfied</mat-icon>
+                <mat-icon matTooltip="Negative: {{element.NBest[0].Sentiment.Negative}}
+                Neutral: {{element.NBest[0].Sentiment.Neutral}}
+                Positive: {{element.NBest[0].Sentiment.Positive}}" *ngIf="+element.NBest[0].Sentiment.Positive > .50 && +element.NBest[0].Sentiment.Positive < 0.75">sentiment_satisfied</mat-icon>
+                <mat-icon matTooltip="Negative: {{element.NBest[0].Sentiment.Negative}}
+                Neutral: {{element.NBest[0].Sentiment.Neutral}}
+                Positive: {{element.NBest[0].Sentiment.Positive}}" *ngIf="+element.NBest[0].Sentiment.Positive > .74">sentiment_very_satisfied</mat-icon>
+              </span>
+              </td>
+            </ng-container>
+        <!-- actions Column -->
+        <ng-container matColumnDef="edit">
+          <th mat-header-cell *matHeaderCellDef> Edit </th>
+          <td mat-cell *matCellDef="let element;let i = index;">
+            <button mat-button *ngIf="element.NBest[0].isEditable" (click)="saveButton($event,i)">Save</button>
+            <button mat-button *ngIf="!element.NBest[0].isEditable" (click)="editButton($event,i)">edit</button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" ></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      <audio style="width: 100%; position:sticky;bottom:0px" [playbackRate]="[playbackRate]" (timeupdate)="highlightUtterance($event)" (seeked)="this.nextOffset=0" (loadstart)="audioEmptied($event)"
+      controls>
+
+      <source [src]="transcript.recordingsUrl" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+    </div>
+  </div>
+</div>

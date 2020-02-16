@@ -1,0 +1,3 @@
+-  Checking DOM selection and points for the text highlighting
+-  Material design 
+-  Architecture for folder and module structure smart vs dumb

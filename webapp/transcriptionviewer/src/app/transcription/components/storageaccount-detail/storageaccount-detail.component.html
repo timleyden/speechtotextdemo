@@ -1,0 +1,47 @@
+<form *ngIf="showAccountDetails">
+  <mat-vertical-stepper [linear]="isLinear" #stepper [selectedIndex]="selectedIndex">
+    <mat-step label="Storage Account Details">
+      <div>
+        <mat-form-field>
+          <mat-label for="accountName">
+            Account Name
+          </mat-label>
+          <input matInput id="accountName" type="text" name="accountName" [(ngModel)]="accountDetails.AccountName" />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field style="width: 400px !important;">
+          <mat-label for="key">
+            SAS Token
+          </mat-label>
+          <input matInput id="key" type="text" name="key" [(ngModel)]="accountDetails.SASToken">
+        </mat-form-field>
+      </div>
+      <button mat-button matStepperNext>Next</button>
+    </mat-step>
+    <mat-step label="Speech Service Details">
+      <div>
+        <mat-form-field>
+          <mat-label>Speech to Text region</mat-label>
+          <mat-select type="text" name="region" [(ngModel)]="accountDetails.Region">
+            <mat-option *ngFor="let c of locationOptions" [value]="c"> {{c}} </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field style="width: 400px !important;">
+          <mat-label>Speech to Text Service key</mat-label>
+          <input matInput type="text" name="servicekey" [(ngModel)]="accountDetails.ServiceKey" />
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>Refresh Interval</mat-label>
+          <input matInput type="number" name="refreshInterval" min="10" max="120" [(ngModel)]="accountDetails.RefreshRate" />
+        </mat-form-field>
+      </div>
+
+      <button mat-button (click)="refresh()">Save details</button>
+    </mat-step>
+  </mat-vertical-stepper>
+</form>
