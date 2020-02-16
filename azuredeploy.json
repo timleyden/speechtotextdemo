@@ -25,6 +25,7 @@
     }
   },
   "variables": {
+    "webStorageAccountName": "[toLower(if(greater(length(concat('webstore', parameters('demoName'))),23),substring(concat('webstore', parameters('demoName')),0,24),concat('webstore', parameters('demoName'))))]",
     "audioStorageAccountName": "[toLower(if(greater(length(concat('audiostore', parameters('demoName'))),23),substring(concat('audiostore', parameters('demoName')),0,24),concat('audiostore', parameters('demoName'))))]",
     "functionAppName": "[concat(parameters('demoName'), 'FuncApp')]",
     "hostingPlanName": "[concat(parameters('demoName'), 'ServicePlan')]",
@@ -42,6 +43,23 @@
     }
   },
   "resources": [
+    {
+      "name": "[variables('webStorageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2017-10-01",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "StorageV2",
+      "dependsOn": [],
+      "location": "[parameters('location')]",
+      "tags": {
+        "displayName": "Storage account for web files"
+      },
+      "properties": {
+        "accessTier": "Hot"
+      }
+    },
     {
       "name": "[variables('AudioStorageAccountName')]",
       "type": "Microsoft.Storage/storageAccounts",
@@ -317,5 +335,7 @@
       }
     }
   ],
-  "outputs": {}
+  "outputs": {
+    "webStorageAccountName": {"type":"string", "value":"[variables('webStorageAccountName')]"}
+  }
 }
