@@ -336,6 +336,8 @@
     }
   ],
   "outputs": {
-    "webStorageAccountName": {"type":"string", "value":"[variables('webStorageAccountName')]"}
+    "webStorageAccountName": {"type":"string", "value":"[variables('webStorageAccountName')]"},
+    "audioStorageAccountName": {"type":"string", "value":"[variables('audioStorageAccountName')]"},
+    "appInsightsIKey": {"type":"string", "value":"[reference(resourceId('microsoft.insights/components/', variables('appInsightsName')), '2015-05-01').InstrumentationKey]"}
   }
 }

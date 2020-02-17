@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "node dist/app.js",
-    "build": "./node_modules/.bin/ng build && cp app.js dist/app.js",
+    "build": "./node_modules/.bin/ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

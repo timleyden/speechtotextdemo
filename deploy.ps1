@@ -9,19 +9,10 @@ $rg = New-AzResourceGroup -Name "speechtotext-rg" -Location "australiaeast" -For
 $deployment = New-AzResourceGroupDeployment -Name "$($rg.ResourceGroupName)-$(New-Guid)" -ResourceGroupName $rg.ResourceGroupName `
                 -Mode Incremental -TemplateFile .\azuredeploy.json -Verbose
 
-# Set an env var with the web storage account name to be used by the deploy web script
-$env:WEBSTORAGEACCOUNTNAME = $webStorageAccountName = $deployment.Outputs.webStorageAccountName.Value
-
-# Add the Storage Preview extension
-az extension add --name storage-preview
-
-# Enable static website
-az storage blob service-properties update --account-name $webStorageAccountName --static-website `
-    --index-document 'index.html'    
-    # --404-document <error-document-name> 
-
-
-
+# Set env vars to be used by the deploy scripts
+$env:APPINSIGHTSIKEY = $deployment.Outputs.appInsightsIKey.Value
+$env:WEBSTORAGEACCOUNTNAME = $deployment.Outputs.webStorageAccountName.Value
+$env:AUDIOSTORAGEACCOUNTNAME = $deployment.Outputs.audioStorageAccountName.Value
 
 
 
