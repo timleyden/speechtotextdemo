@@ -42,12 +42,18 @@ business have asked for the following non-functional requirements:
 
 * Appropriate RBAC
 * Azure Security Center standard turned on
-* HTTPS only for Storage Account (default) and [Functions](https://microsoft.github.io/AzureTipsAndTricks/blog/tip62.html)
+* HTTPS only for Storage Account (default?) and [Functions](https://microsoft.github.io/AzureTipsAndTricks/blog/tip62.html)
 * Storage Service Encryption on (default)
+
+
+Allows https traffic only to storage service if sets to true. The default value is `true` since API version 
+2019-04-01.
+<https://docs.microsoft.com/en-us/azure/templates/microsoft.storage/2019-04-01/storageaccounts#storageaccountpropertiescreateparameters-object>
 
 ## Monitoring
 
-
+* Application Insights keys set as envrionment vars
+* App Insights code added to index.html
 
 ## Links and references
 
