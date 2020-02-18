@@ -46,7 +46,7 @@
     {
       "name": "[variables('webStorageAccountName')]",
       "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "2017-10-01",
+      "apiVersion": "2019-04-01",
       "sku": {
         "name": "Standard_LRS"
       },
@@ -57,13 +57,13 @@
         "displayName": "Storage account for web files"
       },
       "properties": {
-        "accessTier": "Hot"
+        "supportsHttpsTrafficOnly": true
       }
     },
     {
       "name": "[variables('AudioStorageAccountName')]",
       "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "2017-10-01",
+      "apiVersion": "2019-04-01",
       "sku": {
         "name": "Standard_LRS"
       },
@@ -74,13 +74,13 @@
         "displayName": "Storage account for audio files"
       },
       "properties": {
-        "accessTier": "Hot"
+        "supportsHttpsTrafficOnly": true
       },
       "resources": [
         {
           "name": "[concat(variables('AudioStorageAccountName'),'/default/','transcripts')]",
           "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-          "apiVersion": "2018-07-01",
+          "apiVersion": "2019-04-01",
           "dependsOn": [
             "[resourceId('Microsoft.Storage/storageAccounts', variables('AudioStorageAccountName'))]",
             "[resourceId('Microsoft.Web/sites/config',variables('functionAppName'),'appSettings')]"
@@ -89,7 +89,7 @@
         {
           "name": "[concat(variables('AudioStorageAccountName'),'/default/','audio')]",
           "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-          "apiVersion": "2018-07-01",
+          "apiVersion": "2019-04-01",
           "dependsOn": [
             "[resourceId('Microsoft.Storage/storageAccounts', variables('AudioStorageAccountName'))]",
             "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers',variables('AudioStorageAccountName'),'default','transcripts')]"
@@ -100,7 +100,7 @@
     {
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[variables('functionStorageAccountName')]",
-      "apiVersion": "2016-12-01",
+      "apiVersion": "2019-04-01",
       "location": "[parameters('location')]",
       "kind": "Storage",
       "tags": {
@@ -108,6 +108,9 @@
       },
       "sku": {
         "name": "Standard_LRS"
+      },
+      "properties":{
+        "supportsHttpsTrafficOnly": true
       }
     },
     {
