@@ -174,7 +174,7 @@
         "AudioContainer": "[variables('audioContainer')]",
         "TrainingFunctionUrl": "[reference('getTriggerUrlLinkedTemplate').outputs.triggerUrl.value]",
         "AddDiarization":"True",
-        "Project":"Runction"
+        "Project":"function"
       }
     },
     {
