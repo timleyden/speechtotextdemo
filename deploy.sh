@@ -103,7 +103,7 @@ selectNodeVersion () {
 
 # Prerequisites
 # -------------
-if [[$APPSETTING_Project -eq 'function']];then
+if [["$APPSETTING_Project" -eq "function"]];then
 echo 'starting function deployment'
 
 ##################################################################################################################################
