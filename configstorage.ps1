@@ -1,10 +1,11 @@
+$ErrorActionPreference = 'Stop'
+
 # Add the Storage Preview extension
 az extension add --name storage-preview
 
 # Enable static website
 az storage blob service-properties update --account-name $env:WEBSTORAGEACCOUNTNAME --static-website `
-    --index-document 'index.html'    
-    # --404-document <error-document-name> 
+    --index-document 'index.html' --404-document 'index.html' 
 
 # Get the Web endpoint for the storage account
 # Trim the trailing slash 🙄
