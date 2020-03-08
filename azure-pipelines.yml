@@ -19,7 +19,7 @@ steps:
     resourceGroupName: 'speechtotext-rg'
     location: 'Australia East'
     templateLocation: 'URL of the file'
-    csmFileLink: 'azuredeploy.json'
+    csmFileLink: 'azuredeploy-nolinked.json'
     deploymentMode: 'Validation'
     deploymentOutputs: 'AzureDeployOutputs'
 - task: CopyFiles@2
