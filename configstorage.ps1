@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+#$ErrorActionPreference = 'Stop'
 
 # Add the Storage Preview extension
 az extension add --name storage-preview
