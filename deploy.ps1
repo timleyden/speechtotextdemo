@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+#$ErrorActionPreference = 'Stop'
 
 ./deployarm.ps1
 ./configstorage.ps1
