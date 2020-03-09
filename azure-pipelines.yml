@@ -11,6 +11,7 @@ pool:
 
 steps:
 - task: AzureResourceManagerTemplateDeployment@3
+  displayName: Validate ARM
   inputs:
     deploymentScope: 'Resource Group'
     azureResourceManagerConnection: 'Azure CXP FTA Internal Subscription DALARS(60d45c6e-19a3-49d3-9b40-c349d97761da)'
