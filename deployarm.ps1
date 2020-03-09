@@ -12,7 +12,7 @@ New-AzResourceGroup -Name $ResourceGroup -Location $Location -Force `
 
 $deployment = New-AzResourceGroupDeployment -Name "$($ResourceGroup)-$(New-Guid)" `
                 -ResourceGroupName $ResourceGroup `
-                -Mode Incremental -TemplateFile .\azuredeploy.json -Verbose
+                -Mode Incremental -TemplateFile $(Join-Path $PSScriptRoot 'azuredeploy.json') -Verbose
 
 # Set env vars to be used by the deploy scripts
 $env:APPINSIGHTSIKEY = $deployment.Outputs.appInsightsIKey.Value
