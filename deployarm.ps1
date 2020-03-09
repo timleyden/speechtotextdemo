@@ -1,17 +1,17 @@
 [CmdletBinding()]
 param (
-    [Parameter()] [String] $RG = 'speechtotext-rg',
+    [Parameter()] [String] $ResourceGroup = 'speechtotext-rg',
     [Parameter()] [String] $Location = 'australiaeast'
 )
 
 $ErrorActionPreference = 'Stop'
 # Login-AzAccount
 
-$rg = New-AzResourceGroup -Name $RG -Location $Location -Force `
+New-AzResourceGroup -Name $ResourceGroup -Location $Location -Force `
         -Tag @{project='speechtotext'; owner='timleyden'} -Verbose
 
-$deployment = New-AzResourceGroupDeployment -Name "$($rg.ResourceGroupName)-$(New-Guid)" `
-                -ResourceGroupName $rg.ResourceGroupName `
+$deployment = New-AzResourceGroupDeployment -Name "$($ResourceGroup)-$(New-Guid)" `
+                -ResourceGroupName $ResourceGroup `
                 -Mode Incremental -TemplateFile .\azuredeploy.json -Verbose
 
 # Set env vars to be used by the deploy scripts
