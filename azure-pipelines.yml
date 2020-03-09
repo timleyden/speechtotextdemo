@@ -9,6 +9,10 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
+variables:
+- name: skipComponentGovernanceDetection
+  value: true
+
 steps:
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: Validate ARM
