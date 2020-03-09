@@ -18,8 +18,8 @@ steps:
     action: 'Create Or Update Resource Group'
     resourceGroupName: 'speechtotext-rg'
     location: 'Australia East'
-    templateLocation: 'URL of the file'
-    csmFileLink: 'azuredeploy-nolinked.json'
+    templateLocation: 'Linked artifact'
+    csmFile: 'azuredeploy.json'
     deploymentMode: 'Validation'
     deploymentOutputs: 'AzureDeployOutputs'
 - task: CopyFiles@2
