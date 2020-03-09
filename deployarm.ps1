@@ -1,9 +1,13 @@
-$ErrorActionPreference = 'Stop'
+[CmdletBinding()]
+param (
+    [Parameter()] [String] $RG = 'speechtotext-rg',
+    [Parameter()] [String] $Location = 'australiaeast'
+)
 
+$ErrorActionPreference = 'Stop'
 # Login-AzAccount
 
-
-$rg = New-AzResourceGroup -Name "speechtotext-rg" -Location "australiaeast" -Force `
+$rg = New-AzResourceGroup -Name $RG -Location $Location -Force `
         -Tag @{project='speechtotext'; owner='timleyden'} -Verbose
 
 $deployment = New-AzResourceGroupDeployment -Name "$($rg.ResourceGroupName)-$(New-Guid)" `
