@@ -19,7 +19,10 @@ $env:APPINSIGHTSIKEY = $deployment.Outputs.appInsightsIKey.Value
 $env:WEBSTORAGEACCOUNTNAME = $deployment.Outputs.webStorageAccountName.Value
 $env:AUDIOSTORAGEACCOUNTNAME = $deployment.Outputs.audioStorageAccountName.Value
 
-
+# Set output vars for Azure Release Pipeline
+##vso[task.setvariable variable=APPINSIGHTSIKEY;isSecret=false;isOutput=true;]$deployment.Outputs.appInsightsIKey.Value
+##vso[task.setvariable variable=WEBSTORAGEACCOUNTNAME;isSecret=false;isOutput=true;]$deployment.Outputs.webStorageAccountName.Value
+##vso[task.setvariable variable=AUDIOSTORAGEACCOUNTNAME;isSecret=false;isOutput=true;]$deployment.Outputs.audioStorageAccountName.Value
 
 
 # TEARDOWN
