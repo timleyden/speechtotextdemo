@@ -55,6 +55,14 @@ Allows https traffic only to storage service if sets to true. The default value 
 * Application Insights keys set as envrionment vars
 * App Insights code added to index.html
 
+## Post deployment tests (Smoke)
+
+* Load testing services, e.g. <https://loader.io/>
+  * Example: <http://bit.ly/2Q1cgBe>
+* Mozilla Observatory: <https://observatory.mozilla.org/analyze/webstores2tzwqtespjxscxw.z8.web.core.windows.net?third-party=false>
+* Smoke testing with Pester [Smoke.Tests.ps1](./tests/Smoke.Tests.ps1)
+  * More examples: <https://github.com/DanielLarsenNZ/talks/tree/master/wgn-devops-lightning-pester>
+
 ## Links and references
 
 Static website hosting in Azure Storage: <https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website>
