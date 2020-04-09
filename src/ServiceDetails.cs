@@ -21,6 +21,11 @@ namespace SpeechToTextDemo
         public string region { get; set; }
         public string serviceKey { get; set; }
         public string trainUrl { get; set; }
+        public string CallbackFunctionUrl {get; set;}
+        public string StorageUrlBlobCutterFunction {get; set;}
+
+        public string StorageSASCustomSpeech {get; set;}
+        public string StorageConnectionStringCustomSpeech {get; set;}
 
        public static ServiceDetails GetServiceDetails(){
            if(instance == null){
@@ -34,7 +39,15 @@ namespace SpeechToTextDemo
                result.region = Environment.GetEnvironmentVariable("Region");
                result.serviceKey =  Environment.GetEnvironmentVariable("SubscriptionKey");
                result.trainUrl =  Environment.GetEnvironmentVariable("TrainingFunctionUrl");
+               result.CallbackFunctionUrl = Environment.GetEnvironmentVariable("CallbackFunctionUrl");
+               result.StorageSASCustomSpeech =  Environment.GetEnvironmentVariable("StorageSASCustomSpeech");
+                result.StorageUrlBlobCutterFunction =  Environment.GetEnvironmentVariable("StorageUrlBlobCutterFunction");
+
+
+
                instance = result;
+
+
 
            }
           return instance;
