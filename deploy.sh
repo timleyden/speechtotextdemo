@@ -51,7 +51,7 @@ DeployWithoutFuncPack() {
   "$MSBUILD_15_DIR\MSBuild.exe" "$DEPLOYMENT_SOURCE\src\speechtotextdemo.csproj" //p:DeployOnBuild=true //p:configuration=Release //p:publishurl=$DEPLOYMENT_TEMP $SCM_BUILD_ARGS
     # 2. KuduSync
     if [[ "$IN_PLACE_DEPLOYMENT" -ne "1" ]]; then
-      "$KUDU_SYNC_CMD" -v 50 -f "$DEPLOYMENT_SOURCE" -t "$DEPLOYMENT_TARGET" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.hg;.deployment;deploy.sh;obj"
+      "$KUDU_SYNC_CMD" -v 50 -f "$DEPLOYMENT_TEMP" -t "$DEPLOYMENT_TARGET" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.hg;.deployment;deploy.sh;obj"
       exitWithMessageOnError "Kudu Sync failed"
     fi
 
