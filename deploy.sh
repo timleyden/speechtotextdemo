@@ -34,7 +34,7 @@ RestoreNpmPackages() {
 
     for subDirectory in "$1"/*
     do
-      if [ -d $subDirectory ] && [ -e "$subDirectory/$lookup" ]
+      if [ -d "$subDirectory" ] && [ -e "$subDirectory\\$lookup" ]
       then
         RunNpm $subDirectory
       fi
@@ -47,15 +47,13 @@ DeployWithoutFuncPack() {
 
   # 1. Build
   nuget.exe restore "$DEPLOYMENT_SOURCE\src\speechtotextdemo.csproj" -MSBuildPath "$MSBUILD_15_DIR"
-  "$MSBUILD_15_DIR\MSBuild.exe" "$DEPLOYMENT_SOURCE\src\speechtotextdemo.csproj" /p:DeployOnBuild=true /p:configuration=Release /p:publishurl="$DEPLOYMENT_TEMP" $SCM_BUILD_ARGS
+  "$MSBUILD_15_DIR\MSBuild.exe" "$DEPLOYMENT_SOURCE\src\speechtotextdemo.csproj" /p:DeployOnBuild=true /p:configuration=Release /p:publishurl=$DEPLOYMENT_TEMP $SCM_BUILD_ARGS
     # 2. KuduSync
     if [[ "$IN_PLACE_DEPLOYMENT" -ne "1" ]]; then
       "$KUDU_SYNC_CMD" -v 50 -f "$DEPLOYMENT_SOURCE" -t "$DEPLOYMENT_TARGET" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.hg;.deployment;deploy.sh;obj"
       exitWithMessageOnError "Kudu Sync failed"
     fi
 
-    # 3. Restore npm
-    RestoreNpmPackages "$DEPLOYMENT_TARGET"
 }
 
 # Node Helpers
