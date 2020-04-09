@@ -41,25 +41,13 @@ RestoreNpmPackages() {
     done
 }
 
-InstallFunctionExtensions() {
-    echo Installing azure function extensions from nuget
-
-    local lookup="extensions.csproj"
-    if [ -e "$1/$lookup" ]
-    then
-      pushd $1 > /dev/null
-      dotnet build -o bin
-      exitWithMessageOnError "Function extensions installation failed"
-      popd > /dev/null
-    fi
-}
 
 DeployWithoutFuncPack() {
     echo Not using funcpack because SCM_USE_FUNCPACK is not set to 1
 
-    # 1. Install function extensions
-    InstallFunctionExtensions "$DEPLOYMENT_SOURCE"
-
+  # 1. Build
+  nuget.exe restore "$DEPLOYMENT_SOURCE\src\speechtotextdemo.csproj" -MSBuildPath "$MSBUILD_15_DIR"
+  "$MSBUILD_15_DIR\MSBuild.exe" "$DEPLOYMENT_SOURCE\src\speechtotextdemo.csproj" /p:DeployOnBuild=true /p:configuration=Release /p:publishurl="$DEPLOYMENT_TEMP" $SCM_BUILD_ARGS
     # 2. KuduSync
     if [[ "$IN_PLACE_DEPLOYMENT" -ne "1" ]]; then
       "$KUDU_SYNC_CMD" -v 50 -f "$DEPLOYMENT_SOURCE" -t "$DEPLOYMENT_TARGET" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.hg;.deployment;deploy.sh;obj"
