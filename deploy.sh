@@ -168,7 +168,7 @@ fi
 # ------------
 
 npmPath=`which npm 2> /dev/null`
-if [ -z $npmPath ]
+if [ -z "$npmPath" ]
 then
   NPM_CMD="node \"$NPM_JS_PATH\"" # on windows server there's only npm.cmd
 else
