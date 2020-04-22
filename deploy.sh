@@ -47,7 +47,7 @@ DeployWithoutFuncPack() {
 
   # 1. Build
   #nuget.exe restore "$DEPLOYMENT_SOURCE\src\speechtotextdemo.csproj" -MSBuildPath "$MSBUILD_15_DIR"
-  "dotnet" "restore"
+  "dotnet" "restore" "$DEPLOYMENT_SOURCE\src\speechtotextdemo.csproj"
   echo "dotnet" "msbuild" "$DEPLOYMENT_SOURCE\src\speechtotextdemo.csproj" /p:DeployOnBuild=true /p:configuration=Release /p:publishurl=$DEPLOYMENT_TEMP $SCM_BUILD_ARGS
   #"$MSBUILD_15_DIR\MSBuild.exe" "$DEPLOYMENT_SOURCE\src\speechtotextdemo.csproj" //p:DeployOnBuild=true //p:configuration=Release //p:publishurl=$DEPLOYMENT_TEMP $SCM_BUILD_ARGS
   "dotnet" "msbuild" "$DEPLOYMENT_SOURCE\src\speechtotextdemo.csproj" //p:DeployOnBuild=true //p:configuration=Release //p:publishurl=$DEPLOYMENT_TEMP $SCM_BUILD_ARGS
