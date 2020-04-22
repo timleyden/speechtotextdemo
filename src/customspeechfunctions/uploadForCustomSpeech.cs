@@ -161,7 +161,7 @@ namespace cut60secondsaudio
 
 
             string ocpSubKey = ServiceDetails.GetServiceDetails().serviceKey;
-            string storrageUrl = blobTrigger;
+            string storrageUrl = uri.ToString();
             string saskey = ServiceDetails.GetServiceDetails().sASTokenReadOnly;
             string region = ServiceDetails.GetServiceDetails().region;
             
