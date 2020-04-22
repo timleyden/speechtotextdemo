@@ -69,28 +69,9 @@
       },
       "properties": {
         "accessTier": "Hot",
-        "cors": {
-                    "corsRules": [
-                        {
-                            "allowedOrigins": [
-                                "*"
-                            ],
-                            "allowedMethods": [
-                                "POST",
-                                "GET",
-                                "PUT"    
-                            ],
-                            "maxAgeInSeconds": 0,
-                            "exposedHeaders": [
-                                ""
-                            ],
-                            "allowedHeaders": [
-                                "*"
-                            ]
-                        }
-                    ]
-                }
+      
       },
+       
       "resources": [
         {
           "name": "[concat(variables('AudioStorageAccountName'),'/default/',variables('transcriptContainer'))]",
@@ -118,7 +99,45 @@
             "[resourceId('Microsoft.Storage/storageAccounts', variables('AudioStorageAccountName'))]",
             "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers',variables('AudioStorageAccountName'),'default',variables('transcriptContainer'))]"
           ]
-        }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(variables('audioStorageAccountName'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('audioStorageAccountName'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+  "cors": {
+                    "corsRules": [
+                        {
+                            "allowedOrigins": [
+                                "*"
+                            ],
+                            "allowedMethods": [
+                                "POST",
+                                "GET",
+                                "PUT"    
+                            ],
+                            "maxAgeInSeconds": 0,
+                            "exposedHeaders": [
+                                ""
+                            ],
+                            "allowedHeaders": [
+                                "*"
+                            ]
+                        }
+                    ]
+                },
+                "deleteRetentionPolicy": {
+                    "enabled": false
+                }
+            }
+        },
       ]
     },
     {
@@ -215,6 +234,7 @@
         "TrainingFunctionUrl": "[reference('getTriggerUrlLinkedTemplate').outputs.traintriggerUrl.value]",
         "AddDiarization": "True",
         "Project": "function"
+        
       }
     },
     {
@@ -230,6 +250,7 @@
         "[variables('hostingPlanName')]"
       ],
       "properties": {
+        
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
         "siteConfig": {
           "appSettings": [
@@ -274,15 +295,23 @@
               "value": "function"
             }
           ]
-        },
-         "cors": {
+        }        
+      },
+      "resources": [
+        {
+          "name":"web",
+          "type":"config",
+          "apiVersion": "2018-11-01",
+          "properties":{
+            "cors": {
                     "allowedOrigins": [
                         "*"
                     ],
                     "supportCredentials": false
                 }
-      },
-      "resources": [
+          },
+          "dependsOn":["[variables('functionAppName')]"]
+        }
       ]
     },
     {
