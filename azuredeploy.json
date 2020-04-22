@@ -232,7 +232,8 @@
         "AudioContainer": "[variables('audioContainer')]",
         "TrainingFunctionUrl": "[reference('getTriggerUrlLinkedTemplate').outputs.traintriggerUrl.value]",
         "AddDiarization": "True",
-        "Project": "function"
+        "Project": "function",
+        "SCM_REPOSITORY_PATH":"d:/local/repository"
         
       }
     },
@@ -292,6 +293,10 @@
             {
               "name": "Project",
               "value": "function"
+            },
+            {
+              "name": "SCM_REPOSITORY_PATH",
+              "value": "d:/local/repository"
             }
           ]
         }        
