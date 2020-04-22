@@ -46,7 +46,8 @@ DeployWithoutFuncPack() {
     echo Not using funcpack because SCM_USE_FUNCPACK is not set to 1
 
   # 1. Build
-  nuget.exe restore "$DEPLOYMENT_SOURCE\src\speechtotextdemo.csproj" -MSBuildPath "$MSBUILD_15_DIR"
+  #nuget.exe restore "$DEPLOYMENT_SOURCE\src\speechtotextdemo.csproj" -MSBuildPath "$MSBUILD_15_DIR"
+  "dotnet" "restore"
   echo "dotnet" "msbuild" "$DEPLOYMENT_SOURCE\src\speechtotextdemo.csproj" /p:DeployOnBuild=true /p:configuration=Release /p:publishurl=$DEPLOYMENT_TEMP $SCM_BUILD_ARGS
   #"$MSBUILD_15_DIR\MSBuild.exe" "$DEPLOYMENT_SOURCE\src\speechtotextdemo.csproj" //p:DeployOnBuild=true //p:configuration=Release //p:publishurl=$DEPLOYMENT_TEMP $SCM_BUILD_ARGS
   "dotnet" "msbuild" "$DEPLOYMENT_SOURCE\src\speechtotextdemo.csproj" //p:DeployOnBuild=true //p:configuration=Release //p:publishurl=$DEPLOYMENT_TEMP $SCM_BUILD_ARGS
