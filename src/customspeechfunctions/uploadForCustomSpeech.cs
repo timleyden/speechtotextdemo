@@ -152,11 +152,11 @@ namespace cut60secondsaudio
 
 
         [FunctionName("uploadForCustomSpeech")]
-        public static async Task Run([BlobTrigger("cutaudio/{name}", Connection = "StorageConnectionString")]Stream myBlob, string name, IDictionary<string, string> metaData, ILogger log,string blobTrigger)
+        public static async Task Run([BlobTrigger("cutaudio/{name}", Connection = "StorageConnectionString")]Stream myBlob, string name, IDictionary<string, string> metaData, ILogger log, string blobTrigger, Uri uri)
         {
 
 
-            log.LogInformation($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {myBlob.Length} Bytes, path:{blobTrigger}");
+            log.LogInformation($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {myBlob.Length} Bytes, path:{blobTrigger}, uri:{uri.ToString()}");
 
 
 
