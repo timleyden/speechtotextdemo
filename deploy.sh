@@ -254,8 +254,8 @@ if [ -e "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/angular.json" ]; then
   cp  ./dist/transcriptionviewer/index.html  dist/transcriptionviewer/index-orig.html
   sed 's/#{appInsightsKey}/'"$APPSETTING_APPINSIGHTS_INSTRUMENTATIONKEY"'/g' dist/transcriptionviewer/index-orig.html > dist/transcriptionviewer/index.html
   rm dist/transcriptionviewer/index-orig.html
-  cp  ./dist/transcriptionviewer/assets/config/config.prod.json  dist/transcriptionviewer/assets/config/config.prod-orig.json
-  sed 's/#{configUrl}/'"$APPSETTING_configServiceUrl"'/g'  dist/transcriptionviewer/assets/config/config.prod-orig.json > dist/transcriptionviewer/assets/config/config.prod.json
+  cp  /dist/transcriptionviewer/assets/config/config.prod.json  dist/transcriptionviewer/assets/config/config.prod-orig.json
+  sed 's%#{configUrl}%'"$APPSETTING_configServiceUrl"'%g'  dist/transcriptionviewer/assets/config/config.prod-orig.json > dist/transcriptionviewer/assets/config/config.prod.json
   rm dist/transcriptionviewer/assets/config/config.prod-orig.json
   cp  dist/transcriptionviewer/assets/config/config.prod.json  dist/transcriptionviewer/assets/config/config.prod-orig.json
   sed 's/#{appInsightsKey}/'"$APPSETTING_APPINSIGHTS_INSTRUMENTATIONKEY"'/g'  dist/transcriptionviewer/assets/config/config.prod-orig.json > dist/transcriptionviewer/assets/config/config.prod.json

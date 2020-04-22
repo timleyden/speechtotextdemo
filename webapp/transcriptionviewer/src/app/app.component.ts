@@ -8,9 +8,6 @@ import { AppConfigService } from './app-config.service';
 })
 export class AppComponent {
   title = 'transcriptionviewer';
-  aiKey:string;
-  constructor(){
-    this.aiKey = AppConfigService.settings.appInsights.instrumentationKey
-  }
+
 }
 
