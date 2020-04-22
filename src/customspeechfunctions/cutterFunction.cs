@@ -84,7 +84,7 @@ namespace cut60secondsaudio
                         {
 
                             // local debugging
-                            process.StartInfo.FileName = @"C:\code\SpeechToTextdemo\speechtotextdemo\cut60secondsaudio\cut60secondsaudio\ffmpeg.exe";
+                            process.StartInfo.FileName = @"D:\home\site\wwwroot\bin\ffmpeg.exe";
 
                             //production
                            // process.StartInfo.FileName = @"D:\home\site\wwwroot\ffmpeg.exe";
