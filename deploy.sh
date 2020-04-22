@@ -270,8 +270,8 @@ fi
 # 1. KuduSync
 if [[ "$IN_PLACE_DEPLOYMENT" -ne "1" ]]; then
   "$KUDU_SYNC_CMD" -v 50 -f "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/dist" -t "$DEPLOYMENT_TARGET/dist" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.hg;.deployment;deploy.sh"
-  cp "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/pacakage.json" "$DEPLOYMENT_TARGET"
   exitWithMessageOnError "Kudu Sync failed"
+    cp "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/package.json" "$DEPLOYMENT_TARGET"
 fi
 
 
