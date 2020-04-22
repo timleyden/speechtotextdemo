@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AppConfigService } from './app-config.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,9 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'transcriptionviewer';
+  aiKey:string;
+  constructor(){
+    this.aiKey = AppConfigService.settings.appInsights.instrumentationKey
+  }
 }
+

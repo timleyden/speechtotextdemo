@@ -41,7 +41,7 @@ export class TranscriptionNewComponent implements OnInit {
   showUpload: boolean;
   uploadedBlobName: string;
   Models:any[];
-  filteredModels:any[];
+  public filteredModels:any[];
 
   constructor(private formBuilder: FormBuilder, fileService: FileService, private transcriptService: TranscriptService, private accountService: AccountService, private _snackbar: MatSnackBar, public dialog: MatDialog, private navService: NavigationService, private router:Router) {
     this.showAdvanced = false;
@@ -78,7 +78,7 @@ export class TranscriptionNewComponent implements OnInit {
     this.transcriptService.GetModels(this.accountService.Details.Region,this.accountService.Details.ServiceKey).subscribe(data=>{this.Models = <any[]>data; this.filterModels();})
 
   }
-  private filterModels(){
+  public filterModels(){
     this.filteredModels = this.Models.filter(value=>{return value.locale == this.transcriptDef.locale})
   }
   toggleUpload() {
@@ -108,7 +108,7 @@ export class TranscriptionNewComponent implements OnInit {
   }
   onSubmit(valid) {
     if(valid){
-    this.transcriptDef.recordingsUrl = this.fileService.getRecordingUrl(this.details.AccountName, this.details.SASToken,this.selectedFile);
+    this.transcriptDef.recordingsUrl = this.fileService.getRecordingUrl(this.details.AccountName, this.details.SASTokenReadOnly,this.selectedFile);
     if(this.selectedModels){
       this.transcriptDef.models = this.selectedModels.map(value=>{return {"Id":value}})
     }

@@ -13,6 +13,12 @@ import { NavigationComponent } from './navigation/navigation.component';
 import { SortByPipe } from './sort-by.pipe';
 import { HelpComponent } from './help/help.component';
 //import { UploadAudioComponent } from './transcription/containers/upload-audio/upload-audio.component';
+import { APP_INITIALIZER } from '@angular/core';
+import { AppConfigService } from './app-config.service';
+
+export function initializeApp(appConfig: AppConfigService) {
+  return () => appConfig.load();
+}
 
 @NgModule({
   declarations: [
@@ -40,7 +46,11 @@ import { HelpComponent } from './help/help.component';
     MatListModule
   ],
 entryComponents:[],
-  providers: [],
+  providers: [AppConfigService,
+    { provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [AppConfigService], multi: true }
+ ],
   bootstrap: [AppComponent],
 
 })

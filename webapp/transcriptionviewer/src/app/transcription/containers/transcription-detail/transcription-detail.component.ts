@@ -11,6 +11,7 @@ import { AccountService } from 'src/app/account.service';
 import { NavigationService } from 'src/app/navigation.service';
 import { MatBottomSheet, MatSnackBar } from '@angular/material';
 import { TranscriptionSaveBottomsheetComponent } from '../../components/transcription-save-bottomsheet/transcription-save-bottomsheet.component';
+import { AppConfigService } from 'src/app/app-config.service';
 
 
 
@@ -82,7 +83,7 @@ export class TranscriptionDetailComponent implements OnInit {
         this.transcript = data;
         this.navService.NavTitle = " - View: " + this.transcript.name
 
-        this.transcript.recordingsUrl = this.transcript.recordingsUrl.split('?')[0] + this.details.SASToken
+        this.transcript.recordingsUrl = this.transcript.recordingsUrl.split('?')[0] + this.details.SASTokenReadOnly
         var observables: Observable<object>[] = [];
         for (const key in this.transcript.resultsUrls) {
           if (this.transcript.resultsUrls.hasOwnProperty(key)) {
@@ -161,22 +162,15 @@ export class TranscriptionDetailComponent implements OnInit {
   }
 
   submitForTraining() {
-    var filename = 'traningdata.json'
-    var exportdata = { recordingurl: this.transcript.recordingsUrl, SegmentResults: this.transcriptData }
-    var blob = new Blob([(JSON.stringify(exportdata))], { type: 'text/plain' });
-    //var blob = new Blob(blobparts, {type: 'text/json'});
-    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-      window.navigator.msSaveOrOpenBlob(blob, filename);
-    } else {
-      var e: any = document.createEvent('MouseEvents'),
-        a = document.createElement('a');
-      a.download = filename;
-      a.href = window.URL.createObjectURL(blob);
-      a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
-      e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-      a.dispatchEvent(e);
-      // window.URL.revokeObjectURL(a.href); // clean the url.createObjectURL resource
-    }
+
+    var exportdata = { recordingurl: this.transcript.recordingsUrl,modelid: this.transcript.models[0].id, SegmentResults: this.transcriptData }
+    this.http.post(this.details.TrainUrl,exportdata).subscribe(
+      data=>{
+      this._snackbar.open('transcription submitted for training', 'Dismiss', { duration: 8000 })
+    },
+    error=>{
+      this._snackbar.open('training submission failed', 'Dismiss', { duration: 8000 })
+    });
   }
   //only worked in edge
   // audioError(eventData){
