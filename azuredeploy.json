@@ -68,7 +68,28 @@
         "displayName": "Storage account for audio files"
       },
       "properties": {
-        "accessTier": "Hot"
+        "accessTier": "Hot",
+        "cors": {
+                    "corsRules": [
+                        {
+                            "allowedOrigins": [
+                                "*"
+                            ],
+                            "allowedMethods": [
+                                "POST",
+                                "GET",
+                                "PUT"    
+                            ],
+                            "maxAgeInSeconds": 0,
+                            "exposedHeaders": [
+                                ""
+                            ],
+                            "allowedHeaders": [
+                                "*"
+                            ]
+                        }
+                    ]
+                }
       },
       "resources": [
         {
@@ -253,7 +274,13 @@
               "value": "function"
             }
           ]
-        }
+        },
+         "cors": {
+                    "allowedOrigins": [
+                        "*"
+                    ],
+                    "supportCredentials": false
+                }
       },
       "resources": [
       ]
