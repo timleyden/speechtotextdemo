@@ -68,8 +68,7 @@
         "displayName": "Storage account for audio files"
       },
       "properties": {
-        "accessTier": "Hot",
-      
+        "accessTier": "Hot"
       },
        
       "resources": [
@@ -137,7 +136,7 @@
                     "enabled": false
                 }
             }
-        },
+        }
       ]
     },
     {
