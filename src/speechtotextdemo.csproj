@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
-    <AzureFunctionsVersion>v2</AzureFunctionsVersion>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AzureFunctionsVersion>v3</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventGrid" Version="2.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="3.0.10" />
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.28" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.1" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
@@ -16,9 +16,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
-        <None Update="./customspeechfunctions/ffmpeg.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+     
+    </ItemGroup>
+  <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+  <Copy SourceFiles="customspeechfunctions/ffmpeg.exe" DestinationFolder="$(OutDir)/bin" />
+</Target>
+<Target Name="CopyCustomContentOnPublish" AfterTargets="Publish">
+  <Copy SourceFiles="customspeechfunctions/ffmpeg.exe" DestinationFolder="$(PublishDir)/bin" />
+</Target>
+
 </Project>
 
