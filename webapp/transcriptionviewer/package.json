@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "node --max-http-header-size=20000 dist/app.js",
-    "build": "./node_modules/.bin/ng build --prod && cp app.js dist/app.js",
+    "build": "./node_modules/.bin/ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
