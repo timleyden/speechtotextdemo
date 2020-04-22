@@ -1,0 +1,12 @@
+{
+  "name": "transcriptionviewer",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "node --max-http-header-size=20000 app.js"
+  },
+  "private": true,
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {}
+}

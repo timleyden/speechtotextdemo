@@ -262,6 +262,9 @@ if [ -e "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/angular.json" ]; then
   cp  dist/transcriptionviewer/assets/config/config.prod.json  dist/transcriptionviewer/assets/config/config.prod-orig.json
   sed 's/#{appInsightsKey}/'"$APPSETTING_APPINSIGHTS_INSTRUMENTATIONKEY"'/g'  dist/transcriptionviewer/assets/config/config.prod-orig.json > dist/transcriptionviewer/assets/config/config.prod.json
   rm dist/transcriptionviewer/assets/config/config.prod-orig.json
+  exitWithMessageOnError "Angular build failed"
+  cd - > /dev/null
+  fi
 
 if [ -e "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/webserver/package.json" ]; then
   cd "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/webserver"
@@ -270,16 +273,17 @@ if [ -e "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/webserver/package.json" ]
   eval npm install
   exitWithMessageOnError "webserver install failed"
   cd - > /dev/null
-fi
+  fi
 
 # 1. KuduSync
 if [[ "$IN_PLACE_DEPLOYMENT" -ne "1" ]]; then
   "$KUDU_SYNC_CMD" -v 50 -f "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/dist" -t "$DEPLOYMENT_TARGET/dist" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.hg;.deployment;deploy.sh"
   exitWithMessageOnError "Kudu Sync failed"
-  $KUDU_SYNC_CMD" -v 50 -f "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/webserver" -t "$DEPLOYMENT_TARGET/" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.hg;.deployment;deploy.sh"
+  "$KUDU_SYNC_CMD" -v 50 -f "$DEPLOYMENT_SOURCE/webapp/transcriptionviewer/webserver" -t "$DEPLOYMENT_TARGET" -n "$NEXT_MANIFEST_PATH" -p "$PREVIOUS_MANIFEST_PATH" -i ".git;.hg;.deployment;deploy.sh"
   exitWithMessageOnError "Kudu Sync failed"
+
     
-fi
+  fi
 
 
 
