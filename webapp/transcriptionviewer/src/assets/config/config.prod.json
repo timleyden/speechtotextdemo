@@ -1,0 +1,9 @@
+{
+    "env": {
+    "name": "prod"
+    },
+    "appInsights": {
+    "instrumentationKey": "#{appInsightsKey}"
+    },
+    "configUrl":"#{configUrl}"
+}

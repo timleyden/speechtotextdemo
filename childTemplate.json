@@ -11,9 +11,13 @@
     },
     "resources": [],
     "outputs": {
-        "triggerUrl": {
+        "configtriggerUrl": {
             "type": "string",
             "value": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionAppName'), 'GetServiceDetailsHttpTrigger'), variables('sitesWebApiVersion')).trigger_url]"
+        },
+        "traintriggerUrl": {
+            "type": "string",
+            "value": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionAppName'), 'cutterFunction'), variables('sitesWebApiVersion')).trigger_url]"
         }
     }
 }

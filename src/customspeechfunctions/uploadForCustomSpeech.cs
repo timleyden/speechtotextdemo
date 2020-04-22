@@ -152,18 +152,19 @@ namespace cut60secondsaudio
 
 
         [FunctionName("uploadForCustomSpeech")]
-        public static async Task Run([BlobTrigger("cutaudio/{name}", Connection = "StorageConnectionString")]Stream myBlob, string name, IDictionary<string, string> metaData, ILogger log)
+        public static async Task Run([BlobTrigger("cutaudio/{name}", Connection = "StorageConnectionString")]Stream myBlob, string name, IDictionary<string, string> metaData, ILogger log,string blobTrigger)
         {
 
 
-            log.LogInformation($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {myBlob.Length} Bytes");
+            log.LogInformation($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {myBlob.Length} Bytes, path:{blobTrigger}");
 
 
 
             string ocpSubKey = ServiceDetails.GetServiceDetails().serviceKey;
-            string storrageUrl =ServiceDetails.GetServiceDetails().StorageUrlBlobCutterFunction;
-            string saskey = ServiceDetails.GetServiceDetails().StorageSASCustomSpeech;
+            string storrageUrl = blobTrigger;
+            string saskey = ServiceDetails.GetServiceDetails().sASTokenReadOnly;
             string region = ServiceDetails.GetServiceDetails().region;
+            
 
 
             blob blobFile = new blob(name, storrageUrl, saskey);
@@ -229,8 +230,8 @@ namespace cut60secondsaudio
                 "dataSet" + blobFile.blobName,
                 "This data set is created from Speech to Text Accelerator. Basemodel: " + baselineModelId,
                 "Acoustic",
-                blobFile.blobUrl + blobFile.blobName + blobFile.SASkeyForBlob,
-                blobFile.blobUrl + blobFile.blobName + blobFile.SASkeyForBlob,
+                blobFile.blobUrl + blobFile.SASkeyForBlob,
+                blobFile.blobUrl + blobFile.SASkeyForBlob,
                  "en-US",
                  null,
                  project,

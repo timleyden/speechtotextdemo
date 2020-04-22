@@ -1,0 +1,9 @@
+{
+    "env": {
+    "name": "dev"
+    },
+    "appInsights": {
+    "instrumentationKey": "98a9a7b5-9319-4ea2-9a01-c0efe007ae96"
+    },
+    "configUrl":"https://s2tand4f3rvinwssfuncapp.azurewebsites.net/api/GetServiceDetailsHttpTrigger?code=UCdyRsNXGMgY0aYljmu3iAqJNJpUUigT2hXnFvmGk7afj3VyKGKrLQ=="
+}

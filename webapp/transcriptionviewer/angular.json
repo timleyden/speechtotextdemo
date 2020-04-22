@@ -58,6 +58,22 @@
                   "maximumError": "10kb"
                 }
               ]
+            },
+            "dev": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.dev.ts"
+                }
+              ]
+            },
+            "deploy": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.deploy.ts"
+                }
+              ]
             }
           }
         },
@@ -69,6 +85,9 @@
           "configurations": {
             "production": {
               "browserTarget": "transcriptionviewer:build:production"
+            },
+            "dev": {
+              "browserTarget": "transcriptionviewer:build:dev"
             }
           }
         },
