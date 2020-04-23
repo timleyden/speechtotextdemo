@@ -18,6 +18,11 @@
         "traintriggerUrl": {
             "type": "string",
             "value": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionAppName'), 'cutterFunction'), variables('sitesWebApiVersion')).trigger_url]"
+        },
+        "datasetUploadCallback": {
+            "type": "string",
+            "value": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionAppName'), 'DataUploadCompleteHttpTrigger'), variables('sitesWebApiVersion')).trigger_url]"
         }
+
     }
 }
