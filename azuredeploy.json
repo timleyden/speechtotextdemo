@@ -35,6 +35,7 @@
     "trainingContainer": "cutaudio",
     "functionStorageAccountName": "[toLower(if(greater(length(concat('funcstore', parameters('demoName'))),23),substring(concat('funcstore', parameters('demoName')),0,24),concat('funcstore', parameters('demoName'))))]",
     "storageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('functionStorageAccountName'))]",
+    "audiostorageAccountid": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('audioStorageAccountName'))]",
     "functionWorkerRuntime": "dotnet",
     "appInsightsName": "speechToTextDemoAppInsights",
     "cognititiveServiceName": "[concat(parameters('demoName'), 'SpeechServices')]",
@@ -233,7 +234,8 @@
         "TrainingFunctionUrl": "[reference('getTriggerUrlLinkedTemplate').outputs.traintriggerUrl.value]",
         "AddDiarization": "True",
         "Project": "function",
-        "SCM_REPOSITORY_PATH":"d:/local/repository"
+        "SCM_REPOSITORY_PATH":"d:/local/repository",
+        "StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('audioStorageAccountName'), ';AccountKey=', listKeys(variables('audiostorageAccountid'),'2015-05-01-preview').key1)]"
         
       }
     },
