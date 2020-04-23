@@ -235,8 +235,8 @@
         "AddDiarization": "True",
         "Project": "function",
         "SCM_REPOSITORY_PATH":"d:/local/repository",
-        "StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('audioStorageAccountName'), ';AccountKey=', listKeys(variables('audiostorageAccountid'),'2015-05-01-preview').key1)]"
-        
+        "StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('audioStorageAccountName'), ';AccountKey=', listKeys(variables('audiostorageAccountid'),'2015-05-01-preview').key1)]",
+        "CallbackFunctionUrl":"[reference('getTriggerUrlLinkedTemplate').outputs.datasetUploadCallback.value]"
       }
     },
     {
@@ -354,6 +354,22 @@
             "value": "[variables('functionAppName')]"
           }
         }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "name": "RegisterCallback",
+      "dependsOn": [
+        "[variables('siteAppName')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(reference('getTriggerUrlLinkedTemplate').outputs.datasetUploadCallback.value,'&Register=Yes')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {}
       }
     },
     {
