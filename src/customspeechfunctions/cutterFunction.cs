@@ -37,6 +37,9 @@ namespace cut60secondsaudio
             string[] result2 = resultSubString.Split("/");
             string audioName = result2[4];
 
+            log.Info("Processing the transcript for segmentation");
+
+
             foreach (Segmentresult result in textString.SegmentResults)
             {
                 if ((result.OffsetInSeconds + result.DurationInSeconds) - chunks.start < 60)
@@ -74,6 +77,8 @@ namespace cut60secondsaudio
             string localFileName = Path.Combine(tempPath, audioName);
             await thing.DownloadToFileAsync(localFileName, FileMode.CreateNew);
 
+            log.Info("Cutting the audio");
+
             try
             {
                 using (FileStream fs = File.Create(tempText))
@@ -84,10 +89,13 @@ namespace cut60secondsaudio
                         {
 
                             // local debugging
-                            process.StartInfo.FileName = @"D:\home\site\wwwroot\bin\ffmpeg.exe";
 
-                            //production
-                           // process.StartInfo.FileName = @"D:\home\site\wwwroot\ffmpeg.exe";
+                           // process.StartInfo.FileName = @"C:\code\SpeechToTextdemo\speechtotextdemo\cut60secondsaudio\cut60secondsaudio\ffmpeg.exe";
+
+
+
+                        // production
+                          process.StartInfo.FileName = @"D:\home\site\wwwroot\bin\ffmpeg.exe";
 
                             // Getting start and stop times for the audio cuts //
 
@@ -107,9 +115,13 @@ namespace cut60secondsaudio
                             string durationStr = duration.ToString();
                             seconds = durationStr.Split(".");
                             string TimeStop = duration.ToString(@"hh\:mm\:ss");
-                            milliseconds = seconds[1];
-                            TimeStop = TimeStop + "." + milliseconds;
 
+                            if (seconds.Count() == 2)
+                            {
+                                milliseconds = seconds[1];
+                            } 
+
+                            TimeStop = TimeStop + "." + milliseconds;
 
                             // Declare the name/location of the audio  //
 
@@ -131,6 +143,7 @@ namespace cut60secondsaudio
                             // Add text to file    
 
                             log.Info($"Output: {process.ExitCode}");
+
                             log.Info(process.StandardOutput.ReadToEnd());
 
                             Byte[] text = new UTF8Encoding(true).GetBytes(chunkAudioName + "\t" + audioElements.Text + "\n");

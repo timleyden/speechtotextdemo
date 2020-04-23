@@ -201,7 +201,7 @@ namespace cut60secondsaudio
                 string[] projectIDarray = localProjectPath.Split("/api/speechtotext/v3.0-beta1/projects/");
                 string projectId = projectIDarray[1];
 
-                await createDataSetAsync(projectId, client, blobFile, "https://" + region + ".cris.ai/api/speechtotext/v3.0-beta1/projects/", baselineModelId);
+                await createDataSetAsync(projectId, client, blobFile, "https://" + region + ".cris.ai/api/speechtotext/v3.0-beta1/projects/", baselineModelId, log);
 
             }
             else
@@ -210,12 +210,12 @@ namespace cut60secondsaudio
                 string[] projectIDarray = projects.values[0].self.Split("https://" + region + ".cris.ai/api/speechtotext/v3.0-beta1/projects/");
                 string projectID = projectIDarray[1];
 
-                await createDataSetAsync(projectID, client, blobFile, "https://" + region + ".cris.ai/api/speechtotext/v3.0-beta1/projects/", baselineModelId);
+                await createDataSetAsync(projectID, client, blobFile, "https://" + region + ".cris.ai/api/speechtotext/v3.0-beta1/projects/", baselineModelId, log);
 
             }
         }
 
-        public static async Task createDataSetAsync(string projectID, HttpClient client, blob blobFile, string projectUrl, string baselineModelId)
+        public static async Task createDataSetAsync(string projectID, HttpClient client, blob blobFile, string projectUrl, string baselineModelId,ILogger log)
         {
             var project = new projectSelf(projectID, projectUrl + projectID);
 
@@ -224,6 +224,10 @@ namespace cut60secondsaudio
             var customProperties = new customProperties();
 
             var datasetProperties = new datasetProperties();
+
+            log.LogInformation($"SAS key for blob: {blobFile.SASkeyForBlob}");
+
+
 
             var dataSetfromBlob = new dataset(
                 "dataSet" + blobFile.blobName,
@@ -243,6 +247,9 @@ namespace cut60secondsaudio
             var json = JsonConvert.SerializeObject(dataSetfromBlob);
 
             var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+
+            log.LogInformation($"Payload: {json}");
 
             string region = ServiceDetails.GetServiceDetails().region;
 
