@@ -10,7 +10,7 @@
     <button mat-button (click)="toggleUpload()">Upload New</button>
     <mat-form-field class="full-width">
       <mat-label>Title</mat-label>
-      <input name="name" matInput type="text" required [(ngModel)]="transcriptDef.name" />
+      <input name="name" matInput type="text" required [(ngModel)]="transcriptDef.displayName" />
     </mat-form-field>
     <mat-form-field class="full-width" >
       <mat-label>Description</mat-label>
@@ -27,33 +27,28 @@
       </mat-select>
     </mat-form-field>
     <div>   <mat-checkbox name="diarisazation" [(ngModel)]="transcriptDef.properties.AddDiarization"
-      [checked]="transcriptDef.properties.AddDiarization">Diarization</mat-checkbox>
+      [checked]="transcriptDef.properties.addDiarization">Diarization</mat-checkbox>
     </div>
     <div>
-
-    <mat-checkbox name="sentiment" [(ngModel)]="transcriptDef.properties.AddSentiment"
-      [checked]="transcriptDef.properties.AddSentiment">Sentiment</mat-checkbox>
-    </div>
-    <div>
-    <mat-checkbox name="addwordleveltimestamps" [(ngModel)]="transcriptDef.properties.AddWordLevelTimestamps"
+    <mat-checkbox name="addwordleveltimestamps" [(ngModel)]="transcriptDef.properties.addWordLevelTimestamps"
       checked="transcriptDef.properties.AddWordLevelTimestamps">Add word level timestamps</mat-checkbox>
     </div>
     <mat-form-field class="full-width">
       <mat-label>Punctuation Mode</mat-label>
-      <mat-select name="punctuationMode" [(ngModel)]="transcriptDef.properties.PunctuationMode">
+      <mat-select name="punctuationMode" [(ngModel)]="transcriptDef.properties.punctuationMode">
         <mat-option *ngFor="let c of punctuationOptions" value={{c}}> {{c}} </mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field class="full-width">
       <mat-label>Profanity filter mode</mat-label>
-      <mat-select name="profanityMode" [(ngModel)]="transcriptDef.properties.ProfanityFilterMode">
+      <mat-select name="profanityMode" [(ngModel)]="transcriptDef.properties.profanityFilterMode">
         <mat-option *ngFor="let c of profanityOptions" value={{c}}> {{c}} </mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field class="full-width">
       <mat-label>Select Model</mat-label>
       <mat-select name="models" [(ngModel)]="selectedModels" multiple>
-        <mat-option *ngFor="let model of filteredModels" [value]="model.id" matTooltip="{{'kind:' + model.modelKind +' description:' + model.description}}">{{model.name}}</mat-option>
+        <mat-option *ngFor="let model of filteredModels" [value]="model.id" matTooltip="{{' description:' + model.description}}">{{model.displayName}}</mat-option>
       </mat-select>
     </mat-form-field>
   </fieldset>

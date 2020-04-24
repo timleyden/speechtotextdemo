@@ -14,7 +14,7 @@
     <!-- Name Column -->
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef> Name </th>
-      <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.displayName}} </td>
     </ng-container>
 
     <!-- status Column -->
@@ -33,13 +33,13 @@
     <!-- open  Column -->
     <ng-container matColumnDef="open">
       <th mat-header-cell *matHeaderCellDef> Open </th>
-      <td mat-cell *matCellDef="let element"> <button mat-button [routerLink]="['./detail',element.id]">Open</button>
+      <td mat-cell *matCellDef="let element"> <button mat-button [routerLink]="['./detail',element.self]">Open</button>
       </td>
     </ng-container>
     <!-- delete  Column -->
     <ng-container matColumnDef="delete">
       <th mat-header-cell *matHeaderCellDef> Delete </th>
-      <td mat-cell *matCellDef="let element"> <button (click)="deleteTranscription(element.id)"
+      <td mat-cell *matCellDef="let element"> <button (click)="deleteTranscription(element.self)"
           mat-button>Delete</button> </td>
     </ng-container>
 

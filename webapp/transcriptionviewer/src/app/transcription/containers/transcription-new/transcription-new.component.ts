@@ -49,7 +49,8 @@ export class TranscriptionNewComponent implements OnInit {
     this.showAdvancedText = "Advanced";
     this.audioFiles = Array();
     this.showUpload = false;
-
+    this.Models = [];
+    this.filteredModels = [];
     this.punctuationOptions = AllPunctuationMode;
     this.profanityOptions = AllProfanityFilterMode;
     this.locationOptions = Locations;
@@ -75,7 +76,8 @@ export class TranscriptionNewComponent implements OnInit {
     }
   }
   private bindModelsChoice(){
-    this.transcriptService.GetModels().subscribe(data=>{this.Models = <any[]>data; this.filterModels();})
+    this.transcriptService.GetModels().subscribe(data=>{this.Models = this.Models.concat(<any[]>data.values); this.filterModels();})
+    this.transcriptService.GetBaseModels().subscribe(data=>{this.Models = this.Models.concat(<any[]>data.values); this.filterModels();})
 
   }
   public filterModels(){
@@ -93,7 +95,7 @@ export class TranscriptionNewComponent implements OnInit {
       console.log('The dialog was closed');
       console.log(result);
       this.bindAudioFileChoice();
-      this.transcriptDef.recordingsUrl = result;
+      this.transcriptDef.sourceUrls = [result];
     });
   }
   toggleAdvanced(event) {
@@ -108,7 +110,7 @@ export class TranscriptionNewComponent implements OnInit {
   }
   onSubmit(valid) {
     if(valid){
-    this.transcriptDef.recordingsUrl = this.fileService.getRecordingUrl(this.details.AccountName, this.details.SASTokenReadOnly,this.selectedFile);
+    this.transcriptDef.sourceUrls = [this.fileService.getRecordingUrl(this.details.AccountName, this.details.SASTokenReadOnly,this.selectedFile)];
     if(this.selectedModels){
       this.transcriptDef.models = this.selectedModels.map(value=>{return {"Id":value}})
     }

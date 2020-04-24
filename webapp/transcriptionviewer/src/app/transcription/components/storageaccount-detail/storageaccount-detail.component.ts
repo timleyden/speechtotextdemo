@@ -52,6 +52,8 @@ export class StorageaccountDetailComponent implements OnInit {
   ngOnInit() {
   }
   refresh() {
+    //if the user is overriding credentials make sure we set both token values
+    this.accountDetails.SASTokenReadOnly = this.accountDetails.SASToken
     this.accountDetailsService.save();
     this.updated.emit(this.accountDetails);
 

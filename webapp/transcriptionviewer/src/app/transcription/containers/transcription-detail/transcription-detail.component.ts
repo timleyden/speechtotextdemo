@@ -23,6 +23,7 @@ import { AppConfigService } from 'src/app/app-config.service';
 })
 export class TranscriptionDetailComponent implements OnInit {
   transcript;
+  files
   transcriptData: any[];
   nextOffset;
   details: AccountDetails;
@@ -79,25 +80,28 @@ export class TranscriptionDetailComponent implements OnInit {
     this.transcriptData = [];
     this.route.paramMap.subscribe(params => {
       //this.transcript = transcripts[+params.get('transcriptId')]
-      this.transcriptService.GetTranscription(params.get('transcriptId')).subscribe(data => {
-        this.transcript = data;
-        this.navService.NavTitle = " - View: " + this.transcript.name
+      var files$ = this.transcriptService.GetTranscription((params.get('transcriptId')+'/files'));
+      var transcript$ = this.transcriptService.GetTranscription(params.get('transcriptId'));
+      forkJoin(files$,transcript$).subscribe(([data2,data1]) => {
+        this.transcript = data1;
+        this.files = data2;
+        this.navService.NavTitle = " - View: " + this.transcript.displayName
 
-        this.transcript.recordingsUrl = this.transcript.recordingsUrl.split('?')[0] + this.details.SASTokenReadOnly
+        //this.transcript.recordingsUrl = this.transcript.recordingsUrl.split('?')[0] + this.details.SASTokenReadOnly
         var observables: Observable<object>[] = [];
-        for (const key in this.transcript.resultsUrls) {
-          if (this.transcript.resultsUrls.hasOwnProperty(key)) {
-            const element = this.transcript.resultsUrls[key];
-            observables.push(this.http.get(element))
+        var transcriptFiles = this.files.values.filter(val=>{return val.kind == "TranscriptionV21Result"});
+        var file:any;
+       transcriptFiles.forEach(file=>{
 
-          }
-        }
+            observables.push(this.http.get(file.url))
+        });
         forkJoin(observables).subscribe((results: []) => {
           results.forEach((element: any) => {
             //normalize results
-
+            this.transcript.recordingsUrl = element.AudioFileResults[0].AudioFileUrl;//.split('?')[0] + this.details.SASTokenReadOnly
             this.transcriptData = this.transcriptData.concat(Object.assign([], element.AudioFileResults[0].SegmentResults.map((utterance) => { utterance.ChannelNumber = element.AudioFileResults[0].AudioFileName.split('.')[1]; return utterance })));
           });
+
           this.transcriptData.sort((n1, n2) => {
             var first = Number(n1.Offset);
             var second = Number(n2.Offset)
@@ -163,10 +167,13 @@ export class TranscriptionDetailComponent implements OnInit {
 
   submitForTraining() {
 
-    var exportdata = { recordingurl: this.transcript.recordingsUrl,modelid: this.transcript.models[0].id, SegmentResults: this.transcriptData }
+    var exportdata = { recordingurl: this.transcript.recordingsUrl,modelid: this.transcript.model.self, SegmentResults: this.transcriptData }
     this.http.post(this.details.TrainUrl,exportdata).subscribe(
       data=>{
-      this._snackbar.open('transcription submitted for training', 'Dismiss', { duration: 8000 })
+      var sbr = this._snackbar.open('transcription submitted for training, View Progress at the custom speech portal', 'Open', { duration: 8000 });
+      sbr.onAction().subscribe(()=>{
+          window.open("https://speech.microsoft.com/portal?noredirect=true","_blank");
+      });
     },
     error=>{
       this._snackbar.open('training submission failed', 'Dismiss', { duration: 8000 })

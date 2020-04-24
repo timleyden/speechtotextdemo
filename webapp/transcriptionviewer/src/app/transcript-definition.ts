@@ -1,9 +1,9 @@
 import { ConvertPropertyBindingResult } from '@angular/compiler/src/compiler_util/expression_converter';
 
 export class TranscriptDefinition{
-  name:string;
+  displayName:string;
   description:string;
-  recordingsUrl:string;
+  sourceUrls:string[];
   locale:string;
   models:ModelIdentity[] = [];
   properties:TranscriptProperty
@@ -11,8 +11,8 @@ export class TranscriptDefinition{
     //set defaults
     this.properties = new TranscriptProperty();
     this.locale = "en-US"
-    this.properties.ProfanityFilterMode = "Masked"
-    this.properties.PunctuationMode = "DictatedAndAutomatic"
+    this.properties.profanityFilterMode = "Masked"
+    this.properties.punctuationMode = "DictatedAndAutomatic"
   }
 }
 export class ModelIdentity{
@@ -21,25 +21,25 @@ export class ModelIdentity{
 export class TranscriptProperty{
   private _addDiarization:boolean = false
   private _addWordLevelTimestamps = false;
-ProfanityFilterMode:ProfanityFilterMode;
-PunctuationMode:PunctuationMode;
-get AddWordLevelTimestamps():boolean{
+profanityFilterMode:ProfanityFilterMode;
+punctuationMode:PunctuationMode;
+get addWordLevelTimestamps():boolean{
   return this._addWordLevelTimestamps;
 }
-set AddWordLevelTimestamps(value:boolean){
+set addWordLevelTimestamps(value:boolean){
   this._addWordLevelTimestamps = value;
   if(!value){
-    this.AddDiarization = false;
+    this.addDiarization = false;
   }
 }
-AddSentiment:boolean = false;
-get AddDiarization():boolean{
+
+get addDiarization():boolean{
  return this._addDiarization;
 }
-set AddDiarization(value:boolean){
+set addDiarization(value:boolean){
   this._addDiarization = value;
   if(value){
-    this.AddWordLevelTimestamps = true;
+    this.addWordLevelTimestamps = true;
   }
 }
 TranscriptionResultsContainerUrl:string
@@ -47,8 +47,8 @@ toJSON() {
   // copy all fields from `this` to an empty object and return in
   return Object.assign({}, this, {
     // convert fields that need converting
-    AddDiarization: this._addDiarization,
-    AddWordLevelTimestamps: this._addWordLevelTimestamps
+    addDiarization: this._addDiarization,
+    addWordLevelTimestamps: this._addWordLevelTimestamps
   });
 }
 }

@@ -9,9 +9,10 @@ import { AccountService } from './account.service';
 })
 
 export class TranscriptService {
-  private  baseurl:string = ".cris.ai/api";
-  private transcriptionPath:string = "/speechtotext/v2.0/transcriptions";
-  private modelsPath:string = "/speechtotext/v2.0/models"
+  private baseurl:string = ".cris.ai/api";
+  private transcriptionPath:string = "/speechtotext/v3.0-beta1/transcriptions";
+  private modelsPath:string = "/speechtotext/v3.0-beta1/models"
+  private baseModelsPath:string = "/speechtotext/v3.0-beta1/models/base"
   private apiKeyHeaderName:string = "Ocp-Apim-Subscription-Key";
 
   private buildUri() {
@@ -29,6 +30,12 @@ export class TranscriptService {
     }
   }
   constructor(private httpClient: HttpClient, private accountService:AccountService) { }
+
+  private buildBaseModelsUri() {
+    let hostName = `https://${this.accountService.Details.Region}${this.baseModelsPath}`;
+    return hostName;
+  }
+
   PostTranscriptionRequest(request: TranscriptDefinition) {
     let headers = new HttpHeaders({
       'Content-Type': "application/json"
@@ -43,10 +50,7 @@ export class TranscriptService {
     });
     headers = headers.append(this.apiKeyHeaderName, this.accountService.Details.ServiceKey);
     let options = { headers: headers };
-
-   return this.httpClient.get(this.buildUri(), options);
-
-
+    return this.httpClient.get<any>(this.buildUri(), options);
   }
   DeleteTranscription(transcriptionId: string) {
     let headers = new HttpHeaders({
@@ -56,13 +60,13 @@ export class TranscriptService {
     let options = { headers: headers };
     return this.httpClient.delete(this.buildUri() + "/" + transcriptionId, options);
   }
-  GetTranscription(transcriptionId: string) {
+  GetTranscription(url: string) {
     let headers = new HttpHeaders({
       'Content-Type': "application/json"
     });
     headers = headers.append(this.apiKeyHeaderName, this.accountService.Details.ServiceKey);
     let options = { headers: headers };
-    return this.httpClient.get(this.buildUri() + "/" + transcriptionId, options);
+    return this.httpClient.get(url, options);
   }
   GetModels() {
     let headers = new HttpHeaders({
@@ -70,8 +74,15 @@ export class TranscriptService {
     });
     headers = headers.append(this.apiKeyHeaderName, this.accountService.Details.ServiceKey);
     let options = { headers: headers };
-    return this.httpClient.get(this.buildModelsUri(), options);
+    return this.httpClient.get<any>(this.buildModelsUri(), options);
   }
-
+  GetBaseModels() {
+    let headers = new HttpHeaders({
+      'Content-Type': "application/json"
+    });
+    headers = headers.append(this.apiKeyHeaderName, this.accountService.Details.ServiceKey);
+    let options = { headers: headers };
+    return this.httpClient.get<any>(this.buildBaseModelsUri(), options);
+  }
 
 }

@@ -8,7 +8,6 @@
         <th class="mat-header-cell">Duration</th>
         <th class="mat-header-cell">Diarization</th>
         <th class="mat-header-cell">Word Level Timestamps</th>
-        <th class="mat-header-cell">Sentiment</th>
         <th class="mat-header-cell">Punctuation Mode</th>
         <th class="mat-header-cell">Profanity Mode</th>
         <th class="mat-header-cell">Models</th>
@@ -16,16 +15,15 @@
     </thead>
 
     <tr class="mat-row">
-      <td class="mat-cell"><a
-          href="{{transcript.recordingsUrl}}">{{transcript.recordingsUrl.split('?')[0].split('/').pop()}}</a></td>
+      <td  *ngIf="transcript.recordingsUrl" class="mat-cell"><a
+        href="{{transcript.recordingsUrl}}">{{transcript.recordingsUrl.split('?')[0].split('/').pop()}}</a></td>
       <td class="mat-cell">{{transcript.locale}}</td>
-      <td class="mat-cell">{{transcript.properties.Duration}}</td>
-      <td class="mat-cell">{{transcript.properties.AddDiarization}}</td>
-      <td class="mat-cell">{{transcript.properties.AddWordLevelTimestamps}}</td>
-      <td class="mat-cell">{{transcript.properties.AddSentiment}}</td>
-      <td class="mat-cell">{{transcript.properties.PunctuationMode}}</td>
-      <td class="mat-cell">{{transcript.properties.ProfanityFilterMode}}</td>
-      <td class="mat-cell"><span *ngFor="let model of transcript.models">{{model.name}}, </span></td>
+      <td class="mat-cell">{{transcript.properties.duration}}</td>
+      <td class="mat-cell">{{transcript.properties.addDiarization}}</td>
+      <td class="mat-cell">{{transcript.properties.addWordLevelTimestamps}}</td>
+      <td class="mat-cell">{{transcript.properties.punctuationMode}}</td>
+      <td class="mat-cell">{{transcript.properties.profanityFilterMode}}</td>
+      <td class="mat-cell"><span>{{transcript.model.self.split('/').pop()}}</span></td>
     </tr>
   </table>
 <div>
@@ -155,7 +153,7 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" ></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
-      <audio style="width: 100%; position:sticky;bottom:0px" [playbackRate]="[playbackRate]" (timeupdate)="highlightUtterance($event)" (seeked)="this.nextOffset=0" (loadstart)="audioEmptied($event)"
+      <audio *ngIf="transcript.recordingsUrl" style="width: 100%; position:sticky;bottom:0px" [playbackRate]="[playbackRate]" (timeupdate)="highlightUtterance($event)" (seeked)="this.nextOffset=0" (loadstart)="audioEmptied($event)"
       controls>
 
       <source [src]="transcript.recordingsUrl" type="audio/mpeg">
