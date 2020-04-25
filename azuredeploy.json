@@ -236,7 +236,8 @@
         "SCM_REPOSITORY_PATH":"d:/local/repository",
         "StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('audioStorageAccountName'), ';AccountKey=', listKeys(variables('audiostorageAccountid'),'2015-05-01-preview').key1)]",
         "CallbackFunctionUrl":"[reference('getTriggerUrlLinkedTemplate').outputs.datasetUploadCallback.value]",
-        "CogsInternalId":"[reference(variables('cognititiveServiceName')).internalId]"
+        "CogsInternalId":"[reference(variables('cognititiveServiceName')).internalId]",
+        "ProxyBaseUrl":"[concat('https://',reference(variables('functionAppName')).defaultHostName,'/api/proxy')]"
       }
     },
     {
