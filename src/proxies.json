@@ -1,0 +1,22 @@
+{
+    "$schema": "http://json.schemastore.org/proxies",
+    "proxies": {
+        "transcriptions": {
+            "debug":true,
+            "matchCondition": {
+                "route": "/api/proxy/{*restOfPath}",
+                "methods": [
+                    "GET",
+                    "POST",
+                    "DELETE",
+                    "PUT",
+                    "OPTIONS"
+                ]
+            },
+            "backendUri": "https://%Region%.cris.ai/api/{restOfPath}",
+            "requestOverrides": {
+                "backend.request.headers.Ocp-Apim-Subscription-Key": "%SubscriptionKey%"
+            }
+        }
+    }
+}
