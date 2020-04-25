@@ -75,7 +75,7 @@ export class TranscriptionNewComponent implements OnInit {
     }
   }
   private bindModelsChoice(){
-    this.transcriptService.GetModels(this.accountService.Details.Region,this.accountService.Details.ServiceKey).subscribe(data=>{this.Models = <any[]>data; this.filterModels();})
+    this.transcriptService.GetModels().subscribe(data=>{this.Models = <any[]>data; this.filterModels();})
 
   }
   public filterModels(){
@@ -113,7 +113,7 @@ export class TranscriptionNewComponent implements OnInit {
       this.transcriptDef.models = this.selectedModels.map(value=>{return {"Id":value}})
     }
     console.info(JSON.stringify(this.transcriptDef));
-    this.transcriptService.PostTranscriptionRequest(this.transcriptDef, this.details.Region, this.details.ServiceKey).subscribe(data => { console.log(data); this._snackbar.open("Transcription queued", "Dismiss", { duration: 5000 });this.router.navigate(['/transcription']) }, error => { const errorMsg = (error.error.message)?error.error.message:"Check the console for more information"; this._snackbar.open("Failed to queue transcription. " + errorMsg, "Dismiss", { duration: 5000 });console.log(error) });
+    this.transcriptService.PostTranscriptionRequest(this.transcriptDef).subscribe(data => { console.log(data); this._snackbar.open("Transcription queued", "Dismiss", { duration: 5000 });this.router.navigate(['/transcription']) }, error => { const errorMsg = (error.error.message)?error.error.message:"Check the console for more information"; this._snackbar.open("Failed to queue transcription. " + errorMsg, "Dismiss", { duration: 5000 });console.log(error) });
   }
   }
 
