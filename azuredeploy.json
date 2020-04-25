@@ -39,7 +39,6 @@
     "functionWorkerRuntime": "dotnet",
     "appInsightsName": "speechToTextDemoAppInsights",
     "cognititiveServiceName": "[concat(parameters('demoName'), 'SpeechServices')]",
-    "eventSubName": "NewBlobEvent",
     "readOnlyAccountSasProperties": {
       "signedServices": "b",
       "signedPermission": "r",
@@ -236,7 +235,8 @@
         "Project": "function",
         "SCM_REPOSITORY_PATH":"d:/local/repository",
         "StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('audioStorageAccountName'), ';AccountKey=', listKeys(variables('audiostorageAccountid'),'2015-05-01-preview').key1)]",
-        "CallbackFunctionUrl":"[reference('getTriggerUrlLinkedTemplate').outputs.datasetUploadCallback.value]"
+        "CallbackFunctionUrl":"[reference('getTriggerUrlLinkedTemplate').outputs.datasetUploadCallback.value]",
+        "CogsInternalId":"[reference(variables('cognititiveServiceName')).internalId]"
       }
     },
     {
@@ -450,9 +450,10 @@
     }
   ],
   "outputs": {
-    "serviceDetailsUrl": {
+    "appurl": {
       "type": "string",
-      "value": "reference('getTriggerUrlLinkedTemplate').outputs.configtriggerUrl.value"
+      "value": "[concat('https://',reference(variables('siteAppName')).defaultHostName)]"
+
     }
   }
 }
