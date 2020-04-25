@@ -16,7 +16,8 @@ export const Locations:string[] = [,
 "northeurope",
 "westeurope",
 "uksouth",
-"francecentral"
+"francecentral",
+"proxy"
 ]
 export const Locales:string[] = [
   "ar-AE",

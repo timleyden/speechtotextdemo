@@ -8,6 +8,8 @@ export class AccountDetails {
   ServiceKey: string;
   RefreshRate:number = 30;
   TrainUrl:string;
+  UseProxy:boolean
+  ProxyBaseUrl:string
 }
 export interface AccountDetailsBE {
   storageAccountName: string;
@@ -15,7 +17,6 @@ export interface AccountDetailsBE {
   sASTokenReadOnly: string;
   audioStorageContainerName: string;
   transcriptStorageContainerName: string;
-  region: string;
-  serviceKey: string;
   trainUrl: string;
+  proxyBaseUrl:string
 }

@@ -56,7 +56,7 @@ export class TranscriptionDetailComponent implements OnInit {
 
   ngOnInit() {
     this.nextOffset = 0;
-    this.navService.MenuIcons = this.navService.MenuIcons.concat([{ "icon": "delete", "toolTip": "Delete Transcription", "order": 50, "click": () => { this.transcriptService.DeleteTranscription(this.details.Region, this.details.ServiceKey, this.transcript.id).subscribe(data => { this._snackbar.open('transcription deleted', 'Dismiss', { duration: 8000 }); this.transcriptData = null; this.transcript = null; }) } }, { "icon": "save", "toolTip": "Save modified Transcript", "click": (icon) => { this._bottomSheet.open(TranscriptionSaveBottomsheetComponent, { data: { "transcript": this.transcript, "transcriptData": this.transcriptData } }) }, "order": 60 }, { "icon": "train", "toolTip": "Submit for model training", "click": (icon) => { this.submitForTraining() }, "order": 70 }]);
+    this.navService.MenuIcons = this.navService.MenuIcons.concat([{ "icon": "delete", "toolTip": "Delete Transcription", "order": 50, "click": () => { this.transcriptService.DeleteTranscription(this.transcript.id).subscribe(data => { this._snackbar.open('transcription deleted', 'Dismiss', { duration: 8000 }); this.transcriptData = null; this.transcript = null; }) } }, { "icon": "save", "toolTip": "Save modified Transcript", "click": (icon) => { this._bottomSheet.open(TranscriptionSaveBottomsheetComponent, { data: { "transcript": this.transcript, "transcriptData": this.transcriptData } }) }, "order": 60 }, { "icon": "train", "toolTip": "Submit for model training", "click": (icon) => { this.submitForTraining() }, "order": 70 }]);
 
 
   }
@@ -79,7 +79,7 @@ export class TranscriptionDetailComponent implements OnInit {
     this.transcriptData = [];
     this.route.paramMap.subscribe(params => {
       //this.transcript = transcripts[+params.get('transcriptId')]
-      this.transcriptService.GetTranscription(this.details.Region, this.details.ServiceKey, params.get('transcriptId')).subscribe(data => {
+      this.transcriptService.GetTranscription(params.get('transcriptId')).subscribe(data => {
         this.transcript = data;
         this.navService.NavTitle = " - View: " + this.transcript.name
 

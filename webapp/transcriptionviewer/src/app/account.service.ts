@@ -22,11 +22,13 @@ export class AccountService {
     if(AppConfigService.settings.configUrl){
     this.GetAccountDetails(AppConfigService.settings.configUrl).subscribe(data=>{
       this.Details.AccountName = data.storageAccountName;
-      this.Details.Region = data.region;
+      this.Details.Region = "proxy";
       this.Details.SASToken = data.sASToken;
-      this.Details.ServiceKey = data.serviceKey;
+      this.Details.ServiceKey = "proxy";
       this.Details.SASTokenReadOnly = data.sASTokenReadOnly;
       this.Details.TrainUrl = data.trainUrl
+      this.Details.UseProxy = true;
+      this.Details.ProxyBaseUrl = data.proxyBaseUrl;
       this.validateDetails();
     })
   }
