@@ -23,7 +23,7 @@ export class TranscriptService {
   }
   private buildModelsUri() {
     if(this.accountService.Details.UseProxy){
-      return `https://${this.accountService.Details.ProxyBaseUrl}${this.modelsPath}`;
+      return `${this.accountService.Details.ProxyBaseUrl}${this.modelsPath}`;
     }else{
       return  `https://${this.accountService.Details.Region}${this.baseurl}${this.modelsPath}`;
     }
