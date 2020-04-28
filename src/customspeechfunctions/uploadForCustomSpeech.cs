@@ -33,16 +33,6 @@ namespace cut60secondsaudio
 
         public class project
         {
-
-            public project()
-            {
-                name = "CustomSpeechProject";
-                displayName = "CustomSpeechProject";
-                description = "CustomSpeechProject created using accelerator";
-                projectKind = "SpeechToText";
-                locale = "en-US";
-            }
-
             public project(string Name, string DisplayName, string Description, string ProjectKind, string Locale)
             {
                 name = Name;
@@ -151,15 +141,37 @@ namespace cut60secondsaudio
         }
 
 
+
+
+        public class Baselinemodel
+        {
+            public string self { get; set; }
+            public object[] datasets { get; set; }
+            public LinksBaseline links { get; set; }
+            public PropertiesBaseline properties { get; set; }
+            public DateTime lastActionDateTime { get; set; }
+            public string status { get; set; }
+            public DateTime createdDateTime { get; set; }
+            public string locale { get; set; }
+            public string displayName { get; set; }
+            public string description { get; set; }
+            public CustompropertiesBaseline customProperties { get; set; }
+        }
+
+        public class LinksBaseline { public string endpointManifest { get; set; } }
+
+        public class PropertiesBaseline { public string deprecatedFeatures { get; set; } }
+
+        public class CustompropertiesBaseline { }
+
+
+
+
+
         [FunctionName("uploadForCustomSpeech")]
         public static async Task Run([BlobTrigger("cutaudio/{name}", Connection = "StorageConnectionString")]Stream myBlob, string name, IDictionary<string, string> metaData, ILogger log, string blobTrigger, Uri uri)
         {
-
-
             log.LogInformation($"C# Blob trigger function Processed blob\n Name:{name} \n Size: {myBlob.Length} Bytes, path:{blobTrigger}, uri:{uri.ToString()}");
-
-
-
             string ocpSubKey = ServiceDetails.GetServiceDetails().serviceKey;
             string storrageUrl = uri.ToString();
             string saskey = ServiceDetails.GetServiceDetails().sASTokenReadOnly;
@@ -178,19 +190,29 @@ namespace cut60secondsaudio
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", ocpSubKey);
 
-            // Check if any project exists
-            var response = await client.GetAsync(new Uri("https://"+ region + ".cris.ai/api/speechtotext/v3.0-beta1/projects/"));
 
+
+            // Query the baseline model ID to get the locale for project
+
+            var response = await client.GetAsync(new Uri("https://"+ region + ".cris.ai/api/speechtotext/v3.0-beta1/models/base/" + baselineModelId));
             response.EnsureSuccessStatusCode();
-
             string content = await response.Content.ReadAsStringAsync();
+            Baselinemodel baselineModelDetails = JsonConvert.DeserializeObject<Baselinemodel>(content);
+            string locale = baselineModelDetails.locale;
+            log.LogInformation($"Basline model is in locale {locale}");
 
+
+
+            // Check if any project exists
+            response = await client.GetAsync(new Uri("https://"+ region + ".cris.ai/api/speechtotext/v3.0-beta1/projects/"));
+            response.EnsureSuccessStatusCode();
+            content = await response.Content.ReadAsStringAsync();
             getProjectsCalss projects = JsonConvert.DeserializeObject<getProjectsCalss>(content);
 
-            //if no projects found, create a new one
+            //if no projects found, create a new one in locale of baseline model
             if (projects.values.Length == 0)
             {
-                var newSpeechproject = new project();
+                var newSpeechproject = new project("CustomSpeechProject", "CustomSpeechProject","CustomSpeechProject created using accelerator", "SpeechToText", locale);
                 var json = JsonConvert.SerializeObject(newSpeechproject);
                 var data = new StringContent(json, Encoding.UTF8, "application/json");
                 response = await client.PostAsync("https://" + region + ".cris.ai/api/speechtotext/v3.0-beta1/projects/", data);
@@ -201,21 +223,46 @@ namespace cut60secondsaudio
                 string[] projectIDarray = localProjectPath.Split("/api/speechtotext/v3.0-beta1/projects/");
                 string projectId = projectIDarray[1];
 
-                await createDataSetAsync(projectId, client, blobFile, "https://" + region + ".cris.ai/api/speechtotext/v3.0-beta1/projects/", baselineModelId, log);
+                await createDataSetAsync(projectId, client, blobFile, "https://" + region + ".cris.ai/api/speechtotext/v3.0-beta1/projects/", baselineModelId, log, locale);
 
             }
             else
-            //if project is found just use first one to upload the data
+            //if project is found just use the one that that has that locale else create a project in the baseline model locale
             {
-                string[] projectIDarray = projects.values[0].self.Split("https://" + region + ".cris.ai/api/speechtotext/v3.0-beta1/projects/");
-                string projectID = projectIDarray[1];
 
-                await createDataSetAsync(projectID, client, blobFile, "https://" + region + ".cris.ai/api/speechtotext/v3.0-beta1/projects/", baselineModelId, log);
+                bool projectFound = false;
+                string projectID = null;
+
+                foreach(Value projectInstance in projects.values) {
+                    if (projectInstance.locale == locale) {
+
+                        string[] projectIDarray = projects.values[0].self.Split("https://" + region + ".cris.ai/api/speechtotext/v3.0-beta1/projects/");
+                        projectID = projectIDarray[1];
+                        projectFound = true;
+                        break;
+                    }
+                }
+
+                if (!projectFound) {
+
+                    var newSpeechproject = new project("CustomSpeechProject", "CustomSpeechProject","CustomSpeechProject created using accelerator", "SpeechToText", locale);
+                    var json = JsonConvert.SerializeObject(newSpeechproject);
+                    var data = new StringContent(json, Encoding.UTF8, "application/json");
+                    response = await client.PostAsync("https://" + region + ".cris.ai/api/speechtotext/v3.0-beta1/projects/", data);
+                    response.EnsureSuccessStatusCode();
+                    await response.Content.ReadAsStringAsync();
+
+                    string localProjectPath = response.Headers.Location.LocalPath;
+                    string[] projectIDarray = localProjectPath.Split("/api/speechtotext/v3.0-beta1/projects/");
+                    projectID = projectIDarray[1];
+                }
+
+                await createDataSetAsync(projectID, client, blobFile, "https://" + region + ".cris.ai/api/speechtotext/v3.0-beta1/projects/", baselineModelId, log, locale);
 
             }
         }
 
-        public static async Task createDataSetAsync(string projectID, HttpClient client, blob blobFile, string projectUrl, string baselineModelId,ILogger log)
+        public static async Task createDataSetAsync(string projectID, HttpClient client, blob blobFile, string projectUrl, string baselineModelId,ILogger log, string locale)
         {
             var project = new projectSelf(projectID, projectUrl + projectID);
 
@@ -228,7 +275,6 @@ namespace cut60secondsaudio
             log.LogInformation($"SAS key for blob: {blobFile.SASkeyForBlob}");
 
 
-
             var dataSetfromBlob = new dataset(
                 "dataSet" + blobFile.blobName,
                 "dataSet" + blobFile.blobName,
@@ -236,7 +282,7 @@ namespace cut60secondsaudio
                 "Acoustic",
                 blobFile.blobUrl + blobFile.SASkeyForBlob,
                 blobFile.blobUrl + blobFile.SASkeyForBlob,
-                 "en-US",
+                 locale,
                  null,
                  project,
                  properties,
@@ -247,7 +293,6 @@ namespace cut60secondsaudio
             var json = JsonConvert.SerializeObject(dataSetfromBlob);
 
             var data = new StringContent(json, Encoding.UTF8, "application/json");
-
 
             log.LogInformation($"Payload: {json}");
 
