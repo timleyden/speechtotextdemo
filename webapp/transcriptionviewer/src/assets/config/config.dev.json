@@ -3,7 +3,7 @@
     "name": "dev"
     },
     "appInsights": {
-    "instrumentationKey": "9fa0b162-8309-4ff0-a0b7-21d9dc4d306e"
+    "instrumentationKey": "***REMOVED***"
     },
-    "configUrl":"https://s2t2wteos4t6lrncfuncapp.azurewebsites.net/api/GetServiceDetailsHttpTrigger?code=/e3sa7KbHR4dzdU1mMzk7ScZ3fVrha76xSpzOVOyF2UIm6lUsE7RPQ=="
+    "configUrl":"***REMOVED***"
 }
