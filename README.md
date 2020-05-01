@@ -1,21 +1,30 @@
 ﻿# Speech to Text Batch Transcription - Demo
-
 **Disclaimer**: This content is not officially endorsed by *Microsoft*.
+
+## Important Note: we now have two main forks of this solution.
+* The master branch will continue to be our initial solution which focuses on a solution to automatically queue transcriptions using storage accounts and azure functions. This is a good sample if you are looking to automate processing of a large amounts of audio without any human interaction
+* The [transcriptionviewer](https://github.com/timleyden/speechtotextdemo/tree/transcriptionviewer) branch is a new visualisation tool we developed in Angular to help visualise transcriptions and evaluate baseline models for accuracy. In addition we have looked into automating some of the dataprep associated with custom speech models. Our recent efforts have been focused here.
 
 ## Solution Deployment 
 
 The solution is deployed through the Azure Resource Manager. Azure Resource Manager allows you to provision your applications using a declarative template. In a single template, you can deploy multiple services along with their dependencies. You use the same template to repeatedly deploy your application during every stage of the application life cycle. [Learn More](https://docs.microsoft.com/en-au/azure/azure-resource-manager/resource-group-overview).
 
-* [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ftimleyden%2Fspeechtotextdemo%2Fmaster%2Fazuredeploy.json) Original deploy via portal.azure.com - working
+* [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Ftimleyden%2Fspeechtotextdemo%2Fmaster%2Fazuredeploy.json) 
+
 * [![Viszualize](http://armviz.io/visualizebutton.png)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Ftimleyden%2Fspeechtotextdemo%2fmaster%2Fazuredeploy.json) 
-* [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/) New deploy portal, template validation failing on linked templates - last checked July 2019
 
 
 ## Overview
 
-This solution will get you started with using Speech-to-text cognitive service API to perform batch transaction. Speech Service Batch Transcription is designed to handle a large number of audio fragments in storage, such as Azure Blobs. The solution was built upon an existing Batch Transcription API sample found [here](https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/batch/csharp). The sample was changed from using Console App running locally, to using event driven, serverless architecture pattern with Azure Functions, Event Grid, Webhooks. 
+This solution will get you started with using Speech-to-text cognitive service API v2.0 to perform batch transaction. Speech Service Batch Transcription is designed to handle a large number of audio fragments in storage, such as Azure Blobs. The solution was built upon an existing Batch Transcription API sample found [here](https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/batch/csharp). The sample was changed from using Console App running locally, to using event driven, serverless architecture pattern with Azure Functions, Event Grid, Webhooks. 
 
 Once solution is deployed you can copy supported audio files (wav, mp3, ogg) to the audio container in the storage account and the solution will automatically queue your file for transcription using speech services. The solution uses batch service webhook, to evoke azure function to pool completed transcripts and store in blob storage, instead of pooling for completion. 
+## Notes
+If you are planning on reusing some of this sample for your own purposes here are some things you might want to consider:
+* there is a default rate limit on the speechtotext api. The REST API limits requests to 25 per 5 seconds (at the time of writing) this is documented in the [FAQ](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/faq-stt#increasing-concurrency) along with steps to request an increase 
+* we had to move to a polling function as webhooks were deprecated in v2.0
+* you will run into concurrency issues if the polling function is running longer than the default interval of 15 minutes. Both instances end up trying to copy the same transcription which causes errors.  We hope to address this in the sample when we get time.
+* fault handling is extremely limited in the sample code, apart from the builtin retry behavious of eventgrid. You may need to improve this for reliability.
 
 ## Solution Architecture
 ![](Architecture.PNG)
@@ -36,6 +45,8 @@ Supported audio formats WAV, MP3, OGG (mono, stereo).
 [Batch transcription learn more](https://docs.microsoft.com/en-gb/azure/cognitive-services/speech-service/batch-transcription)
 
 #### Webhooks for Speech Services
+Note: Our initial solution used webhooks however these have since been deprecated in v2.0 and so we have now moved to a polling function
+
 Webhooks are like HTTP callbacks that allow your application to accept data from the Speech Services when it becomes available. Using webhooks, you can optimize your use of our REST APIs by eliminating the need to continuously poll for a response. [Learn more](https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/webhooks). 
 
 **TranscriptionCompletion** operation was used in this solution to evoke azure function to pool completed transcripts. 
