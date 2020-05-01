@@ -111,7 +111,7 @@
           <th mat-header-cell *matHeaderCellDef> Text </th>
           <td [ngStyle]="{'background-color':getColor(element.NBest[0].Confidence)}" mat-cell
             *matCellDef="let element; let i = index;"> <a class="utterance" *ngIf="!element.NBest[0].isEditable"
-              (click)="jumpTo($event)" [attr.offset]="element.Offset /10000000"
+              (click)="jumpTo($event)" [attr.offset]="element.OffsetInSeconds"
               [title]="'Confidence: '+element.NBest[0].Confidence+' Time offset: '+formatOffset(element.Offset)+'s'">
               {{ element.NBest[0].Display}}</a> <input style="font-style:italic;font-weight: bold;"
               *ngIf="element.NBest[0].isEditable" matInput class="utteranceEdit" type="text"
