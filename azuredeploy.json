@@ -22,6 +22,37 @@
       "metadata": {
         "description": "when deployed this template generates and store a sas token in appSettings to allow the Batch Transcription service to access audio blob files."
       }
+    },
+    "speechLocation": {
+       "type": "string",
+       "metadata": {
+            "description": "description"
+        },
+        "allowedValues":[
+          "australiaeast",
+          "brazilsouth",
+          "westus",
+          "westus2",
+          "westeurope",
+          "northeurope",
+          "southeastasia",
+          "eastasia",
+          "westcentralus",
+          "southcentralus",
+          "eastus",
+          "eastus2",
+          "canadacentral",
+          "japaneast",
+          "centralindia",
+          "uksouth",
+          "japanwest",
+          "koreacentral",
+          "francecentral",
+          "northcentralus",
+          "centralus",
+          "southafricanorth",
+          "uaenorth"
+        ]
     }
   },
   "variables": {
@@ -175,7 +206,7 @@
       "name": "[variables('cognititiveServiceName')]",
       "dependsOn": [
       ],
-      "location": "[parameters('location')]",
+      "location": "[parameters('speechLocation')]",
       "tags": {
         "displayName": "Speech Service"
       },
@@ -377,7 +408,7 @@
       "name": "[variables('siteAppName')]",
       "type": "Microsoft.Web/sites",
       "apiVersion": "2018-11-01",
-      "location": "australiasoutheast",
+      "location": "[parameters('location')]",
       "tags": {
         "displayName": "Transcription Viewer Web App"
       },
@@ -432,7 +463,7 @@
       "name": "[variables('webhostingPlanName')]",
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2018-11-01",
-      "location": "australiasoutheast",
+      "location": "[parameters('location')]",
       "kind": "linux",
 
       "sku": {
