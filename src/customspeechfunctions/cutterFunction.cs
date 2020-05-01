@@ -12,6 +12,8 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using System.Text;
 using System.IO.Compression;
 using Microsoft.Azure.WebJobs.Host;
+using System.Text.RegularExpressions;
+
 
 namespace cut60secondsaudio
 {
@@ -32,13 +34,17 @@ namespace cut60secondsaudio
             var textString = JsonConvert.DeserializeObject<Class1>(requestBody);
 
             string recordingUrl = textString.recordingurl;
-            string modelID = textString.modelid;
+
+
+            string modelIdSubString = textString.modelid.Replace("https://", "");
+            string [] modelIdArr = modelIdSubString.Split('/');
+            string modelID = modelIdArr.LastOrDefault();
+
             string resultSubString = recordingUrl.Substring(0, recordingUrl.IndexOf("?sv"));
             string[] result2 = resultSubString.Split("/");
             string audioName = result2[4];
 
             log.Info("Processing the transcript for segmentation");
-
 
             foreach (Segmentresult result in textString.SegmentResults)
             {
@@ -49,6 +55,19 @@ namespace cut60secondsaudio
                 }
                 else
                 {
+
+                    string[] numbers = Regex.Split(chunks.Text, @"\D+");
+
+                    foreach (string value in numbers)
+                    {
+                        if (!string.IsNullOrEmpty(value))
+                        {
+                            if (value.Length > 4)
+                            {
+                                chunks.Text = chunks.Text.Replace(value, "");
+                            }
+                        }
+                    }
                     audio.AudioChunks.Add(chunks);
                     float stop = chunks.stop;
                     chunks = new AudioChunk();
@@ -57,7 +76,6 @@ namespace cut60secondsaudio
                 }
             }
             audio.AudioChunks.Add(chunks);
-
 
             int count = 0;
 
@@ -90,7 +108,7 @@ namespace cut60secondsaudio
 
                             // local debugging
 
-                           // process.StartInfo.FileName = @"C:\code\SpeechToTextdemo\speechtotextdemo\cut60secondsaudio\cut60secondsaudio\ffmpeg.exe";
+                       //     process.StartInfo.FileName = @"C:\code\SpeechToTextdemo\speechtotextdemo\cut60secondsaudio\cut60secondsaudio\ffmpeg.exe";
 
 
 
