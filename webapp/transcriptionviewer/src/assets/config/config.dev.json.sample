@@ -1,0 +1,9 @@
+{
+    "env": {
+    "name": "dev"
+    },
+    "appInsights": {
+    "instrumentationKey": "dev appinsights key"
+    },
+    "configUrl":"url to dev config function either local or in azure"
+}
