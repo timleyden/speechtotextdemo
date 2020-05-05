@@ -479,6 +479,26 @@
       "properties": {
         "reserved": true
       }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "name": "resizeAppServicePlanToFree",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites/sourcecontrols',variables('siteAppName'),'web')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[uri(if(not(contains(deployment().properties,'templateLink')),'https://raw.githubusercontent.com/timleyden/speechtotextdemo/transcriptionviewer/',deployment().properties.templateLink.uri), 'resizeAppServicePlan.json')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "servicePlanName": {
+            "value": "[variables('webhostingPlanName')]"
+          }
+        }
+      }
     }
   ],
   "outputs": {
