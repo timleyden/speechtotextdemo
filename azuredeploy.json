@@ -496,6 +496,9 @@
         "parameters": {
           "servicePlanName": {
             "value": "[variables('webhostingPlanName')]"
+          },
+          "location":{
+            "value":"[parameters('location')]"
           }
         }
       }
