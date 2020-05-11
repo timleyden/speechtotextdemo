@@ -416,7 +416,7 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', variables('webhostingPlanName'))]",
-        "getTriggerUrlLinkedTemplate"
+                 "[variables('appInsightsName')]"
       ],
       "properties": {
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('webhostingPlanName'))]",
@@ -431,10 +431,6 @@
               "value": "false"
             },
             {
-              "name": "configServiceUrl",
-              "value": "[reference('getTriggerUrlLinkedTemplate').outputs.configtriggerUrl.value]"
-            },
-            {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
               "value": "[reference(resourceId('microsoft.insights/components/', variables('appInsightsName')), '2015-05-01').InstrumentationKey]"
             }
@@ -443,6 +439,26 @@
           "linuxFxVersion": "NODE|12-lts"
         }
 
+      }
+    },
+    {
+    "name": "[concat(variables('siteAppName'),'/appSettings')]",
+      "type": "Microsoft.Web/sites/config",
+      "apiVersion": "2018-11-01",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+          "[variables('siteAppName')]",
+         "getTriggerUrlLinkedTemplate"
+
+      ],
+      "tags": {
+        "displayName": "WebAppSettings"
+      },
+      "properties": {
+        "SCM_REPOSITORY_PATH":"/tmp/repository",
+        "WEBSITES_ENABLE_APP_SERVICE_STORAGE":"false",
+        "configServiceUrl":"[reference('getTriggerUrlLinkedTemplate').outputs.configtriggerUrl.value]",
+        "APPINSIGHTS_INSTRUMENTATIONKEY":"[reference(resourceId('microsoft.insights/components/', variables('appInsightsName')), '2015-05-01').InstrumentationKey]"
       }
     },
     {
