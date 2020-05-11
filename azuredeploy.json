@@ -505,7 +505,7 @@
       "apiVersion": "2017-05-10",
       "name": "resizeAppServicePlanToFree",
       "dependsOn": [
-         "[resourceId('Microsoft.Web/sites/config',variables('siteAppName'),'appSettings')]",
+         "[resourceId('Microsoft.Web/sites/config',variables('siteAppName'),'appSettings')]"
       ],
       "properties": {
         "mode": "Incremental",
