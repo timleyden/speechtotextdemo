@@ -129,7 +129,7 @@
           "apiVersion": "2018-07-01",
           "dependsOn": [
             "[resourceId('Microsoft.Storage/storageAccounts', variables('AudioStorageAccountName'))]",
-            "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers',variables('AudioStorageAccountName'),'default',variables('transcriptContainer'))]"
+            "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers',variables('AudioStorageAccountName'),'default',variables('audioContainer'))]"
           ]
         },
         {
@@ -395,7 +395,7 @@
       "apiVersion": "2017-05-10",
       "name": "RegisterCallback",
       "dependsOn": [
-        "[variables('siteAppName')]"
+       "[resourceId('Microsoft.Web/sites/config',variables('siteAppName'),'appSettings')]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -448,7 +448,8 @@
       "location": "[parameters('location')]",
       "dependsOn": [
           "[variables('siteAppName')]",
-         "getTriggerUrlLinkedTemplate"
+         "getTriggerUrlLinkedTemplate",
+         "[resourceId('Microsoft.Web/sites/config',variables('functionAppName'),'appSettings')]"
 
       ],
       "tags": {
