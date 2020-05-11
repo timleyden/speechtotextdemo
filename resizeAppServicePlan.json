@@ -18,9 +18,6 @@
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2018-11-01",
       "location": "[parameters('location')]",
-      "dependsOn":[
-        "/web"
-        ],
       "kind": "linux",
       "sku": {
                 "name": "F1",

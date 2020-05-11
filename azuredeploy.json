@@ -70,6 +70,8 @@
     "functionWorkerRuntime": "dotnet",
     "appInsightsName": "speechToTextDemoAppInsights",
     "cognititiveServiceName": "[concat(parameters('demoName'), 'SpeechServices')]",
+    "webLocation":"australiasoutheast",
+    "locationComment":"this has to be a location which does not match the function app service plan because app serivce does not support linux and window runtime coexisting in the samre location in the same rg",
     "readOnlyAccountSasProperties": {
       "signedServices": "b",
       "signedPermission": "r",
@@ -408,7 +410,7 @@
       "name": "[variables('siteAppName')]",
       "type": "Microsoft.Web/sites",
       "apiVersion": "2018-11-01",
-      "location": "[parameters('location')]",
+      "location": "[variables('webLocation')]",
       "tags": {
         "displayName": "Transcription Viewer Web App"
       },
@@ -463,7 +465,7 @@
       "name": "[variables('webhostingPlanName')]",
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2018-11-01",
-      "location": "[parameters('location')]",
+      "location": "[variables('webLocation')]",
       "kind": "linux",
 
       "sku": {
@@ -496,6 +498,9 @@
         "parameters": {
           "servicePlanName": {
             "value": "[variables('webhostingPlanName')]"
+          },
+          "location":{
+            "value":"[variables('webLocation')]"
           }
         }
       }
