@@ -1,9 +1,0 @@
-{
-    "env": {
-    "name": "dev"
-    },
-    "appInsights": {
-    "instrumentationKey": "instrumentationkey"
-    },
-    "configUrl":"devconfigurl"
-}

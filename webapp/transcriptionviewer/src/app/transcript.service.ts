@@ -32,8 +32,11 @@ export class TranscriptService {
   constructor(private httpClient: HttpClient, private accountService:AccountService) { }
 
   private buildBaseModelsUri() {
-    let hostName = `https://${this.accountService.Details.Region}${this.baseModelsPath}`;
-    return hostName;
+    if(this.accountService.Details.UseProxy){
+      return `${this.accountService.Details.ProxyBaseUrl}${this.baseModelsPath}`;
+    }else{
+      return  `https://${this.accountService.Details.Region}${this.baseurl}${this.baseModelsPath}`;
+    }
   }
 
   PostTranscriptionRequest(request: TranscriptDefinition) {
@@ -66,6 +69,9 @@ export class TranscriptService {
     });
     headers = headers.append(this.apiKeyHeaderName, this.accountService.Details.ServiceKey);
     let options = { headers: headers };
+    if(this.accountService.Details.UseProxy){
+      url = this.accountService.Details.ProxyBaseUrl + url.split(this.baseurl)[1]
+    }
     return this.httpClient.get(url, options);
   }
   GetModels() {

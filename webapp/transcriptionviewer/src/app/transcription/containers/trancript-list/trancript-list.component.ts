@@ -34,7 +34,7 @@ export class TrancriptListComponent implements OnInit {
     window.clearInterval(this.timerHandle);
   }
   getTranscriptions() {
-    this.transcriptService.GetTranscriptions().subscribe(data => { this.transcriptions = Object.assign([], data); this.detailsValid = true; }, error => { this._snackbar.open('Error connecting to speech to text service. Please check account details. Error message: ' + error.message, 'Dismiss', { duration: 5000 }); console.error(error); clearInterval(this.timerHandle); this.accountService.IsSpeechValid.next(false) });
+    this.transcriptService.GetTranscriptions().subscribe(data => { this.transcriptions = Object.assign([], data.values); this.detailsValid = true; }, error => { this._snackbar.open('Error connecting to speech to text service. Please check account details. Error message: ' + error.message, 'Dismiss', { duration: 5000 }); console.error(error); clearInterval(this.timerHandle); this.accountService.IsSpeechValid.next(false) });
 
   }
   ngOnChange(val: AccountDetails) {
