@@ -366,7 +366,7 @@
       ],
       "properties": {
         "RepoUrl": "https://github.com/timleyden/speechtotextdemo.git",
-        "branch": "transcriptionviewer",
+        "branch": "transcriptionviewerv3",
         "IsManualIntegration": true
       }
     },
@@ -380,7 +380,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[uri(if(not(contains(deployment().properties,'templateLink')),'https://raw.githubusercontent.com/timleyden/speechtotextdemo/transcriptionviewer/',deployment().properties.templateLink.uri), 'childTemplate.json')]",
+          "uri": "[uri(if(not(contains(deployment().properties,'templateLink')),'https://raw.githubusercontent.com/timleyden/speechtotextdemo/transcriptionviewerv3/',deployment().properties.templateLink.uri), 'childTemplate.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -457,7 +457,7 @@
       ],
       "properties": {
         "RepoUrl": "https://github.com/timleyden/speechtotextdemo.git",
-        "branch": "transcriptionviewer",
+        "branch": "transcriptionviewerv3",
         "IsManualIntegration": true
       }
     },
@@ -492,7 +492,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[uri(if(not(contains(deployment().properties,'templateLink')),'https://raw.githubusercontent.com/timleyden/speechtotextdemo/transcriptionviewer/',deployment().properties.templateLink.uri), 'resizeAppServicePlan.json')]",
+          "uri": "[uri(if(not(contains(deployment().properties,'templateLink')),'https://raw.githubusercontent.com/timleyden/speechtotextdemo/transcriptionviewerv3/',deployment().properties.templateLink.uri), 'resizeAppServicePlan.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
