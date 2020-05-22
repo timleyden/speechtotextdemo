@@ -12,9 +12,19 @@
       <mat-label>Title</mat-label>
       <input name="name" matInput type="text" required [(ngModel)]="transcriptDef.displayName" />
     </mat-form-field>
+    <mat-form-field class="full-width">
+      <mat-label>Select Container (selecting a container ignores the file selected above)</mat-label>
+      <mat-select name="audioContainer" [(ngModel)]="selectedContainer" >
+        <mat-option *ngFor="let container of containers" [value]="container.name">{{container.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
     <mat-form-field class="full-width" >
       <mat-label>Description</mat-label>
       <input name="description" matInput type="text" [(ngModel)]="transcriptDef.description" />
+    </mat-form-field>
+    <mat-form-field class="full-width" >
+      <mat-label matToolTip="Number of day to retain transcription for">Retention Period</mat-label>
+      <input name="retention" matInput type="number"  [(ngModel)]="transcriptDef.properties.timeToLiveDays" />
     </mat-form-field>
 
   </fieldset>
@@ -47,8 +57,8 @@
     </mat-form-field>
     <mat-form-field class="full-width">
       <mat-label>Select Model</mat-label>
-      <mat-select name="models" [(ngModel)]="selectedModels" multiple>
-        <mat-option *ngFor="let model of filteredModels" [value]="model.id" matTooltip="{{' description:' + model.description}}">{{model.displayName}}</mat-option>
+      <mat-select name="models" [(ngModel)]="selectedModel" >
+        <mat-option *ngFor="let model of filteredModels" [value]="model.self" matTooltip="{{' description:' + model.description}}">{{model.displayName}}</mat-option>
       </mat-select>
     </mat-form-field>
   </fieldset>

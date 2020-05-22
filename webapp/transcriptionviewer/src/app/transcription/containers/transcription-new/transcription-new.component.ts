@@ -27,8 +27,10 @@ import { NavigationService } from 'src/app/navigation.service';
 export class TranscriptionNewComponent implements OnInit {
   showAdvanced;
   showAdvancedText;
-  selectedModels:string[];
+  selectedModel:string;
   audioFiles: any[];
+  containers:any[];
+  selectedContainer:string;
   selectedFile:string;
   newTranscriptForm;
   fileService: FileService;
@@ -48,6 +50,7 @@ export class TranscriptionNewComponent implements OnInit {
     this.fileService = fileService;
     this.showAdvancedText = "Advanced";
     this.audioFiles = Array();
+    this.containers = Array();
     this.showUpload = false;
     this.Models = [];
     this.filteredModels = [];
@@ -69,6 +72,10 @@ export class TranscriptionNewComponent implements OnInit {
       for await (const blob of <any>(this.fileService.getAudioFiles(this.details.AccountName, this.details.SASToken))) {
         this.audioFiles.push(blob)
       }
+      for await (const container of <any>(this.fileService.getContainers(this.details.AccountName, this.details.SASToken))) {
+        this.containers.push(container)
+      }
+
     } catch (e) {
       this.accountService.IsStorageValid.next(false);
       console.error(e);
@@ -95,7 +102,7 @@ export class TranscriptionNewComponent implements OnInit {
       console.log('The dialog was closed');
       console.log(result);
       this.bindAudioFileChoice();
-      this.transcriptDef.sourceUrls = [result];
+      this.transcriptDef.contentUrls = [result];
     });
   }
   toggleAdvanced(event) {
@@ -110,9 +117,14 @@ export class TranscriptionNewComponent implements OnInit {
   }
   onSubmit(valid) {
     if(valid){
-    this.transcriptDef.sourceUrls = [this.fileService.getRecordingUrl(this.details.AccountName, this.details.SASTokenReadOnly,this.selectedFile)];
-    if(this.selectedModels){
-      this.transcriptDef.models = this.selectedModels.map(value=>{return {"Id":value}})
+
+    if(this.selectedContainer){
+      this.transcriptDef.contentContainerUrl = this.fileService.getContainerUrl(this.details.AccountName,this.details.SASToken, this.selectedContainer)
+    }else{
+      this.transcriptDef.contentUrls = [this.fileService.getRecordingUrl(this.details.AccountName, this.details.SASTokenReadOnly,this.selectedFile)];
+    }
+    if(this.selectedModel){
+      this.transcriptDef.model = {"self":this.selectedModel}
     }
     console.info(JSON.stringify(this.transcriptDef));
     this.transcriptService.PostTranscriptionRequest(this.transcriptDef).subscribe(data => { console.log(data); this._snackbar.open("Transcription queued", "Dismiss", { duration: 5000 });this.router.navigate(['/transcription']) }, error => { const errorMsg = (error.error.message)?error.error.message:"Check the console for more information"; this._snackbar.open("Failed to queue transcription. " + errorMsg, "Dismiss", { duration: 5000 });console.log(error) });

@@ -18,9 +18,9 @@
       <td  *ngIf="transcript.recordingsUrl" class="mat-cell"><a
         href="{{transcript.recordingsUrl}}">{{transcript.recordingsUrl.split('?')[0].split('/').pop()}}</a></td>
       <td class="mat-cell">{{transcript.locale}}</td>
-      <td class="mat-cell">{{transcript.properties.duration}}</td>
-      <td class="mat-cell">{{transcript.properties.addDiarization}}</td>
-      <td class="mat-cell">{{transcript.properties.addWordLevelTimestamps}}</td>
+      <td class="mat-cell">{{humanizeDuration(transcript.properties.duration)}}</td>
+      <td class="mat-cell">{{transcript.properties.diarizationEnabled}}</td>
+      <td class="mat-cell">{{transcript.properties.wordLevelTimestampsEnabled}}</td>
       <td class="mat-cell">{{transcript.properties.punctuationMode}}</td>
       <td class="mat-cell">{{transcript.properties.profanityFilterMode}}</td>
       <td class="mat-cell"><span>{{transcript.model.self.split('/').pop()}}</span></td>
@@ -69,6 +69,14 @@
   </mat-select>
 
 </mat-form-field>
+<mat-form-field *ngIf="files && files.length > 2">
+
+  <mat-label>Choose File</mat-label>
+  <mat-select name="transcript" [(ngModel)]="selectedFile" (selectionChange)="test()" >
+    <mat-option *ngFor="let file of files" [value]="file.links.contentUrl">{{file.name}}</mat-option>
+  </mat-select>
+
+</mat-form-field>
 </div>
   <mat-divider></mat-divider>
   <div *ngIf="transcript">
@@ -111,9 +119,9 @@
             *matCellDef="let element; let i = index;"> <a class="utterance" *ngIf="!element.NBest[0].isEditable"
               (click)="jumpTo($event)" [attr.offset]="element.OffsetInSeconds"
               [title]="'Confidence: '+element.NBest[0].Confidence+' Time offset: '+formatOffset(element.Offset)+'s'">
-              {{ element.NBest[0].Display}}</a> <input style="font-style:italic;font-weight: bold;"
+              {{ element.NBest[0].Display}}</a> <textarea rows="4" style="font-style:italic;font-weight: bold;"
               *ngIf="element.NBest[0].isEditable" matInput class="utteranceEdit" type="text"
-              [(ngModel)]="element.NBest[0].Display" /></td>
+              [(ngModel)]="element.NBest[0].Display" ></textarea></td>
         </ng-container>
         <!-- original Column -->
         <ng-container matColumnDef="original">
@@ -122,26 +130,7 @@
             {{element.NBest[0].Original}}
           </td>
         </ng-container>
-            <!-- sentiment Column -->
-            <ng-container matColumnDef="sentiment"  >
-              <th mat-header-cell *matHeaderCellDef> Sentiment </th>
-              <td mat-cell *matCellDef="let element;let i = index;">
-                <span *ngIf="element.NBest[0].Sentiment">
-                <mat-icon matTooltip="Negative: {{element.NBest[0].Sentiment.Negative}}
-                Neutral: {{element.NBest[0].Sentiment.Neutral}}
-                Positive: {{element.NBest[0].Sentiment.Positive}}" *ngIf="+element.NBest[0].Sentiment.Negative > .50">sentiment_very_dissatisfied</mat-icon>
-                <mat-icon matTooltip="Negative: {{element.NBest[0].Sentiment.Negative}}
-                Neutral: {{element.NBest[0].Sentiment.Neutral}}
-                Positive: {{element.NBest[0].Sentiment.Positive}}" *ngIf="+element.NBest[0].Sentiment.Neutral > .50">sentiment_dissatisfied</mat-icon>
-                <mat-icon matTooltip="Negative: {{element.NBest[0].Sentiment.Negative}}
-                Neutral: {{element.NBest[0].Sentiment.Neutral}}
-                Positive: {{element.NBest[0].Sentiment.Positive}}" *ngIf="+element.NBest[0].Sentiment.Positive > .50 && +element.NBest[0].Sentiment.Positive < 0.75">sentiment_satisfied</mat-icon>
-                <mat-icon matTooltip="Negative: {{element.NBest[0].Sentiment.Negative}}
-                Neutral: {{element.NBest[0].Sentiment.Neutral}}
-                Positive: {{element.NBest[0].Sentiment.Positive}}" *ngIf="+element.NBest[0].Sentiment.Positive > .74">sentiment_very_satisfied</mat-icon>
-              </span>
-              </td>
-            </ng-container>
+
         <!-- actions Column -->
         <ng-container matColumnDef="edit">
           <th mat-header-cell *matHeaderCellDef> Edit </th>

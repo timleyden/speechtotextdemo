@@ -10,9 +10,9 @@ import { AccountService } from './account.service';
 
 export class TranscriptService {
   private baseurl:string = ".cris.ai/api";
-  private transcriptionPath:string = "/speechtotext/v3.0-beta1/transcriptions";
-  private modelsPath:string = "/speechtotext/v3.0-beta1/models"
-  private baseModelsPath:string = "/speechtotext/v3.0-beta1/models/base"
+  private transcriptionPath:string = "/speechtotext/v3.0/transcriptions";
+  private modelsPath:string = "/speechtotext/v3.0/models"
+  private baseModelsPath:string = "/speechtotext/v3.0/models/base"
   private apiKeyHeaderName:string = "Ocp-Apim-Subscription-Key";
 
   private buildUri() {
@@ -55,15 +55,18 @@ export class TranscriptService {
     let options = { headers: headers };
     return this.httpClient.get<any>(this.buildUri(), options);
   }
-  DeleteTranscription(transcriptionId: string) {
+  DeleteTranscription(url: string) {
     let headers = new HttpHeaders({
       'Content-Type': "application/json"
     });
     headers = headers.append(this.apiKeyHeaderName, this.accountService.Details.ServiceKey);
     let options = { headers: headers };
-    return this.httpClient.delete(this.buildUri() + "/" + transcriptionId, options);
+    if(this.accountService.Details.UseProxy){
+      url = this.accountService.Details.ProxyBaseUrl + url.split(this.baseurl)[1]
+    }
+    return this.httpClient.delete(url, options);
   }
-  GetTranscription(url: string) {
+  GetTranscription(url: string):any {
     let headers = new HttpHeaders({
       'Content-Type': "application/json"
     });

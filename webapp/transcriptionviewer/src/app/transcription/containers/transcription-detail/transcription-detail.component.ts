@@ -12,7 +12,8 @@ import { NavigationService } from 'src/app/navigation.service';
 import { MatBottomSheet, MatSnackBar } from '@angular/material';
 import { TranscriptionSaveBottomsheetComponent } from '../../components/transcription-save-bottomsheet/transcription-save-bottomsheet.component';
 import { AppConfigService } from 'src/app/app-config.service';
-
+import { analyzeAndValidateNgModules } from '@angular/compiler';
+import * as moment from 'moment';
 
 
 @Component({
@@ -24,6 +25,7 @@ import { AppConfigService } from 'src/app/app-config.service';
 export class TranscriptionDetailComponent implements OnInit {
   transcript;
   files
+  selectedFile
   transcriptData: any[];
   nextOffset;
   details: AccountDetails;
@@ -39,7 +41,7 @@ export class TranscriptionDetailComponent implements OnInit {
   { "Value": "confidence", "Display": "Confidence", "Tooltip": "confidence of the model for this utterance" },
   { "Value": "text", "Display": "Utterance", "Tooltip": "the transcribed text (utterance)" },
   { "Value": "original", "Display": "Original", "Tooltip": "If the transcript has been modified, this column shows the original generated text" },
-  { "Value": "sentiment", "Display": "Sentiment", "Tooltip": "If sentiment enabled, show sentiment in the format of Negative, Neutral, Positive" },
+  //{ "Value": "sentiment", "Display": "Sentiment", "Tooltip": "If sentiment enabled, show sentiment in the format of Negative, Neutral, Positive" },
   { "Value": "edit", "Display": "Edit Controls", "Tooltip": "Display the Edit and Save buttons for editing transcript" }
   ];
   displayedColumns: string[] = ["offset", "text", "edit"]
@@ -57,7 +59,7 @@ export class TranscriptionDetailComponent implements OnInit {
 
   ngOnInit() {
     this.nextOffset = 0;
-    this.navService.MenuIcons = this.navService.MenuIcons.concat([{ "icon": "delete", "toolTip": "Delete Transcription", "order": 50, "click": () => { this.transcriptService.DeleteTranscription(this.transcript.id).subscribe(data => { this._snackbar.open('transcription deleted', 'Dismiss', { duration: 8000 }); this.transcriptData = null; this.transcript = null; }) } }, { "icon": "save", "toolTip": "Save modified Transcript", "click": (icon) => { this._bottomSheet.open(TranscriptionSaveBottomsheetComponent, { data: { "transcript": this.transcript, "transcriptData": this.transcriptData } }) }, "order": 60 }, { "icon": "train", "toolTip": "Submit for model training", "click": (icon) => { this.submitForTraining() }, "order": 70 }]);
+    this.navService.MenuIcons = this.navService.MenuIcons.concat([{ "icon": "delete", "toolTip": "Delete Transcription", "order": 50, "click": () => { this.transcriptService.DeleteTranscription(this.transcript.self).subscribe(data => { this._snackbar.open('transcription deleted', 'Dismiss', { duration: 8000 }); this.transcriptData = null; this.transcript = null; }) } }, { "icon": "save", "toolTip": "Save modified Transcript", "click": (icon) => { this._bottomSheet.open(TranscriptionSaveBottomsheetComponent, { data: { "transcript": this.transcript, "transcriptData": this.transcriptData } }) }, "order": 60 }, { "icon": "train", "toolTip": "Submit for model training", "click": (icon) => { this.submitForTraining() }, "order": 70 }]);
 
 
   }
@@ -82,39 +84,49 @@ export class TranscriptionDetailComponent implements OnInit {
       //this.transcript = transcripts[+params.get('transcriptId')]
       var files$ = this.transcriptService.GetTranscription((params.get('transcriptId')+'/files'));
       var transcript$ = this.transcriptService.GetTranscription(params.get('transcriptId'));
-      forkJoin(files$,transcript$).subscribe(([data2,data1]) => {
+      forkJoin<any,any>(files$,transcript$).subscribe(([data2,data1]) => {
         this.transcript = data1;
-        this.files = data2;
+        this.files = data2.values.filter(val=>{return val.kind == "Transcription"});
         this.navService.NavTitle = " - View: " + this.transcript.displayName
-
+        this.selectedFile = this.files[0].links.contentUrl;
         //this.transcript.recordingsUrl = this.transcript.recordingsUrl.split('?')[0] + this.details.SASTokenReadOnly
         var observables: Observable<object>[] = [];
-        var transcriptFiles = this.files.values.filter(val=>{return val.kind == "TranscriptionV21Result"});
-        var file:any;
-       transcriptFiles.forEach(file=>{
+        this.getTransciptData();
 
-            observables.push(this.http.get(file.url))
-        });
-        forkJoin(observables).subscribe((results: []) => {
-          results.forEach((element: any) => {
-            //normalize results
-            this.transcript.recordingsUrl = element.AudioFileResults[0].AudioFileUrl;//.split('?')[0] + this.details.SASTokenReadOnly
-            this.transcriptData = this.transcriptData.concat(Object.assign([], element.AudioFileResults[0].SegmentResults.map((utterance) => { utterance.ChannelNumber = element.AudioFileResults[0].AudioFileName.split('.')[1]; return utterance })));
-          });
-
-          this.transcriptData.sort((n1, n2) => {
-            var first = Number(n1.Offset);
-            var second = Number(n2.Offset)
-            if (first > second) {
-              return 1;
-            } if (first < second) {
-              return -1;
-            }
-            else return 0;
-          })
-        })
       });
     });
+  }
+test(){
+  this.getTransciptData();
+}
+  getTransciptData(){
+
+   this.http.get(this.selectedFile).subscribe((element:any) => {
+
+        //normalize results
+        this.transcript.recordingsUrl = element.AudioFileResults[0].AudioFileUrl;//.split('?')[0] + this.details.SASTokenReadOnly
+        var audio = document.getElementsByTagName('audio')[0];
+
+        //looks like we no longer need to infer channel number form file name as its now a property and in a single file
+        this.transcriptData = element.AudioFileResults[0].SegmentResults
+        this.transcriptData.sort((n1, n2) => {
+          var first = Number(n1.Offset);
+          var second = Number(n2.Offset)
+          if (first > second) {
+            return 1;
+          } if (first < second) {
+            return -1;
+          }
+          else return 0;
+        })
+        audio.load();
+      });
+
+
+
+  }
+  humanizeDuration(duration){
+    return moment.duration(duration).humanize()
   }
   jumpTo(event) {
     var offset = event.srcElement.getAttribute("offset");

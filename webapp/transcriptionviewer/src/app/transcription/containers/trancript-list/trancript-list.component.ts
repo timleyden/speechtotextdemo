@@ -7,6 +7,7 @@ import { TranscriptService } from 'src/app/transcript.service';
 import { AccountService } from 'src/app/account.service';
 import { MatSnackBar } from '@angular/material';
 import { NavigationService } from 'src/app/navigation.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-trancript-list',
@@ -16,7 +17,7 @@ import { NavigationService } from 'src/app/navigation.service';
 export class TrancriptListComponent implements OnInit {
   transcriptions: any[]
   details: AccountDetails;
-  displayedColumns: string[] = ["created", "name", "status", "locale", "open", "delete"]
+  displayedColumns: string[] = ["created", "name", "status", "locale","duration", "open", "delete"]
   timerHandle: number;
   detailsValid: boolean = false
   constructor(fileService: FileService, private transcriptService: TranscriptService, public accountService: AccountService, private _snackbar: MatSnackBar, private navService: NavigationService) {
@@ -36,6 +37,9 @@ export class TrancriptListComponent implements OnInit {
   getTranscriptions() {
     this.transcriptService.GetTranscriptions().subscribe(data => { this.transcriptions = Object.assign([], data.values); this.detailsValid = true; }, error => { this._snackbar.open('Error connecting to speech to text service. Please check account details. Error message: ' + error.message, 'Dismiss', { duration: 5000 }); console.error(error); clearInterval(this.timerHandle); this.accountService.IsSpeechValid.next(false) });
 
+  }
+  humanizeDuration(duration){
+    return moment.duration(duration).humanize()
   }
   ngOnChange(val: AccountDetails) {
     this.details = val;

@@ -25,6 +25,17 @@ transcripts
 
 
   }
+   getContainers(account:string,sas:string){
+    const anonymousCredential = new AnonymousCredential();
+    const blobServiceClient = new BlobServiceClient(
+      `https://${account}.blob.core.windows.net${sas}`,
+      anonymousCredential
+    );
+
+     return blobServiceClient.listContainers();
+
+
+  }
   getRecordingUrl(account:string,sas:string,blobName:string){
     const anonymousCredential = new AnonymousCredential();
     const blobServiceClient = new BlobServiceClient(
@@ -34,6 +45,16 @@ transcripts
     const containerClient = blobServiceClient.getContainerClient("audio");
     const blobClient = containerClient.getBlobClient(blobName)
     return blobClient.url
+  }
+  getContainerUrl(account:string,sas:string,containerName:string){
+    const anonymousCredential = new AnonymousCredential();
+    const blobServiceClient = new BlobServiceClient(
+      `https://${account}.blob.core.windows.net${sas}`,
+      anonymousCredential
+    );
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+
+    return containerClient.url;
   }
   uploadAudioFile(account:string,key:string, file :File){
     const anonymousCredential = new AnonymousCredential();
