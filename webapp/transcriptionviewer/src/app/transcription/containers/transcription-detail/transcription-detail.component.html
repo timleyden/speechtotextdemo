@@ -69,7 +69,7 @@
   </mat-select>
 
 </mat-form-field>
-<mat-form-field *ngIf="files && files.length > 2">
+<mat-form-field *ngIf="files && files.length > 1">
 
   <mat-label>Choose File</mat-label>
   <mat-select name="transcript" [(ngModel)]="selectedFile" (selectionChange)="test()" >
