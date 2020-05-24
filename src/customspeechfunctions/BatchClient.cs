@@ -15,7 +15,7 @@ namespace cut60secondsaudio
     using System.Threading.Tasks;
     using Microsoft.Extensions.Logging;
 
-
+//copied from https://github.com/Azure-Samples/cognitive-services-speech-sdk/tree/master/samples/batch/csharp
     public class BatchClient
     {
         private const int MinRetryBackoffInMilliseconds = 10;
@@ -28,26 +28,15 @@ namespace cut60secondsaudio
 
         private ILogger log;
 
-        private BatchClient(HttpClient client, string apiVersion = "2.0")
+        private BatchClient(HttpClient client, string apiVersion = "3.0")
         {
             this.client = client;
             speechToTextBasePath = $"api/speechtotext/v{apiVersion}/";
         }
 
-        public static async Task<BatchClient> CreateApiV1ClientAsync(string username, string key, string hostName, int port)
-        {
-            var client = new HttpClient();
-            client.Timeout = TimeSpan.FromMinutes(25);
-            client.BaseAddress = new UriBuilder(Uri.UriSchemeHttps, hostName, port).Uri;
+       
 
-            var tokenProviderPath = "/oauth/ctoken";
-            var clientToken = await CreateClientTokenAsync(client, hostName, port, tokenProviderPath, username, key).ConfigureAwait(false);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", clientToken.AccessToken);
-
-            return new BatchClient(client);
-        }
-
-        public static BatchClient CreateApiV2Client(string key, string hostName, int port, ILogger Logger = null, string apiVersion = "2.0")
+        public static BatchClient CreateApiClient(string key, string hostName, int port, ILogger Logger = null, string apiVersion = "3.0")
         {
             var client = new HttpClient();
             client.Timeout = TimeSpan.FromMinutes(25);
@@ -62,27 +51,21 @@ namespace cut60secondsaudio
             return result;
         }
 
-        public Task<IEnumerable<Transcription>> GetTranscriptionsAsync()
-        {
-            var path = $"{this.speechToTextBasePath}Transcriptions";
-            return this.GetAsync<IEnumerable<Transcription>>(path);
-        }
-
         public Task<Uri> CreateWebHook(string CallbackUrl, string secret)
         {
             string jasonpaylod = @"{{
-  ""configuration"": {{
+  
     ""url"": ""{0}"",
-    ""secret"": ""{1}""
+   
+  ,
+  ""events"": {{
+    ""datasetImportCompletion"":""true""
   }},
-  ""events"": [
-    ""DatasetImportCompletion""
-  ],
   ""active"": true,
-  ""name"": ""DatasetImportCompletionWebHook"",
-  ""description"": ""This is a Webhook created to trigger an HTTP POST request when my audio file transcription is completed."",
+  ""displayName"": ""DatasetImportCompletionWebHook"",
+  ""description"": ""This is a Webhook created to trigger an HTTP POST request when my dataset import is completed."",
   ""properties"": {{
-      ""Active"" : ""True""
+       ""secret"": ""{1}""
   }}
 }}";
             //Webhooks can be created by making a POST request to https://<region>.cris.ai/api/speechtotext/v2.1/transcriptions/hooks.
@@ -92,96 +75,7 @@ namespace cut60secondsaudio
             var path = $"{this.speechToTextBasePath}datasets/hooks";
             return this.PostAsJsonAsync(path, string.Format(jasonpaylod, CallbackUrl, secret));
         }
-
-        public Task<Transcription> GetTranscriptionAsync(Guid id)
-        {
-            var path = $"{this.speechToTextBasePath}Transcriptions/{id}";
-            return this.GetAsync<Transcription>(path);
-        }
-
-        public Task<Uri> PostTranscriptionAsync(string name, string description, string locale, Uri recordingsUrl, bool AddDiarization)
-        {
-            var path = $"{this.speechToTextBasePath}transcriptions/";
-            IList<Uri> recordingsUrls = new List<Uri>();
-            recordingsUrls.Add(recordingsUrl);
-            var transcriptionDefinition = TranscriptionDefinition.Create(name, description, locale, recordingsUrls, AddDiarization);
-
-            return this.PostAsJsonAsync<TranscriptionDefinition>(path, transcriptionDefinition);
-        }
-
-        public Task<Uri> PostTranscriptionAsync(string name, string description, string locale, Uri recordingsUrl, IEnumerable<Guid> modelIds, bool AddDiarization)
-        {
-            if (!modelIds.Any())
-            {
-                return this.PostTranscriptionAsync(name, description, locale, recordingsUrl, AddDiarization);
-            }
-
-            var models = modelIds.Select(m => ModelIdentity.Create(m)).ToList();
-            var path = $"{this.speechToTextBasePath}transcriptions/";
-            IList<Uri> recordingsUrls = new List<Uri>();
-            recordingsUrls.Add(recordingsUrl);
-            var transcriptionDefinition = TranscriptionDefinition.Create(name, description, locale, recordingsUrls, models, AddDiarization);
-            return this.PostAsJsonAsync<TranscriptionDefinition>(path, transcriptionDefinition);
-        }
-
-        public Task<Transcription> GetTranscriptionAsync(Uri location)
-        {
-            if (location == null)
-            {
-                throw new ArgumentNullException(nameof(location));
-            }
-
-            return this.GetAsync<Transcription>(location.AbsolutePath);
-        }
-
-        public Task DeleteTranscriptionAsync(Guid id)
-        {
-            var path = $"{this.speechToTextBasePath}Transcriptions/{id}";
-            return this.client.DeleteAsync(path);
-        }
-
-        private static async Task<Token> CreateClientTokenAsync(HttpClient client, string hostName, int port, string tokenProviderPath, string username, string key)
-        {
-            var uriBuilder = new UriBuilder("https", hostName, port, tokenProviderPath);
-
-            var form = new Dictionary<string, string>
-                    {
-                        { "grant_type", "client_credentials" },
-                        { "client_id", "cris" },
-                        { "client_secret", key },
-                        { "username", username }
-                    };
-
-            var rand = new Random();
-
-            for (var retries = 0; retries < MaxNumberOfRetries; retries++)
-            {
-                HttpResponseMessage response = null;
-                try
-                {
-                    response = await client.PostAsync(uriBuilder.Uri, new FormUrlEncodedContent(form)).ConfigureAwait(false);
-                    var token = await response.Content.ReadAsAsync<Token>().ConfigureAwait(false);
-
-                    if (string.IsNullOrEmpty(token.Error))
-                    {
-                        return token;
-                    }
-                }
-                catch (HttpRequestException)
-                {
-                    // Didn't work. Too bad. Try again.
-                }
-                finally
-                {
-                    response?.Dispose();
-                }
-
-                await Task.Delay(TimeSpan.FromMilliseconds(rand.Next(MinRetryBackoffInMilliseconds, MaxRetryBackoffInMilliseconds)))
-                    .ConfigureAwait(false);
-            }
-
-            throw new InvalidOperationException("Exceeded maximum number of retries for getting a token.");
-        }
+             
 
         private static async Task<Uri> GetLocationFromPostResponseAsync(HttpResponseMessage response, ILogger log = null)
         {
