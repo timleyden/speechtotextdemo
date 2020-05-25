@@ -27,9 +27,6 @@ namespace cut60secondsaudio
         private const string SignatureHeaderName = "X-MicrosoftSpeechServices-Signature";
 
 
-
-
-
         [FunctionName("DataUploadCompleteHttpTrigger")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
@@ -75,6 +72,16 @@ namespace cut60secondsaudio
                     log.LogError(e.StackTrace);
                     return (ActionResult)new BadRequestResult();
                 }
+            } else if (req.Query.ContainsKey("validationToken")) {
+
+                string ValidToken = req.Query["validationToken"];
+                
+                log.LogInformation(ValidToken);
+
+                return ValidToken!= null
+                    ?(ActionResult)new OkObjectResult ($"{ValidToken}")
+                    : new BadRequestObjectResult ("no validation token");
+
             }
 
             var eventTypeHeader = req.Headers[EventTypeHeaderName];
