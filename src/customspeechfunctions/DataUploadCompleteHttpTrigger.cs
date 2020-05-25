@@ -18,6 +18,7 @@ namespace cut60secondsaudio
 {
     public static class DataUploadCompleteHttpTrigger
     {
+        
 
         private const string HostNameTempalte = "{0}.cris.ai";
         private const int Port = 443;
@@ -34,7 +35,12 @@ namespace cut60secondsaudio
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
-
+            string body;
+            using (var streamReader = new StreamReader(req.Body))
+                {
+                    body = await streamReader.ReadToEndAsync().ConfigureAwait(false);
+                    log.LogInformation(body);                  
+                }
             if (req.Query.ContainsKey("Register") && req.Query["Register"] == "Yes")
             {
                 log.LogInformation("Register query param found, attempting webhook registration");
@@ -89,74 +95,60 @@ namespace cut60secondsaudio
             clientHttp.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", ocpSubKey);
 
 
-            string body = string.Empty;
-            string datasetUplodId = string.Empty;
+                      
             string baselineModelID = "";
-
-            try
-            {
-                using (var streamReader = new StreamReader(req.Body))
-                {
-                    body = await streamReader.ReadToEndAsync().ConfigureAwait(false);
-
-                    objectResponse objectResp = JsonConvert.DeserializeObject<objectResponse>(body);
-
-                    datasetUplodId = objectResp.id;
-
-                    var arrBaseline = objectResp.description.Split("This data set is created from Speech to Text Accelerator. Basemodel: ");
-
-                    baselineModelID = arrBaseline[1];
-
-                }
-            }
-            catch (Exception e)
-            {
-                log.LogError(e.Message);
-                log.LogError(e.Message);
-            }
-
+            string dataseturi = "";
+             objectResponse objectResp = JsonConvert.DeserializeObject<objectResponse>(body);
+             dataseturi = objectResp.self;
 
             // call to get the project ID
-            var response = await clientHttp.GetAsync(new Uri("https://" + region + ".cris.ai/api/speechtotext/v3.0-beta1/datasets/" + datasetUplodId));
+            log.LogInformation(dataseturi);
+            var response = await clientHttp.GetAsync(dataseturi);
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync();
+            log.LogInformation(content);
             DataSetobject dataset = JsonConvert.DeserializeObject<DataSetobject>(content);
-            string[] projectLinkArr = dataset.project.self.Split("https://"+region+ ".cris.ai/api/speechtotext/v3.0-beta1/projects/");
-            string projectID = projectLinkArr[1];
+             var arrBaseline = dataset.description.Split("This data set is created from Speech to Text Accelerator. Basemodel: ");
+             baselineModelID = arrBaseline[1];
+            log.LogInformation(baselineModelID);
 
 
             switch (eventTypeHeader)
             {
-                case "DatasetImportCompletion":
+                case "DatasetCompletion":
 
-                    ProjectModelTraining project = new ProjectModelTraining(projectID, 
-                        "https://"+region+".cris.ai/api/speechtotext/v3.0-beta1/projects/"+ projectID);
+                    ProjectModelTraining project = new ProjectModelTraining( 
+                        dataset.project.self);
                     PropertiesModelTraining properties = new PropertiesModelTraining();
                     CustompropertiesModelTraining customProperties = new CustompropertiesModelTraining();
 
-                    DatasetModelTraining dataSet = new DatasetModelTraining(datasetUplodId, 
-                        "https://"+region+".cris.ai/api/speechtotext/v3.0-beta1/datasets/" + datasetUplodId);
+                    DatasetModelTraining dataSet = new DatasetModelTraining(
+                        dataset.self);
 
                     DatasetModelTraining[] add_arr = new DatasetModelTraining[1];
                     add_arr[0] = dataSet;
 
-                    BasemodelModelTraining model = new BasemodelModelTraining(baselineModelID,
-                       "https://"+region+ ".cris.ai/api/speechtotext/v3.0-beta1/models/base/" + baselineModelID);
+                    BasemodelModelTraining model = new BasemodelModelTraining(
+                       "https://"+region+ ".cris.ai/api/speechtotext/v3.0/models/base/" + baselineModelID);
          
                     ModelpropertiesModelTraining modelProperties = new ModelpropertiesModelTraining();
 
-                    ModelTraining modelUpload = new ModelTraining("TrainingFromAccelerator", "TrainingFromAccelerator", "Training uploaded from accelerator", "Language",
+                    ModelTraining modelUpload = new ModelTraining("TrainingFromAccelerator", "TrainingFromAccelerator", "Training uploaded from accelerator",
                         "en-US", project, properties, customProperties, add_arr, model, modelProperties);
 
                     var json = JsonConvert.SerializeObject(modelUpload);
-
+                    log.LogInformation(json);
                     var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-                    response = await clientHttp.PostAsync("https://"+region+".cris.ai/api/speechtotext/v3.0-beta1/models", data);
-
-                    response.EnsureSuccessStatusCode();
-
-                    await response.Content.ReadAsStringAsync();
+                    response = await clientHttp.PostAsync("https://"+region+".cris.ai/api/speechtotext/v3.0/models", data);
+                    string responseString = await response.Content.ReadAsStringAsync();
+                    if(!response.IsSuccessStatusCode){
+                        log.LogError(responseString);
+                        response.EnsureSuccessStatusCode();
+                        }
+                        else{
+                            log.LogInformation(responseString);
+                        }
 
                     break;
                 default:

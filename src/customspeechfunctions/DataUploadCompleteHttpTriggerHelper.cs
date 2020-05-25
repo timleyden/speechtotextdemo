@@ -14,7 +14,7 @@ namespace cut60secondsaudio
         public class ModelTraining
         {
 
-            public ModelTraining(string name, string displayName, string description, string modelKind, string locale, ProjectModelTraining project,
+            public ModelTraining(string name, string displayName, string description, string locale, ProjectModelTraining project,
                 PropertiesModelTraining properties, CustompropertiesModelTraining customProperties, DatasetModelTraining[] datasets, BasemodelModelTraining baseModel,
                 ModelpropertiesModelTraining modelProperties)
             {
@@ -22,7 +22,6 @@ namespace cut60secondsaudio
                 this.name = name;
                 this.displayName = displayName;
                 this.description = description;
-                this.modelKind = modelKind;
                 this.locale = locale;
                 this.project = project;
                 this.properties = properties;
@@ -34,10 +33,9 @@ namespace cut60secondsaudio
             }
 
 
-            public string name { get; set; }
+
             public string displayName { get; set; }
             public string description { get; set; }
-            public string modelKind { get; set; }
             public string locale { get; set; }
             public ProjectModelTraining project { get; set; }
             public PropertiesModelTraining properties { get; set; }
@@ -49,12 +47,12 @@ namespace cut60secondsaudio
 
         public class ProjectModelTraining
         {
-            public ProjectModelTraining(string id, string self)
+            public ProjectModelTraining( string self)
             {
-                this.id = id;
+
                 this.self = self;
             }
-            public string id { get; set; }
+
             public string self { get; set; }
         }
 
@@ -85,12 +83,12 @@ namespace cut60secondsaudio
         public class BasemodelModelTraining
         {
 
-            public BasemodelModelTraining(string id, string self)
+            public BasemodelModelTraining(string self)
             {
-                this.id = id;
+
                 this.self = self;
             }
-            public string id { get; set; }
+
             public string self { get; set; }
         }
 
@@ -112,13 +110,13 @@ namespace cut60secondsaudio
         public class DatasetModelTraining
         {
 
-            public DatasetModelTraining(string id, string self)
+            public DatasetModelTraining(string self)
             {
-                this.id = id;
+             
                 this.self = self;
             }
 
-            public string id { get; set; }
+
             public string self { get; set; }
         }
 
@@ -180,15 +178,8 @@ namespace cut60secondsaudio
 
         public class objectResponse
         {
-            public string dataImportKind { get; set; }
-            public DateTime lastActionDateTime { get; set; }
-            public string status { get; set; }
-            public string id { get; set; }
-            public DateTime createdDateTime { get; set; }
-            public string locale { get; set; }
-            public string name { get; set; }
-            public string description { get; set; }
-            public PropertiesResp properties { get; set; }
+            public string self { get; set; }
+           
         }
 
         public class PropertiesResp
