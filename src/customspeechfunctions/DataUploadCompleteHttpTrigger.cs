@@ -53,7 +53,7 @@ namespace cut60secondsaudio
                  //   string HostName = string.Format(HostNameTempalte, System.Environment.GetEnvironmentVariable("Region"));
                   string HostName = string.Format(HostNameTempalte,  ServiceDetails.GetServiceDetails().region);
                     log.LogInformation(HostName);
-                    var client = BatchClient.CreateApiClient(SubscriptionKey, HostName, Port, log, "3");
+                    var client = BatchClient.CreateApiClient(SubscriptionKey, HostName, Port, log, "3.0");
                     var result = await client.CreateWebHook(url, "<my_secret>");
                     if (result != null) { log.LogInformation(result.AbsoluteUri); }
                     var template = @"{'$schema': 'https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#', 'contentVersion': '1.0.0.0', 'parameters': {}, 'variables': {}, 'resources': [],'outputs': {}}";
