@@ -34,7 +34,30 @@ Use [ngrock](https://ngrok.com/) to expose DataUploadCompleteTriggrt function as
 
 
 
+## Webapp location azuredeploy.json
 
-#
+Node.js app has location hardcoded in azuredeploy.json file due to limitation encountered during development. It limits you to deploy windows and linux plans in same location in the same resources group.
+
+## Resources created
+The arm template stands up the following resources 
+* Storage account 
+* App Service
+* App Service Plan
+* Cognitive Service 
+* Application Insights 
 
 
+## Cost
+
+To stand up and provision the resources, the template creates a Basic (Dedicated environment for dev/test) App service plan, which is than automatically scales down to Free Tier. 
+
+* App Service Plan Free Tier - FREE
+* App Service Plan BASIC Dedicated environment for dev/test - $0.130/hour [pricing](https://azure.microsoft.com/en-us/pricing/details/app-service/windows/)
+* Speech Cognitive Service pricing - Standard ($1.373 per audio hour), Custom ($1.923 per audio hour, endpoint hosting: $0.0738 per model per hour) [pricing](https://azure.microsoft.com/en-us/pricing/details/cognitive-services/speech-services/)
+* Azure Storage - $0.00112/GB per month [pricing](https://azure.microsoft.com/en-us/pricing/details/storage/)
+* Application Insights (Application Insights is billed based on the volume of telemetry data that your application sends and the number of web tests that you choose to run) - $4.586 per GB. [pricing](https://azure.microsoft.com/en-us/pricing/details/monitor/)
+
+
+## External Libraries 
+
+To slice up the audio and transcript the accelerator uses [FFmpeg library](https://ffmpeg.org/). There are other libraries that you can use intsead such as [LibROSA](https://librosa.github.io/librosa/), [pysox](https://pypi.org/project/pysox/), [pydub](https://pypi.org/project/pydub/).
