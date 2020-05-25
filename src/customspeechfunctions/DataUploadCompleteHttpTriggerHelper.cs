@@ -19,7 +19,6 @@ namespace cut60secondsaudio
                 ModelpropertiesModelTraining modelProperties)
             {
 
-                this.name = name;
                 this.displayName = displayName;
                 this.description = description;
                 this.locale = locale;
