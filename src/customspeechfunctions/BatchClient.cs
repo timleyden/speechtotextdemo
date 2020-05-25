@@ -55,7 +55,7 @@ namespace cut60secondsaudio
         {
             string jasonpaylod = @"{{
   
-    ""url"": ""{0}"",
+    ""webUrl"": ""{0}"",
    
   ,
   ""events"": {{
