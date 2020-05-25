@@ -54,14 +54,10 @@ namespace cut60secondsaudio
         public Task<Uri> CreateWebHook(string CallbackUrl, string secret)
         {
             string jasonpaylod = @"{{
-  
-    ""webUrl"": ""{0}"",
-   
-  ,
+  ""webUrl"": ""{0}"",
   ""events"": {{
-    ""datasetImportCompletion"":""true""
+    ""datasetCompletion"":""true""
   }},
-  ""active"": true,
   ""displayName"": ""DatasetImportCompletionWebHook"",
   ""description"": ""This is a Webhook created to trigger an HTTP POST request when my dataset import is completed."",
   ""properties"": {{
@@ -72,7 +68,7 @@ namespace cut60secondsaudio
 
 
             //TODO:query hooks to see if this url has been registered previously to add idempotency
-            var path = $"{this.speechToTextBasePath}datasets/hooks";
+            var path = $"{this.speechToTextBasePath}webhooks";
             return this.PostAsJsonAsync(path, string.Format(jasonpaylod, CallbackUrl, secret));
         }
              
