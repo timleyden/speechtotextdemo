@@ -31,7 +31,7 @@ namespace cut60secondsaudio
         private BatchClient(HttpClient client, string apiVersion = "3.0")
         {
             this.client = client;
-            speechToTextBasePath = $"api/speechtotext/v{apiVersion}/";
+            speechToTextBasePath = $"speechtotext/v{apiVersion}/";
         }
 
        

@@ -3,6 +3,7 @@ import { AccountDetails,AccountDetailsBE } from './account-details'
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AppConfigService } from './app-config.service';
+import { Locations } from './speechReferenceData';
 @Injectable({
   providedIn: 'root'
 })
@@ -18,6 +19,7 @@ export class AccountService {
     } else {
       this.Details = new AccountDetails();
     }
+
     this.validateDetails();
     if(AppConfigService.settings.configUrl){
     this.GetAccountDetails(AppConfigService.settings.configUrl).subscribe(data=>{
@@ -45,6 +47,9 @@ export class AccountService {
     return this.httpClient.get<AccountDetailsBE>(configUrl);
   }
   validateDetails() {
+    if(this.Details.Region != "proxy"){
+      this.Details.UseProxy = false;
+    }
     if(!this.Details.RefreshRate){
       this.Details.RefreshRate = 30;
     }

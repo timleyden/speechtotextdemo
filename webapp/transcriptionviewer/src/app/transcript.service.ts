@@ -9,7 +9,7 @@ import { AccountService } from './account.service';
 })
 
 export class TranscriptService {
-  private baseurl:string = ".cris.ai/api";
+  private baseurl:string = ".api.cognitive.microsoft.com";
   private transcriptionPath:string = "/speechtotext/v3.0/transcriptions";
   private modelsPath:string = "/speechtotext/v3.0/models"
   private baseModelsPath:string = "/speechtotext/v3.0/models/base"

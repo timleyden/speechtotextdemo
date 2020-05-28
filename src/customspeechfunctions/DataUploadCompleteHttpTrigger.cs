@@ -20,7 +20,7 @@ namespace cut60secondsaudio
     {
         
 
-        private const string HostNameTempalte = "{0}.cris.ai";
+        private const string HostNameTempalte = "{0}.api.cognitive.microsoft.com";
         private const int Port = 443;
 
         private const string EventTypeHeaderName = "X-MicrosoftSpeechServices-Event";
@@ -136,7 +136,7 @@ namespace cut60secondsaudio
                     add_arr[0] = dataSet;
 
                     BasemodelModelTraining model = new BasemodelModelTraining(
-                       "https://"+region+ ".cris.ai/api/speechtotext/v3.0/models/base/" + baselineModelID);
+                       "https://"+region+ ".api.cognitive.microsoft.com/speechtotext/v3.0/models/base/" + baselineModelID);
          
                     ModelpropertiesModelTraining modelProperties = new ModelpropertiesModelTraining();
 
@@ -147,7 +147,7 @@ namespace cut60secondsaudio
                     log.LogInformation(json);
                     var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-                    response = await clientHttp.PostAsync("https://"+region+".cris.ai/api/speechtotext/v3.0/models", data);
+                    response = await clientHttp.PostAsync("https://"+region+".api.cognitive.microsoft.com/speechtotext/v3.0/models", data);
                     string responseString = await response.Content.ReadAsStringAsync();
                     if(!response.IsSuccessStatusCode){
                         log.LogError(responseString);

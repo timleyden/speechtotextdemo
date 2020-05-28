@@ -270,7 +270,8 @@
         "StorageConnectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('audioStorageAccountName'), ';AccountKey=', listKeys(variables('audiostorageAccountid'),'2015-05-01-preview').key1)]",
         "CallbackFunctionUrl":"[reference('getTriggerUrlLinkedTemplate').outputs.datasetUploadCallback.value]",
         "CogsInternalId":"[reference(variables('cognititiveServiceName')).internalId]",
-        "ProxyBaseUrl":"[concat('https://',reference(variables('functionAppName')).defaultHostName,'/api/proxy')]"
+        "ProxyBaseUrl":"[concat('https://',reference(variables('functionAppName')).defaultHostName,'/api/proxy')]",
+        "AZURE_FUNCTION_PROXY_BACKEND_URL_DECODE_SLASHES":"true"
       }
     },
     {
@@ -395,7 +396,8 @@
       "apiVersion": "2017-05-10",
       "name": "RegisterCallback",
       "dependsOn": [
-       "[resourceId('Microsoft.Web/sites/config',variables('siteAppName'),'appSettings')]"
+       "[resourceId('Microsoft.Web/sites/config',variables('siteAppName'),'appSettings')]",
+       "getTriggerUrlLinkedTemplate"
       ],
       "properties": {
         "mode": "Incremental",

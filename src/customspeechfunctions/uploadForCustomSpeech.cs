@@ -172,7 +172,7 @@ namespace cut60secondsaudio
 
             // Query the baseline model ID to get the locale for project
 
-            var response = await client.GetAsync(new Uri("https://"+ region + ".cris.ai/api/speechtotext/v3.0/models/base/" + baselineModelId));
+            var response = await client.GetAsync(new Uri("https://"+ region + ".api.cognitive.microsoft.com/speechtotext/v3.0/models/base/" + baselineModelId));
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync();
             Baselinemodel baselineModelDetails = JsonConvert.DeserializeObject<Baselinemodel>(content);
@@ -182,7 +182,7 @@ namespace cut60secondsaudio
 
 
             // Check if any project exists
-            response = await client.GetAsync(new Uri("https://"+ region + ".cris.ai/api/speechtotext/v3.0/projects/"));
+            response = await client.GetAsync(new Uri("https://"+ region + ".api.cognitive.microsoft.com/speechtotext/v3.0/projects/"));
             response.EnsureSuccessStatusCode();
             content = await response.Content.ReadAsStringAsync();
             getProjectsCalss projects = JsonConvert.DeserializeObject<getProjectsCalss>(content);
@@ -193,15 +193,15 @@ namespace cut60secondsaudio
                 var newSpeechproject = new project("CustomSpeechProject", "CustomSpeechProject","CustomSpeechProject created using accelerator", "SpeechToText", locale);
                 var json = JsonConvert.SerializeObject(newSpeechproject);
                 var data = new StringContent(json, Encoding.UTF8, "application/json");
-                response = await client.PostAsync("https://" + region + ".cris.ai/api/speechtotext/v3.0/projects/", data);
+                response = await client.PostAsync("https://" + region + ".api.cognitive.microsoft.com/speechtotext/v3.0/projects/", data);
                 response.EnsureSuccessStatusCode();
                 await response.Content.ReadAsStringAsync();
 
                 string localProjectPath = response.Headers.Location.LocalPath;
-                string[] projectIDarray = localProjectPath.Split("/api/speechtotext/v3.0/projects/");
+                string[] projectIDarray = localProjectPath.Split("/speechtotext/v3.0/projects/");
                 string projectId = projectIDarray[1];
 
-                await createDataSetAsync(projectId, client, blobFile, "https://" + region + ".cris.ai/api/speechtotext/v3.0/projects/", baselineModelId, log, locale);
+                await createDataSetAsync(projectId, client, blobFile, "https://" + region + ".api.cognitive.microsoft.com/speechtotext/v3.0/projects/", baselineModelId, log, locale);
 
             }
             else
@@ -214,7 +214,7 @@ namespace cut60secondsaudio
                 foreach(Value projectInstance in projects.values) {
                     if (projectInstance.locale == locale) {
 
-                        string[] projectIDarray = projects.values[0].self.Split("https://" + region + ".cris.ai/api/speechtotext/v3.0/projects/");
+                        string[] projectIDarray = projects.values[0].self.Split("https://" + region + ".api.cognitive.microsoft.com/speechtotext/v3.0/projects/");
                         projectID = projectIDarray[1];
                         projectFound = true;
                         break;
@@ -226,16 +226,16 @@ namespace cut60secondsaudio
                     var newSpeechproject = new project("CustomSpeechProject", "CustomSpeechProject","CustomSpeechProject created using accelerator", "SpeechToText", locale);
                     var json = JsonConvert.SerializeObject(newSpeechproject);
                     var data = new StringContent(json, Encoding.UTF8, "application/json");
-                    response = await client.PostAsync("https://" + region + ".cris.ai/api/speechtotext/v3.0/projects/", data);
+                    response = await client.PostAsync("https://" + region + ".api.cognitive.microsoft.com/speechtotext/v3.0/projects/", data);
                     response.EnsureSuccessStatusCode();
                     await response.Content.ReadAsStringAsync();
 
                     string localProjectPath = response.Headers.Location.LocalPath;
-                    string[] projectIDarray = localProjectPath.Split("/api/speechtotext/v3.0/projects/");
+                    string[] projectIDarray = localProjectPath.Split("/speechtotext/v3.0/projects/");
                     projectID = projectIDarray[1];
                 }
 
-                await createDataSetAsync(projectID, client, blobFile, "https://" + region + ".cris.ai/api/speechtotext/v3.0/projects/", baselineModelId, log, locale);
+                await createDataSetAsync(projectID, client, blobFile, "https://" + region + ".api.cognitive.microsoft.com/speechtotext/v3.0/projects/", baselineModelId, log, locale);
 
             }
         }
@@ -274,7 +274,7 @@ namespace cut60secondsaudio
 
             string region = ServiceDetails.GetServiceDetails().region;
 
-            var response = await client.PostAsync("https://"+region+".cris.ai/api/speechtotext/v3.0/datasets", data);
+            var response = await client.PostAsync("https://"+region+".api.cognitive.microsoft.com/speechtotext/v3.0/datasets", data);
 
             response.EnsureSuccessStatusCode();
 

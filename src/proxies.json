@@ -4,7 +4,7 @@
         "transcriptions": {
             "debug":true,
             "matchCondition": {
-                "route": "/api/proxy/{*restOfPath}",
+                "route": "/api/proxy/speechtotext/{*restOfPath}",
                 "methods": [
                     "GET",
                     "POST",
@@ -13,7 +13,7 @@
                     "OPTIONS"
                 ]
             },
-            "backendUri": "https://%Region%.cris.ai/api/{restOfPath}",
+            "backendUri": "https://%Region%.api.cognitive.microsoft.com/speechtotext/{restOfPath}",
             "requestOverrides": {
                 "backend.request.headers.Ocp-Apim-Subscription-Key": "%SubscriptionKey%"
             }
