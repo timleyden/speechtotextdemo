@@ -4,7 +4,7 @@
 
 ## Introduction
 This speech solution was put together to help customers test and use azure cognitive speech services. It has 2 components:
-* Transcription Viwerl
+* Transcription Viwer
 * Custom Speech data preparation. 
 
 
