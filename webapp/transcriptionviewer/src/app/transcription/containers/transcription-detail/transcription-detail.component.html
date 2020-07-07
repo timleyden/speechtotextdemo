@@ -95,39 +95,39 @@
         <!-- speaker Column -->
         <ng-container matColumnDef="speaker">
           <th mat-header-cell *matHeaderCellDef> Speaker </th>
-          <td mat-cell *matCellDef="let element"> {{element.SpeakerId}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.speaker}} </td>
         </ng-container>
         <!-- channel Column -->
         <ng-container matColumnDef="channel">
           <th mat-header-cell *matHeaderCellDef> Channel </th>
-          <td mat-cell *matCellDef="let element"> {{element.ChannelNumber}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.channel}} </td>
         </ng-container>
         <!-- offset Column -->
         <ng-container matColumnDef="offset">
           <th mat-header-cell *matHeaderCellDef> Offset </th>
-          <td mat-cell *matCellDef="let element">{{formatOffset(element.Offset) }} </td>
+          <td mat-cell *matCellDef="let element">{{formatOffset(element.offsetInTicks) }} </td>
         </ng-container>
         <!-- confidence Column -->
         <ng-container matColumnDef="confidence">
           <th mat-header-cell *matHeaderCellDef> Confidence </th>
-          <td mat-cell *matCellDef="let element"> {{ (element.NBest[0].Confidence*100) | number:'1.0-0' }}% </td>
+          <td mat-cell *matCellDef="let element"> {{ (element.nBest[0].confidence*100) | number:'1.0-0' }}% </td>
         </ng-container>
         <!-- utterance Column -->
         <ng-container matColumnDef="text">
           <th mat-header-cell *matHeaderCellDef> Text </th>
-          <td [ngStyle]="{'background-color':getColor(element.NBest[0].Confidence)}" mat-cell
-            *matCellDef="let element; let i = index;"> <a class="utterance" *ngIf="!element.NBest[0].isEditable"
-              (click)="jumpTo($event)" [attr.offset]="element.OffsetInSeconds"
-              [title]="'Confidence: '+element.NBest[0].Confidence+' Time offset: '+formatOffset(element.Offset)+'s'">
-              {{ element.NBest[0].Display}}</a> <textarea rows="4" style="font-style:italic;font-weight: bold;"
-              *ngIf="element.NBest[0].isEditable" matInput class="utteranceEdit" type="text"
-              [(ngModel)]="element.NBest[0].Display" ></textarea></td>
+          <td [ngStyle]="{'background-color':getColor(element.nBest[0].confidence)}" mat-cell
+            *matCellDef="let element; let i = index;"> <a class="utterance" *ngIf="!element.nBest[0].isEditable"
+              (click)="jumpTo($event)" [attr.offset]="element.offsetInTicks"
+              [title]="'Confidence: '+element.nBest[0].confidence+' Time offset: '+formatOffset(element.offsetInTicks)+'s'">
+              {{ element.nBest[0].display}}</a> <textarea rows="4" style="font-style:italic;font-weight: bold;"
+              *ngIf="element.nBest[0].isEditable" matInput class="utteranceEdit" type="text"
+              [(ngModel)]="element.nBest[0].display" ></textarea></td>
         </ng-container>
         <!-- original Column -->
         <ng-container matColumnDef="original">
           <th mat-header-cell *matHeaderCellDef> Original Text </th>
           <td mat-cell *matCellDef="let element;let i = index;">
-            {{element.NBest[0].Original}}
+            {{element.nBest[0].Original}}
           </td>
         </ng-container>
 
@@ -135,8 +135,8 @@
         <ng-container matColumnDef="edit">
           <th mat-header-cell *matHeaderCellDef> Edit </th>
           <td mat-cell *matCellDef="let element;let i = index;">
-            <button mat-button *ngIf="element.NBest[0].isEditable" (click)="saveButton($event,i)">Save</button>
-            <button mat-button *ngIf="!element.NBest[0].isEditable" (click)="editButton($event,i)">edit</button>
+            <button mat-button *ngIf="element.nBest[0].isEditable" (click)="saveButton($event,i)">Save</button>
+            <button mat-button *ngIf="!element.nBest[0].isEditable" (click)="editButton($event,i)">edit</button>
           </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" ></tr>

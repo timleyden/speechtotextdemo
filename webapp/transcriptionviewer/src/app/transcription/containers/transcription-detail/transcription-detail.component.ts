@@ -104,14 +104,14 @@ test(){
    this.http.get(this.selectedFile).subscribe((element:any) => {
 
         //normalize results
-        this.transcript.recordingsUrl = element.AudioFileResults[0].AudioFileUrl;//.split('?')[0] + this.details.SASTokenReadOnly
+        this.transcript.recordingsUrl = element.source;//.split('?')[0] + this.details.SASTokenReadOnly
         var audio = document.getElementsByTagName('audio')[0];
 
         //looks like we no longer need to infer channel number form file name as its now a property and in a single file
-        this.transcriptData = element.AudioFileResults[0].SegmentResults
+        this.transcriptData = element.recognizedPhrases
         this.transcriptData.sort((n1, n2) => {
-          var first = Number(n1.Offset);
-          var second = Number(n2.Offset)
+          var first = Number(n1.offsetInTicks);
+          var second = Number(n2.offsetInTicks)
           if (first > second) {
             return 1;
           } if (first < second) {
@@ -131,7 +131,7 @@ test(){
   jumpTo(event) {
     var offset = event.srcElement.getAttribute("offset");
     var audio = document.getElementsByTagName('audio')[0];
-    audio.currentTime = offset;
+    audio.currentTime = (offset/10000000);
     audio.play();
   }
   highlightUtterance(event) {
@@ -164,14 +164,14 @@ test(){
   }
   editButton(eventData, id) {
     //window.alert(this.transcriptData[id].Offset);
-    if (!this.transcriptData[id].NBest[0].Original) {
-      this.transcriptData[id].NBest[0].Original = this.transcriptData[id].NBest[0].Display
+    if (!this.transcriptData[id].nBest[0].Original) {
+      this.transcriptData[id].nBest[0].Original = this.transcriptData[id].nBest[0].Display
     }
-    this.transcriptData[id].NBest[0].isEditable = true;
+    this.transcriptData[id].nBest[0].isEditable = true;
   }
   saveButton(eventData, id) {
 
-    this.transcriptData[id].NBest[0].isEditable = false;
+    this.transcriptData[id].nBest[0].isEditable = false;
   }
   formatOffset(offset) {
     return this.datePipe.transform((new Date(1970, 0, 1).setSeconds(offset / 10000000)), 'HH:mm:ss')
