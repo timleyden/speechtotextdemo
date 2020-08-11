@@ -143,11 +143,11 @@ test(){
     console.log(audio.currentTime)
     for (var i = 0; i < utterances.length; i++) {
       const u1 = utterances[i];
-      const offset = Number(u1.getAttribute("offset"));
+      const offset = Number(u1.getAttribute("offset"))/10000000;
       let next = 0;
       if (i + 1 < utterances.length) {
         const u2 = utterances[i + 1];
-        next = Number(u2.getAttribute("offset"));
+        next = Number(u2.getAttribute("offset"))/10000000;
       } else {
         next = offset + 30; //we are at the end of the transcript add 30 seconds to allow for long utterance
       }
