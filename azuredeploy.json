@@ -435,6 +435,10 @@
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
               "value": "[reference(resourceId('microsoft.insights/components/', variables('appInsightsName')), '2015-05-01').InstrumentationKey]"
+            },
+            {
+              "name": "WEBSITE_NPM_DEFAULT_VERSION",
+              "value": "6.14.5"
             }
           ],
 
@@ -462,7 +466,8 @@
         "SCM_REPOSITORY_PATH":"/tmp/repository",
         "WEBSITES_ENABLE_APP_SERVICE_STORAGE":"false",
         "configServiceUrl":"[reference('getTriggerUrlLinkedTemplate').outputs.configtriggerUrl.value]",
-        "APPINSIGHTS_INSTRUMENTATIONKEY":"[reference(resourceId('microsoft.insights/components/', variables('appInsightsName')), '2015-05-01').InstrumentationKey]"
+        "APPINSIGHTS_INSTRUMENTATIONKEY":"[reference(resourceId('microsoft.insights/components/', variables('appInsightsName')), '2015-05-01').InstrumentationKey]",
+        "WEBSITE_NPM_DEFAULT_VERSION":"6.14.5"
       }
     },
     {
