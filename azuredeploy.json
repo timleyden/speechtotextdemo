@@ -18,7 +18,7 @@
     },
     "sasExpiryDate": {
       "type": "string",
-      "defaultValue": "2021-01-01T00:00:01Z",
+      "defaultValue": "2022-01-01T00:00:01Z",
       "metadata": {
         "description": "when deployed this template generates and store a sas token in appSettings to allow the Batch Transcription service to access audio blob files."
       }
@@ -257,7 +257,7 @@
         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('appInsightsName')), '2015-05-01').InstrumentationKey]",
         "AzureWebJobsSecretStorageType": "files",
         "SubscriptionKey": "[listkeys(resourceId('Microsoft.CognitiveServices/accounts', variables('cognititiveServiceName')),'2017-04-18').key1]",
-        "Region": "[parameters('location')]",
+        "Region": "[parameters('speechLocation')]",
         "SASToken": "[concat('?',listAccountSas(variables('AudioStorageAccountName'), '2018-07-01', variables('accountSasProperties')).accountSasToken)]",
         "SASTokenReadOnly": "[concat('?',listAccountSas(variables('AudioStorageAccountName'), '2018-07-01', variables('readOnlyAccountSasProperties')).accountSasToken)]",
         "StorageAccountName": "[variables('audioStorageAccountName')]",
