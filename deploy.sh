@@ -232,7 +232,7 @@ fi
 
 echo Handling node.js deployment.
 # 2. Select node version
-selectNodeVersion
+# selectNodeVersion #removed as per https://github.com/projectkudu/kudu/issues/3189
 
 
 # 3. Install npm packages
